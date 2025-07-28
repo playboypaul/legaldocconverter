@@ -31,8 +31,8 @@ const Hero = () => {
 
           {/* Subheadline */}
           <p className="text-xl text-slate-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Upload any legal document and get instant format conversion plus AI-powered analysis. 
-            Streamline your legal workflow with professional-grade document processing.
+            Professional document conversion and AI-powered legal analysis at legaldocconverter.com. 
+            Convert PDFs, DOCX, TXT files and get detailed legal insights in seconds.
           </p>
 
           {/* CTA Buttons */}
