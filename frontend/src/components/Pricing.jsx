@@ -103,6 +103,11 @@ const Pricing = () => {
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white' 
                       : 'bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white'
                   }`}
+                  onClick={() => {
+                    if (plan.name === 'Professional') {
+                      window.open('https://buy.stripe.com/5kQfZh7EU65I6Q61i65AQ0V', '_blank');
+                    }
+                  }}
                 >
                   {plan.name === 'Free' ? 'Start Free' : 'Subscribe Now'}
                   {plan.popular && <Sparkles className="ml-2 h-5 w-5" />}
