@@ -170,7 +170,7 @@ const DocumentProcessor = () => {
   };
 
   return (
-    <section id="processor" className="py-20 bg-slate-50">
+    <section id="processor" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
@@ -182,18 +182,18 @@ const DocumentProcessor = () => {
         </div>
 
         {/* Upload Section */}
-        <Card className="mb-8 border-0 shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center">
+        <Card className="mb-8 border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/50">
+          <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-lg">
+            <CardTitle className="flex items-center text-white">
               <Upload className="h-5 w-5 mr-2" />
               Document Upload
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-blue-100">
               Supported formats: {supportedFormats.input.join(', ')}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-slate-400 transition-colors duration-200">
+          <CardContent className="p-8">
+            <div className="border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-12 text-center hover:border-blue-400 hover:bg-gradient-to-br hover:from-blue-100 hover:to-indigo-100 transition-all duration-300">
               <input
                 type="file"
                 id="file-upload"
@@ -205,20 +205,20 @@ const DocumentProcessor = () => {
               <label htmlFor="file-upload" className="cursor-pointer">
                 {isUploading ? (
                   <div className="flex flex-col items-center">
-                    <Loader2 className="h-12 w-12 text-slate-400 animate-spin mb-4" />
-                    <p className="text-slate-600">Uploading...</p>
+                    <Loader2 className="h-16 w-16 text-blue-500 animate-spin mb-4" />
+                    <p className="text-blue-700 font-medium">Uploading...</p>
                   </div>
                 ) : file ? (
                   <div className="flex flex-col items-center">
-                    <CheckCircle className="h-12 w-12 text-green-500 mb-4" />
-                    <p className="text-slate-900 font-medium">{file.name}</p>
-                    <p className="text-slate-600 text-sm">Click to upload a different file</p>
+                    <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
+                    <p className="text-slate-900 font-bold text-lg">{file.name}</p>
+                    <p className="text-slate-600 text-sm mt-2">Click to upload a different file</p>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <FileText className="h-12 w-12 text-slate-400 mb-4" />
-                    <p className="text-slate-900 font-medium">Click to upload your legal document</p>
-                    <p className="text-slate-600 text-sm">or drag and drop it here</p>
+                    <FileText className="h-16 w-16 text-blue-400 mb-4" />
+                    <p className="text-slate-900 font-bold text-lg">Click to upload your legal document</p>
+                    <p className="text-slate-600 text-sm mt-2">or drag and drop it here</p>
                   </div>
                 )}
               </label>
@@ -227,21 +227,21 @@ const DocumentProcessor = () => {
         </Card>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Convert Section */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-green-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
                 <Download className="h-5 w-5 mr-2" />
                 Format Conversion
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-green-100">
                 Convert your document to any supported format
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6 p-6">
               <Select value={outputFormat} onValueChange={setOutputFormat}>
-                <SelectTrigger>
+                <SelectTrigger className="border-2 border-green-200 focus:border-green-400">
                   <SelectValue placeholder="Select output format" />
                 </SelectTrigger>
                 <SelectContent>
@@ -256,7 +256,7 @@ const DocumentProcessor = () => {
               <Button 
                 onClick={handleConvert}
                 disabled={!fileId || !outputFormat || isConverting}
-                className="w-full bg-slate-900 hover:bg-slate-800"
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 {isConverting ? (
                   <>
@@ -272,17 +272,17 @@ const DocumentProcessor = () => {
               </Button>
 
               {conversionResult && (
-                <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center mb-2">
-                    <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                    <span className="font-medium text-green-800">Conversion Complete</span>
+                <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+                  <div className="flex items-center mb-3">
+                    <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                    <span className="font-bold text-green-800 text-lg">Conversion Complete</span>
                   </div>
-                  <p className="text-sm text-green-700 mb-3">
+                  <p className="text-green-700 mb-4 font-medium">
                     {conversionResult.original_file} → {conversionResult.converted_file}
                   </p>
                   <Button 
                     size="sm" 
-                    className="bg-green-600 hover:bg-green-700 text-white"
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
                     onClick={handleDownload}
                   >
                     <Download className="h-4 w-4 mr-2" />
@@ -294,33 +294,45 @@ const DocumentProcessor = () => {
           </Card>
 
           {/* Analyze Section */}
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center">
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-violet-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <CardHeader className="bg-gradient-to-r from-violet-500 to-indigo-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
                 <Brain className="h-5 w-5 mr-2" />
                 AI Legal Analysis
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-violet-100">
                 Get detailed insights and legal analysis
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-slate-100 rounded-lg">
-                <p className="text-sm text-slate-700">
+            <CardContent className="space-y-6 p-6">
+              <div className="p-6 bg-gradient-to-r from-violet-50 to-indigo-50 border-2 border-violet-200 rounded-xl">
+                <p className="text-violet-800 font-medium mb-3">
                   Our AI will analyze your document for:
                 </p>
-                <ul className="text-sm text-slate-600 mt-2 space-y-1">
-                  <li>• Key legal provisions</li>
-                  <li>• Risk assessments</li>
-                  <li>• Compliance checks</li>
-                  <li>• Recommendations</li>
+                <ul className="text-violet-700 space-y-2">
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-violet-600" />
+                    Key legal provisions
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-violet-600" />
+                    Risk assessments
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-violet-600" />
+                    Compliance checks
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className="h-4 w-4 mr-2 text-violet-600" />
+                    Recommendations
+                  </li>
                 </ul>
               </div>
               
               <Button 
                 onClick={handleAnalyze}
                 disabled={!fileId || isAnalyzing}
-                className="w-full bg-slate-700 hover:bg-slate-800"
+                className="w-full bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
               >
                 {isAnalyzing ? (
                   <>
@@ -340,28 +352,28 @@ const DocumentProcessor = () => {
 
         {/* Analysis Results */}
         {analysisResult && (
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Brain className="h-5 w-5 mr-2" />
+          <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
+            <CardHeader className="bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white text-xl">
+                <Brain className="h-6 w-6 mr-2" />
                 Legal Analysis Results
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8 p-8">
               {/* Summary */}
-              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Executive Summary</h4>
-                <p className="text-blue-800">{analysisResult.summary}</p>
+              <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl">
+                <h4 className="font-bold text-blue-900 mb-3 text-lg">Executive Summary</h4>
+                <p className="text-blue-800 leading-relaxed">{analysisResult.summary}</p>
               </div>
 
               {/* Key Findings */}
               <div>
-                <h4 className="font-semibold text-slate-900 mb-3">Key Findings</h4>
-                <ul className="space-y-2">
+                <h4 className="font-bold text-slate-900 mb-4 text-lg">Key Findings</h4>
+                <ul className="space-y-3">
                   {analysisResult.key_findings.map((finding, index) => (
-                    <li key={index} className="flex items-start">
-                      <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                      <span className="text-slate-700">{finding}</span>
+                    <li key={index} className="flex items-start p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                      <CheckCircle className="h-5 w-5 text-green-600 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-800 font-medium">{finding}</span>
                     </li>
                   ))}
                 </ul>
@@ -369,25 +381,25 @@ const DocumentProcessor = () => {
 
               {/* Risk Assessment */}
               <div>
-                <h4 className="font-semibold text-slate-900 mb-3">Risk Assessment</h4>
-                <div className="space-y-3">
+                <h4 className="font-bold text-slate-900 mb-4 text-lg">Risk Assessment</h4>
+                <div className="space-y-4">
                   {analysisResult.risk_assessment.map((risk, index) => (
-                    <div key={index} className="p-3 border rounded-lg">
-                      <div className="flex items-center mb-2">
-                        <AlertCircle className={`h-4 w-4 mr-2 ${
+                    <div key={index} className="p-6 border-2 rounded-xl bg-gradient-to-r from-white to-slate-50">
+                      <div className="flex items-center mb-3">
+                        <AlertCircle className={`h-5 w-5 mr-3 ${
                           risk.level === 'High' ? 'text-red-500' : 
-                          risk.level === 'Medium' ? 'text-yellow-500' : 'text-green-500'
+                          risk.level === 'Medium' ? 'text-amber-500' : 'text-green-500'
                         }`} />
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${
-                          risk.level === 'High' ? 'bg-red-100 text-red-800' : 
-                          risk.level === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+                        <span className={`px-4 py-2 rounded-full text-sm font-bold ${
+                          risk.level === 'High' ? 'bg-red-100 text-red-800 border border-red-200' : 
+                          risk.level === 'Medium' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-green-100 text-green-800 border border-green-200'
                         }`}>
                           {risk.level} Risk
                         </span>
                       </div>
-                      <p className="text-slate-700 mb-2">{risk.issue}</p>
-                      <p className="text-sm text-slate-600">
-                        <strong>Recommendation:</strong> {risk.recommendation}
+                      <p className="text-slate-800 mb-3 font-medium">{risk.issue}</p>
+                      <p className="text-slate-600 bg-slate-100 p-3 rounded-lg">
+                        <strong className="text-slate-800">Recommendation:</strong> {risk.recommendation}
                       </p>
                     </div>
                   ))}
@@ -395,20 +407,20 @@ const DocumentProcessor = () => {
               </div>
 
               {/* Compliance Score */}
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="font-semibold text-green-900 mb-2">Compliance Score</h4>
-                <div className="flex items-center mb-2">
-                  <div className="text-2xl font-bold text-green-800 mr-2">
+              <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+                <h4 className="font-bold text-green-900 mb-4 text-lg">Compliance Score</h4>
+                <div className="flex items-center mb-4">
+                  <div className="text-4xl font-bold text-green-800 mr-4">
                     {analysisResult.compliance.score}%
                   </div>
-                  <div className="flex-1 bg-green-200 rounded-full h-2">
+                  <div className="flex-1 bg-green-200 rounded-full h-4">
                     <div 
-                      className="bg-green-600 h-2 rounded-full" 
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 h-4 rounded-full transition-all duration-1000 ease-out" 
                       style={{ width: `${analysisResult.compliance.score}%` }}
                     ></div>
                   </div>
                 </div>
-                <p className="text-green-800">{analysisResult.compliance.details}</p>
+                <p className="text-green-800 font-medium">{analysisResult.compliance.details}</p>
               </div>
             </CardContent>
           </Card>
