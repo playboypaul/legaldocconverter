@@ -10,6 +10,7 @@ import Pricing from "./components/Pricing";
 import Footer from "./components/Footer";
 import SignInModal from "./components/auth/SignInModal";
 import SignUpModal from "./components/auth/SignUpModal";
+import LegalModalManager from "./components/legal/LegalModalManager";
 import { Toaster } from "./components/ui/toaster";
 
 const Home = () => {
@@ -36,6 +37,7 @@ function App() {
         </BrowserRouter>
         <SignInModal />
         <SignUpModal />
+        <LegalModalManager />
         <Toaster />
       </AuthProvider>
     </div>
