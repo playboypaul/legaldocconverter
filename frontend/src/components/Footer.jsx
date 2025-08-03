@@ -88,12 +88,18 @@ const Footer = () => {
               © 2025 LegalDocConverter.com. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-slate-400 hover:text-white text-sm transition-colors">
+              <button 
+                onClick={() => window.openPrivacyPolicy && window.openPrivacyPolicy()}
+                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              >
                 Privacy Policy
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white text-sm transition-colors">
+              </button>
+              <button 
+                onClick={() => window.openTermsOfService && window.openTermsOfService()}
+                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              >
                 Terms of Service
-              </a>
+              </button>
               <a href="#" className="text-slate-400 hover:text-white text-sm transition-colors">
                 Cookie Policy
               </a>
