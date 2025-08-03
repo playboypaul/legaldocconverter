@@ -152,7 +152,20 @@ const SignInModal = () => {
             </button>
           </p>
           <p className="text-xs text-slate-500">
-            By signing in, you agree to our Terms of Service and Privacy Policy
+            By signing in, you agree to our{' '}
+            <button 
+              onClick={() => window.openTermsOfService && window.openTermsOfService()}
+              className="text-blue-600 hover:text-blue-700 underline"
+            >
+              Terms of Service
+            </button>
+            {' '}and{' '}
+            <button 
+              onClick={() => window.openPrivacyPolicy && window.openPrivacyPolicy()}
+              className="text-blue-600 hover:text-blue-700 underline"
+            >
+              Privacy Policy
+            </button>
           </p>
         </div>
       </DialogContent>
