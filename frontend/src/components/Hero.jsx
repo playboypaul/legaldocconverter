@@ -40,6 +40,9 @@ const Hero = () => {
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-0"
+              onClick={() => {
+                document.getElementById('processor').scrollIntoView({behavior: 'smooth'});
+              }}
             >
               Start Converting Now
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -48,8 +51,11 @@ const Hero = () => {
               variant="outline" 
               size="lg"
               className="border-2 border-slate-300 text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50 hover:border-blue-300 hover:text-blue-700 px-8 py-4 text-lg font-semibold transition-all duration-300"
+              onClick={() => {
+                document.getElementById('features').scrollIntoView({behavior: 'smooth'});
+              }}
             >
-              Watch Demo
+              Learn More
             </Button>
           </div>
 
