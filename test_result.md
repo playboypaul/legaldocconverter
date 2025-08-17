@@ -284,10 +284,14 @@ metadata:
   test_sequence: 1
 
 test_plan:
-  current_focus: []
-  stuck_tasks: []
+  current_focus:
+    - "File Upload API Endpoint"
+    - "Document Upload Functionality"
+    - "AdSense Integration Fix"
+  stuck_tasks:
+    - "Document Upload Functionality"
   test_all: false
-  test_priority: "completed"
+  test_priority: "high_first"
 
 agent_communication:
     - agent: "testing"
