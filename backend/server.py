@@ -27,7 +27,33 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
-app = FastAPI()
+app = FastAPI(
+    title="Legal Document Converter API",
+    description="API for converting and analyzing legal documents",
+    version="1.0.0"
+)
+
+# Add file size limit middleware
+MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
+
+async def validate_file_size(request: Request, call_next):
+    """Middleware to validate file size before processing"""
+    try:
+        if request.url.path == "/api/upload" and request.method == "POST":
+            content_length = request.headers.get("content-length")
+            if content_length and int(content_length) > MAX_FILE_SIZE:
+                return HTTPException(
+                    status_code=413,
+                    detail=f"File too large. Maximum size allowed is {MAX_FILE_SIZE // (1024*1024)}MB"
+                )
+        
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        logger.error(f"File size validation error: {str(e)}")
+        return await call_next(request)
+
+app.middleware("http")(validate_file_size)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
