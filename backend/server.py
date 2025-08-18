@@ -42,9 +42,10 @@ async def validate_file_size(request: Request, call_next):
         if request.url.path == "/api/upload" and request.method == "POST":
             content_length = request.headers.get("content-length")
             if content_length and int(content_length) > MAX_FILE_SIZE:
-                return HTTPException(
+                from fastapi.responses import JSONResponse
+                return JSONResponse(
                     status_code=413,
-                    detail=f"File too large. Maximum size allowed is {MAX_FILE_SIZE // (1024*1024)}MB"
+                    content={"detail": f"File too large. Maximum size allowed is {MAX_FILE_SIZE // (1024*1024)}MB"}
                 )
         
         response = await call_next(request)
