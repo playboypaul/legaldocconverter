@@ -12,14 +12,27 @@ import SignInModal from "./components/auth/SignInModal";
 import SignUpModal from "./components/auth/SignUpModal";
 import LegalModalManager from "./components/legal/LegalModalManager";
 import { Toaster } from "./components/ui/toaster";
+import { BannerAd, ContentRichAd } from "./components/ads/AdSenseAd";
 
 const Home = () => {
   return (
     <>
       <Header />
       <Hero />
+      
+      {/* Content-rich ad after hero section for better AdSense compliance */}
+      <ContentRichAd topic="Legal Document Conversion" />
+      
       <Features />
+      
+      {/* Banner ad between features and processor */}
+      <BannerAd />
+      
       <DocumentProcessor />
+      
+      {/* Content-rich ad before pricing for affiliate opportunities */}
+      <ContentRichAd topic="Professional Legal Software" />
+      
       <Pricing />
       <Footer />
     </>
