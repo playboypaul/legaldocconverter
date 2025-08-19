@@ -327,7 +327,7 @@ export const LegalTechReportWithAd = ({ className = "my-12" }) => (
               </div>
             </div>
             <div className="flex items-start">
-              <div className="bg-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">4</del>
+              <div className="bg-indigo-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">4</div>
               <div>
                 <h5 className="font-semibold text-indigo-900">Real-time Collaboration Platforms</h5>
                 <p className="text-indigo-800 text-sm">Secure, multi-party document editing with audit trails</p>
