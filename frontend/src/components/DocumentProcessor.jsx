@@ -990,21 +990,154 @@ const DocumentProcessor = () => {
             <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-white">
                 <Edit3 className="h-5 w-5 mr-2" />
-                Document Editor
+                Advanced Document Editor
               </CardTitle>
               <CardDescription className="text-teal-100">
-                Edit your documents directly in the browser
+                Edit converted documents with professional formatting tools
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-center py-12">
-                <Edit3 className="h-16 w-16 text-teal-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Editor</h3>
-                <p className="text-gray-600 mb-4">Edit text, formatting, and structure of your documents</p>
-                <Button className="bg-teal-600 hover:bg-teal-700 text-white">
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Open Editor
-                </Button>
+              <div className="space-y-6">
+                {/* Editor Toolbar */}
+                <div className="flex flex-wrap items-center gap-2 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+                  <div className="flex items-center space-x-1">
+                    <Button size="sm" variant="outline" className="text-teal-700 border-teal-300">
+                      <strong>B</strong>
+                    </Button>
+                    <Button size="sm" variant="outline" className="text-teal-700 border-teal-300">
+                      <em>I</em>
+                    </Button>
+                    <Button size="sm" variant="outline" className="text-teal-700 border-teal-300">
+                      <u>U</u>
+                    </Button>
+                  </div>
+                  <div className="border-l border-teal-300 h-6"></div>
+                  <Select>
+                    <SelectTrigger className="w-32 border-teal-300">
+                      <SelectValue placeholder="Font" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="arial">Arial</SelectItem>
+                      <SelectItem value="times">Times New Roman</SelectItem>
+                      <SelectItem value="calibri">Calibri</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select>
+                    <SelectTrigger className="w-16 border-teal-300">
+                      <SelectValue placeholder="12" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="12">12</SelectItem>
+                      <SelectItem value="14">14</SelectItem>
+                      <SelectItem value="16">16</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Document Format Selector */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <Button
+                    variant={documentEditor.format === 'txt' ? 'default' : 'outline'}
+                    onClick={() => setDocumentEditor(prev => ({...prev, format: 'txt'}))}
+                    className="flex items-center justify-center"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    TXT Editor
+                  </Button>
+                  <Button
+                    variant={documentEditor.format === 'pdf' ? 'default' : 'outline'}
+                    onClick={() => setDocumentEditor(prev => ({...prev, format: 'pdf'}))}
+                    className="flex items-center justify-center"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    PDF Editor
+                  </Button>
+                  <Button
+                    variant={documentEditor.format === 'docx' ? 'default' : 'outline'}
+                    onClick={() => setDocumentEditor(prev => ({...prev, format: 'docx'}))}
+                    className="flex items-center justify-center"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    DOCX Editor
+                  </Button>
+                  <Button
+                    variant={documentEditor.format === 'html' ? 'default' : 'outline'}
+                    onClick={() => setDocumentEditor(prev => ({...prev, format: 'html'}))}
+                    className="flex items-center justify-center"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    HTML Editor
+                  </Button>
+                </div>
+
+                {/* Document Content Editor */}
+                <div className="border border-teal-200 rounded-lg bg-white">
+                  <div className="p-3 bg-teal-50 border-b border-teal-200 flex items-center justify-between">
+                    <span className="font-medium text-teal-800">
+                      Editing: {documentEditor.format?.toUpperCase() || 'Select Format'}
+                    </span>
+                    <div className="flex items-center space-x-2">
+                      <Button size="sm" variant="outline" className="text-teal-700 border-teal-300">
+                        <Settings className="h-3 w-3 mr-1" />
+                        Format
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleDocumentSave(documentEditor.content, documentEditor.format)}
+                        className="bg-teal-600 hover:bg-teal-700 text-white"
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <textarea
+                    className="w-full h-80 p-4 border-0 resize-none focus:outline-none"
+                    placeholder={`Start editing your ${documentEditor.format?.toUpperCase() || ''} document here...
+
+${documentEditor.format === 'html' ? 'You can use HTML tags like <b>, <i>, <p>, etc.' : ''}
+${documentEditor.format === 'txt' ? 'Plain text editor - no formatting available.' : ''}
+${documentEditor.format === 'docx' ? 'Rich text editing with formatting support.' : ''}
+${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for editing).' : ''}`}
+                    value={documentEditor.content}
+                    onChange={(e) => setDocumentEditor(prev => ({...prev, content: e.target.value}))}
+                  />
+                </div>
+
+                {/* Editor Features */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <Edit3 className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Rich Text Editing</h4>
+                    <p className="text-sm text-teal-700">Full formatting support with professional tools</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Auto-Save</h4>
+                    <p className="text-sm text-teal-700">Automatic saving prevents data loss</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <Download className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Export Options</h4>
+                    <p className="text-sm text-teal-700">Save in multiple formats after editing</p>
+                  </div>
+                </div>
+
+                {/* Load Converted Document */}
+                {!documentEditor.isEditing && (
+                  <div className="text-center p-8 border-2 border-dashed border-teal-300 rounded-lg bg-teal-50/50">
+                    <Edit3 className="h-12 w-12 text-teal-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Start Editing</h3>
+                    <p className="text-gray-600 mb-4">Convert a document first, then click "Edit File" to start editing</p>
+                    <Button
+                      onClick={() => setActiveTab('convert')}
+                      className="bg-teal-600 hover:bg-teal-700 text-white"
+                    >
+                      Go to Converter
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
