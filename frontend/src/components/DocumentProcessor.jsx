@@ -1306,37 +1306,223 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
             <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-white">
                 <Layers className="h-5 w-5 mr-2" />
-                Legal Software Integrations
+                Legal Software Integration Hub
+                <span className="ml-2 px-2 py-1 text-xs bg-green-500 text-white rounded-full">FREE TIER</span>
               </CardTitle>
               <CardDescription className="text-indigo-100">
-                Connect with popular legal software platforms
+                Seamlessly connect with your existing legal technology stack
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
-                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">Clio Integration</h4>
-                  <p className="text-gray-600 text-sm mb-4">Sync documents with Clio practice management</p>
-                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                    Connect Clio
-                  </Button>
+              <div className="space-y-8">
+                {/* Popular Integrations */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Legal Platforms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Clio Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.clio ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            C
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Clio</h4>
+                            <p className="text-sm text-gray-600">Practice Management</p>
+                          </div>
+                        </div>
+                        {integrations.clio && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Sync converted documents directly to client matters in Clio. Auto-organize by case and practice area.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Document sync to client matters
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Automated file organization
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Time entry integration
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('clio')}
+                        size="sm"
+                        className={`w-full ${integrations.clio ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white`}
+                      >
+                        {integrations.clio ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect Clio
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Westlaw Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.westlaw ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            W
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Westlaw</h4>
+                            <p className="text-sm text-gray-600">Legal Research</p>
+                          </div>
+                        </div>
+                        {integrations.westlaw && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Import research documents and case law directly from Westlaw for analysis and conversion.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Case law import
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Research synchronization
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Citation formatting
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('westlaw')}
+                        size="sm"
+                        className={`w-full ${integrations.westlaw ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white`}
+                      >
+                        {integrations.westlaw ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect Westlaw
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* LexisNexis Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.lexis ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-blue-800 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            L
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">LexisNexis</h4>
+                            <p className="text-sm text-gray-600">Legal Research</p>
+                          </div>
+                        </div>
+                        {integrations.lexis && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Access LexisNexis research database and import legal documents for processing and analysis.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Legal database access
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Document import tools
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Research workflow sync
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('lexis')}
+                        size="sm"
+                        className={`w-full ${integrations.lexis ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-800 hover:bg-blue-900'} text-white`}
+                      >
+                        {integrations.lexis ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect LexisNexis
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
-                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">Westlaw Integration</h4>
-                  <p className="text-gray-600 text-sm mb-4">Import research directly from Westlaw</p>
-                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                    Connect Westlaw
-                  </Button>
+
+                {/* Coming Soon Integrations */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { name: 'DocuSign', icon: '📄', color: 'yellow' },
+                      { name: 'NetDocuments', icon: '🗂️', color: 'green' },
+                      { name: 'iManage', icon: '📊', color: 'blue' },
+                      { name: 'PracticePanther', icon: '🐾', color: 'purple' }
+                    ].map((integration) => (
+                      <div key={integration.name} className="text-center p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <div className="text-2xl mb-2">{integration.icon}</div>
+                        <h4 className="font-medium text-gray-900 text-sm">{integration.name}</h4>
+                        <p className="text-xs text-gray-500 mt-1">Coming Soon</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
-                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
-                  <h4 className="font-semibold text-gray-900 mb-2">LexisNexis Integration</h4>
-                  <p className="text-gray-600 text-sm mb-4">Access LexisNexis research tools</p>
-                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                    Connect LexisNexis
-                  </Button>
+
+                {/* Integration Benefits */}
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-indigo-900 mb-4">Integration Benefits</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Seamless Workflow</h5>
+                        <p className="text-sm text-indigo-700">Documents flow automatically between your legal software platforms</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Time Savings</h5>
+                        <p className="text-sm text-indigo-700">Eliminate manual file transfers and duplicate data entry</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Data Consistency</h5>
+                        <p className="text-sm text-indigo-700">Maintain consistent file organization across all platforms</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Enhanced Security</h5>
+                        <p className="text-sm text-indigo-700">Secure API connections with enterprise-grade encryption</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
