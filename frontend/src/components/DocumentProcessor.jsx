@@ -304,6 +304,44 @@ const DocumentProcessor = () => {
     return descriptions[format.toLowerCase()] || 'Document Format';
   };
 
+  // Helper function to get format descriptions
+  const getFormatDescription = (format) => {
+    const descriptions = {
+      pdf: "Portable Document Format",
+      docx: "Microsoft Word Document",
+      doc: "Legacy Word Document", 
+      txt: "Plain Text File",
+      rtf: "Rich Text Format",
+      odt: "OpenDocument Text",
+      html: "Web Page Format",
+      xml: "Extensible Markup Language",
+      csv: "Comma Separated Values",
+      xlsx: "Excel Spreadsheet",
+      xls: "Legacy Excel File",
+      ppt: "PowerPoint Presentation",
+      pptx: "Modern PowerPoint",
+      epub: "Electronic Book",
+      md: "Markdown Document",
+      json: "JavaScript Object Notation",
+      yaml: "YAML Ain't Markup Language",
+      tex: "LaTeX Document",
+      docbook: "DocBook Format",
+      opml: "Outline Format",
+      rst: "reStructuredText",
+      asciidoc: "AsciiDoc Format",
+      wiki: "Wiki Markup",
+      jira: "Jira Markup",
+      fb2: "FictionBook Format",
+      icml: "Adobe InCopy Format",
+      tei: "Text Encoding Initiative",
+      context: "ConTeXt Format",
+      man: "Manual Page",
+      ms: "Manuscript Format",
+      zimwiki: "ZimWiki Format"
+    };
+    return descriptions[format.toLowerCase()] || format.toUpperCase();
+  };
+
   // Helper function to load file for editing
   const loadFileForEditing = (result) => {
     setDocumentEditor({
