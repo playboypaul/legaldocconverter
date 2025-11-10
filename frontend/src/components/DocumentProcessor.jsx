@@ -788,6 +788,15 @@ const DocumentProcessor = () => {
               Integrations
               <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
             </Button>
+            <Button
+              variant={activeTab === 'pdf-tools' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('pdf-tools')}
+              className={`${activeTab === 'pdf-tools' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              PDF Tools
+              <span className="ml-1 px-2 py-0.5 text-xs bg-orange-500 text-white rounded-full">NEW</span>
+            </Button>
           </div>
         </div>
 
