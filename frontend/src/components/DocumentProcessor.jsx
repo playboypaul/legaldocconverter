@@ -537,6 +537,145 @@ const DocumentProcessor = () => {
     }
   };
 
+  // PDF Editing Functions
+  const handlePdfMerge = async (fileIds) => {
+    if (!fileIds || fileIds.length < 2) {
+      toast({
+        title: "Insufficient files",
+        description: "Please select at least 2 PDF files to merge.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPdfEditor(prev => ({ ...prev, isProcessing: true }));
+
+    try {
+      const response = await axios.post(`${API}/pdf/merge`, {
+        file_ids: fileIds
+      });
+
+      setPdfEditor(prev => ({ ...prev, mergeResult: response.data, isProcessing: false }));
+      
+      toast({
+        title: "PDF merge complete",
+        description: `Successfully merged ${fileIds.length} PDF files.`,
+      });
+    } catch (error) {
+      setPdfEditor(prev => ({ ...prev, isProcessing: false }));
+      toast({
+        title: "PDF merge failed",
+        description: error.response?.data?.detail || "Failed to merge PDF files.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePdfSplit = async (fileId, splitType, pageRanges = []) => {
+    if (!fileId) {
+      toast({
+        title: "No file selected",
+        description: "Please select a PDF file to split.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPdfEditor(prev => ({ ...prev, isProcessing: true }));
+
+    try {
+      const response = await axios.post(`${API}/pdf/split`, {
+        file_id: fileId,
+        split_type: splitType,
+        page_ranges: splitType === 'ranges' ? pageRanges : undefined
+      });
+
+      setPdfEditor(prev => ({ ...prev, splitResult: response.data, isProcessing: false }));
+      
+      toast({
+        title: "PDF split complete",
+        description: `Successfully split PDF into ${response.data.split_files.length} files.`,
+      });
+    } catch (error) {
+      setPdfEditor(prev => ({ ...prev, isProcessing: false }));
+      toast({
+        title: "PDF split failed",
+        description: error.response?.data?.detail || "Failed to split PDF file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePdfEncrypt = async (fileId, password, permissions) => {
+    if (!fileId || !password) {
+      toast({
+        title: "Missing information",
+        description: "Please select a file and enter a password.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPdfEditor(prev => ({ ...prev, isProcessing: true }));
+
+    try {
+      const response = await axios.post(`${API}/pdf/encrypt`, {
+        file_id: fileId,
+        password: password,
+        permissions: permissions
+      });
+
+      setPdfEditor(prev => ({ ...prev, encryptResult: response.data, isProcessing: false }));
+      
+      toast({
+        title: "PDF encryption complete",
+        description: "PDF has been encrypted with password protection.",
+      });
+    } catch (error) {
+      setPdfEditor(prev => ({ ...prev, isProcessing: false }));
+      toast({
+        title: "PDF encryption failed",
+        description: error.response?.data?.detail || "Failed to encrypt PDF file.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handlePdfEsign = async (fileId, signerInfo, position) => {
+    if (!fileId || !signerInfo.name || !signerInfo.email) {
+      toast({
+        title: "Missing information",
+        description: "Please provide signer name and email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPdfEditor(prev => ({ ...prev, isProcessing: true }));
+
+    try {
+      const response = await axios.post(`${API}/pdf/esign`, {
+        file_id: fileId,
+        signer_info: signerInfo,
+        position: position
+      });
+
+      setPdfEditor(prev => ({ ...prev, esignResult: response.data, isProcessing: false }));
+      
+      toast({
+        title: "PDF signing complete",
+        description: "Electronic signature has been added to the PDF.",
+      });
+    } catch (error) {
+      setPdfEditor(prev => ({ ...prev, isProcessing: false }));
+      toast({
+        title: "PDF signing failed",
+        description: error.response?.data?.detail || "Failed to sign PDF file.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <section id="processor" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
