@@ -313,6 +313,162 @@ const DocumentProcessor = () => {
     });
   };
 
+  // Batch Processing Functions
+  const handleBatchUpload = async (files) => {
+    setBatchFiles(files);
+    setIsBatchProcessing(true);
+    
+    try {
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await axios.post(`${API}/upload`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        
+        return {
+          originalFile: file,
+          fileId: response.data.file_id,
+          status: 'uploaded'
+        };
+      });
+      
+      const results = await Promise.all(uploadPromises);
+      setBatchFiles(results);
+      
+      toast({
+        title: "Batch upload complete",
+        description: `Successfully uploaded ${files.length} files for processing.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Batch upload failed",
+        description: "Some files failed to upload. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBatchProcessing(false);
+    }
+  };
+
+  const handleBatchConvert = async (targetFormat) => {
+    if (batchFiles.length === 0) {
+      toast({
+        title: "No files to convert",
+        description: "Please upload files first.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsBatchProcessing(true);
+    
+    try {
+      const conversionPromises = batchFiles.map(async (file) => {
+        const response = await axios.post(`${API}/convert`, {
+          file_id: file.fileId,
+          target_format: targetFormat,
+        });
+        return {
+          ...file,
+          conversionResult: response.data,
+          status: 'converted'
+        };
+      });
+      
+      const results = await Promise.all(conversionPromises);
+      setBatchFiles(results);
+      
+      toast({
+        title: "Batch conversion complete",
+        description: `Successfully converted ${results.length} files.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Batch conversion failed",
+        description: "Some conversions failed. Please check individual files.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsBatchProcessing(false);
+    }
+  };
+
+  // Document Comparison Functions
+  const handleFileComparison = async (originalFile, modifiedFile) => {
+    if (!originalFile || !modifiedFile) {
+      toast({
+        title: "Missing files",
+        description: "Please upload both original and modified files for comparison.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API}/compare`, {
+        original_file_id: originalFile.fileId,
+        modified_file_id: modifiedFile.fileId,
+      });
+      
+      setComparisonResult(response.data);
+      
+      toast({
+        title: "Comparison complete",
+        description: "Document comparison analysis is ready for review.",
+      });
+    } catch (error) {
+      toast({
+        title: "Comparison failed",
+        description: error.response?.data?.detail || "Failed to compare documents.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Document Editor Functions
+  const handleDocumentSave = async (content, format) => {
+    try {
+      const response = await axios.post(`${API}/save-document`, {
+        content: content,
+        format: format,
+      });
+      
+      toast({
+        title: "Document saved",
+        description: "Your changes have been saved successfully.",
+      });
+      
+      return response.data;
+    } catch (error) {
+      toast({
+        title: "Save failed",
+        description: "Failed to save document changes.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Integration Functions
+  const handleIntegrationConnect = async (platform) => {
+    try {
+      // In a real implementation, this would handle OAuth flow
+      setIntegrations(prev => ({ ...prev, [platform]: true }));
+      
+      toast({
+        title: "Integration connected",
+        description: `Successfully connected to ${platform.charAt(0).toUpperCase() + platform.slice(1)}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Integration failed",
+        description: `Failed to connect to ${platform}.`,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <section id="processor" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
