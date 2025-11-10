@@ -290,6 +290,29 @@ const DocumentProcessor = () => {
     }
   };
 
+  // Helper function to get format descriptions
+  const getFormatDescription = (format) => {
+    const descriptions = {
+      pdf: 'Portable Document Format',
+      docx: 'Microsoft Word Document',
+      doc: 'Legacy Word Document',
+      txt: 'Plain Text File',
+      rtf: 'Rich Text Format',
+      odt: 'OpenDocument Text',
+      html: 'Web Page Format'
+    };
+    return descriptions[format.toLowerCase()] || 'Document Format';
+  };
+
+  // Helper function to load file for editing
+  const loadFileForEditing = (result) => {
+    setDocumentEditor({
+      content: result.converted_file,
+      format: result.target_format,
+      isEditing: true
+    });
+  };
+
   return (
     <section id="processor" className="py-20 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
