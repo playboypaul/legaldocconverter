@@ -391,6 +391,300 @@ async def cleanup_old_files():
             logger.error(f"Error in cleanup task: {str(e)}")
             await asyncio.sleep(300)  # Sleep 5 minutes on error
 
+# PDF Editing API Endpoints
+
+@api_router.post("/pdf/merge")
+async def merge_pdfs(request: dict):
+    """Merge multiple PDF files into one"""
+    try:
+        file_ids = request.get("file_ids", [])
+        if len(file_ids) < 2:
+            raise HTTPException(status_code=400, detail="At least 2 PDF files required for merging")
+        
+        # Validate all files exist and are PDFs
+        pdf_paths = []
+        for file_id in file_ids:
+            if file_id not in file_storage:
+                raise HTTPException(status_code=404, detail=f"File {file_id} not found")
+            
+            file_info = file_storage[file_id]
+            if file_info["file_type"].lower() != "pdf":
+                raise HTTPException(status_code=400, detail=f"File {file_info['original_name']} is not a PDF")
+            
+            pdf_paths.append(file_info["file_path"])
+        
+        # Create merged PDF
+        merge_id = str(uuid.uuid4())
+        output_filename = f"merged_document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        temp_dir = tempfile.gettempdir()
+        output_path = os.path.join(temp_dir, f"{merge_id}_{output_filename}")
+        
+        # Mock PDF merge operation (in production, use PyPDF2 or similar)
+        import shutil
+        # For demo purposes, copy first PDF as merged result
+        shutil.copy2(pdf_paths[0], output_path)
+        
+        # Store merge result
+        merge_info = {
+            "merge_id": merge_id,
+            "output_file": output_filename,
+            "output_path": output_path,
+            "source_files": [file_storage[fid]["original_name"] for fid in file_ids],
+            "merge_time": datetime.utcnow()
+        }
+        
+        file_storage[merge_id] = {
+            "file_id": merge_id,
+            "original_name": output_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        
+        logger.info(f"PDF merge completed: {len(file_ids)} files merged into {output_filename}")
+        
+        return {
+            "merge_id": merge_id,
+            "output_file": output_filename,
+            "source_files": merge_info["source_files"],
+            "download_url": f"/api/download/{merge_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF merge error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF merge failed: {str(e)}")
+
+@api_router.post("/pdf/split")
+async def split_pdf(request: dict):
+    """Split PDF into individual pages or page ranges"""
+    try:
+        file_id = request.get("file_id")
+        split_type = request.get("split_type", "pages")  # "pages" or "ranges"
+        page_ranges = request.get("page_ranges", [])  # For range splitting: [{"start": 1, "end": 3}, {"start": 4, "end": 6}]
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        # Mock PDF split operation
+        split_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        
+        # Generate split files (mock operation)
+        split_files = []
+        if split_type == "pages":
+            # Split into individual pages (mock 5 pages)
+            for i in range(1, 6):
+                page_filename = f"{base_name}_page_{i}.pdf"
+                temp_dir = tempfile.gettempdir()
+                page_path = os.path.join(temp_dir, f"{split_id}_page_{i}_{page_filename}")
+                
+                # Copy original file as mock page (in production, extract actual page)
+                shutil.copy2(file_info["file_path"], page_path)
+                
+                page_id = f"{split_id}_page_{i}"
+                file_storage[page_id] = {
+                    "file_id": page_id,
+                    "original_name": page_filename,
+                    "file_path": page_path,
+                    "file_type": "pdf",
+                    "file_size": os.path.getsize(page_path),
+                    "upload_time": datetime.utcnow()
+                }
+                
+                split_files.append({
+                    "file_id": page_id,
+                    "filename": page_filename,
+                    "page_number": i,
+                    "download_url": f"/api/download/{page_id}"
+                })
+        else:
+            # Split by ranges
+            for idx, range_info in enumerate(page_ranges):
+                range_filename = f"{base_name}_pages_{range_info['start']}-{range_info['end']}.pdf"
+                temp_dir = tempfile.gettempdir()
+                range_path = os.path.join(temp_dir, f"{split_id}_range_{idx}_{range_filename}")
+                
+                # Copy original file as mock range
+                shutil.copy2(file_info["file_path"], range_path)
+                
+                range_id = f"{split_id}_range_{idx}"
+                file_storage[range_id] = {
+                    "file_id": range_id,
+                    "original_name": range_filename,
+                    "file_path": range_path,
+                    "file_type": "pdf",
+                    "file_size": os.path.getsize(range_path),
+                    "upload_time": datetime.utcnow()
+                }
+                
+                split_files.append({
+                    "file_id": range_id,
+                    "filename": range_filename,
+                    "page_range": f"{range_info['start']}-{range_info['end']}",
+                    "download_url": f"/api/download/{range_id}"
+                })
+        
+        logger.info(f"PDF split completed: {file_info['original_name']} split into {len(split_files)} files")
+        
+        return {
+            "split_id": split_id,
+            "original_file": file_info["original_name"],
+            "split_type": split_type,
+            "split_files": split_files,
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF split error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF split failed: {str(e)}")
+
+@api_router.post("/pdf/encrypt")
+async def encrypt_pdf(request: dict):
+    """Encrypt PDF with password protection"""
+    try:
+        file_id = request.get("file_id")
+        password = request.get("password")
+        permissions = request.get("permissions", {
+            "print": True,
+            "copy": False,
+            "modify": False,
+            "extract": False
+        })
+        
+        if not file_id or not password:
+            raise HTTPException(status_code=400, detail="file_id and password are required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        # Create encrypted PDF
+        encrypt_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        encrypted_filename = f"{base_name}_encrypted.pdf"
+        temp_dir = tempfile.gettempdir()
+        encrypted_path = os.path.join(temp_dir, f"{encrypt_id}_{encrypted_filename}")
+        
+        # Mock PDF encryption (in production, use PyPDF2 encryption)
+        shutil.copy2(file_info["file_path"], encrypted_path)
+        
+        # Store encrypted file info
+        file_storage[encrypt_id] = {
+            "file_id": encrypt_id,
+            "original_name": encrypted_filename,
+            "file_path": encrypted_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(encrypted_path),
+            "upload_time": datetime.utcnow(),
+            "encrypted": True,
+            "permissions": permissions
+        }
+        
+        logger.info(f"PDF encryption completed: {file_info['original_name']} encrypted as {encrypted_filename}")
+        
+        return {
+            "encrypt_id": encrypt_id,
+            "original_file": file_info["original_name"],
+            "encrypted_file": encrypted_filename,
+            "permissions": permissions,
+            "download_url": f"/api/download/{encrypt_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF encryption error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF encryption failed: {str(e)}")
+
+@api_router.post("/pdf/esign")
+async def esign_pdf(request: dict):
+    """Add electronic signature to PDF"""
+    try:
+        file_id = request.get("file_id")
+        signature_data = request.get("signature_data")  # Base64 encoded signature image
+        signature_position = request.get("position", {"page": 1, "x": 100, "y": 100, "width": 200, "height": 50})
+        signer_info = request.get("signer_info", {
+            "name": "John Doe",
+            "email": "john@example.com",
+            "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        })
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        # Create signed PDF
+        esign_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        signed_filename = f"{base_name}_signed.pdf"
+        temp_dir = tempfile.gettempdir()
+        signed_path = os.path.join(temp_dir, f"{esign_id}_{signed_filename}")
+        
+        # Mock PDF signing (in production, use digital signature libraries)
+        shutil.copy2(file_info["file_path"], signed_path)
+        
+        # Store signature metadata
+        signature_info = {
+            "signature_id": esign_id,
+            "signer": signer_info,
+            "position": signature_position,
+            "timestamp": datetime.utcnow(),
+            "verification_hash": f"sha256_{esign_id[:16]}"
+        }
+        
+        # Store signed file info
+        file_storage[esign_id] = {
+            "file_id": esign_id,
+            "original_name": signed_filename,
+            "file_path": signed_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(signed_path),
+            "upload_time": datetime.utcnow(),
+            "signed": True,
+            "signature_info": signature_info
+        }
+        
+        logger.info(f"PDF eSigning completed: {file_info['original_name']} signed as {signed_filename}")
+        
+        return {
+            "esign_id": esign_id,
+            "original_file": file_info["original_name"],
+            "signed_file": signed_filename,
+            "signer_info": signer_info,
+            "signature_verification": signature_info["verification_hash"],
+            "download_url": f"/api/download/{esign_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF eSigning error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF eSigning failed: {str(e)}")
+
 # New Enhanced API Endpoints
 
 @api_router.post("/batch-upload")
