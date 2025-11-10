@@ -510,7 +510,7 @@ const DocumentProcessor = () => {
               </CardContent>
             </Card>
 
-          {/* Analyze Section */}
+            {/* Analyze Section */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-violet-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
             <CardHeader className="bg-gradient-to-r from-violet-500 to-indigo-500 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-white">
