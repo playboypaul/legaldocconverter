@@ -370,72 +370,145 @@ const DocumentProcessor = () => {
           </CardContent>
         </Card>
 
-        {/* Action Buttons */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* Convert Section */}
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-green-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center text-white">
-                <Download className="h-5 w-5 mr-2" />
-                Format Conversion
-              </CardTitle>
-              <CardDescription className="text-green-100">
-                Convert your document to any supported format
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6 p-6">
-              <Select value={outputFormat} onValueChange={setOutputFormat}>
-                <SelectTrigger className="border-2 border-green-200 focus:border-green-400">
-                  <SelectValue placeholder="Select output format" />
-                </SelectTrigger>
-                <SelectContent>
-                  {supportedFormats.output.map((format) => (
-                    <SelectItem key={format} value={format.toLowerCase()}>
-                      {format}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              <Button 
-                onClick={handleConvert}
-                disabled={!fileId || !outputFormat || isConverting}
-                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-              >
-                {isConverting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Converting...
-                  </>
-                ) : (
-                  <>
-                    <Download className="h-4 w-4 mr-2" />
-                    Convert Document
-                  </>
-                )}
-              </Button>
+        {/* Enhanced Feature Tabs */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-2 mb-6 p-2 bg-white rounded-xl shadow-lg">
+            <Button
+              variant={activeTab === 'convert' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('convert')}
+              className={`${activeTab === 'convert' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Convert
+            </Button>
+            <Button
+              variant={activeTab === 'batch' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('batch')}
+              className={`${activeTab === 'batch' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <Package className="h-4 w-4 mr-2" />
+              Batch Process
+              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+            </Button>
+            <Button
+              variant={activeTab === 'compare' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('compare')}
+              className={`${activeTab === 'compare' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <GitCompare className="h-4 w-4 mr-2" />
+              Compare
+              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+            </Button>
+            <Button
+              variant={activeTab === 'edit' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('edit')}
+              className={`${activeTab === 'edit' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <Edit3 className="h-4 w-4 mr-2" />
+              Edit
+            </Button>
+            <Button
+              variant={activeTab === 'annotate' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('annotate')}
+              className={`${activeTab === 'annotate' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <PenTool className="h-4 w-4 mr-2" />
+              Annotate
+              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+            </Button>
+            <Button
+              variant={activeTab === 'integrations' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('integrations')}
+              className={`${activeTab === 'integrations' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <Layers className="h-4 w-4 mr-2" />
+              Integrations
+              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+            </Button>
+          </div>
+        </div>
 
-              {conversionResult && (
-                <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
-                  <div className="flex items-center mb-3">
-                    <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
-                    <span className="font-bold text-green-800 text-lg">Conversion Complete</span>
-                  </div>
-                  <p className="text-green-700 mb-4 font-medium">
-                    {conversionResult.original_file} → {conversionResult.converted_file}
-                  </p>
-                  <Button 
-                    size="sm" 
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold shadow-md hover:shadow-lg transition-all duration-300"
-                    onClick={handleDownload}
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Download Converted File
-                  </Button>
+        {/* Tab Content */}
+        {activeTab === 'convert' && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            {/* Enhanced Convert Section */}
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-green-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+              <CardHeader className="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <Download className="h-5 w-5 mr-2" />
+                  Enhanced Format Conversion
+                </CardTitle>
+                <CardDescription className="text-green-100">
+                  Convert to any format with professional quality
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6 p-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Choose Output Format
+                  </label>
+                  <Select value={outputFormat} onValueChange={setOutputFormat}>
+                    <SelectTrigger className="border-2 border-green-200 focus:border-green-400">
+                      <SelectValue placeholder="Select output format (PDF, DOCX, TXT, etc.)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {supportedFormats.output.map((format) => (
+                        <SelectItem key={format} value={format.toLowerCase()}>
+                          {format.toUpperCase()} - {getFormatDescription(format)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+                
+                <Button 
+                  onClick={handleConvert}
+                  disabled={!fileId || !outputFormat || isConverting}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                >
+                  {isConverting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Converting...
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4 w-4 mr-2" />
+                      Convert Document
+                    </>
+                  )}
+                </Button>
+
+                {conversionResult && (
+                  <div className="p-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+                    <div className="flex items-center mb-3">
+                      <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                      <span className="font-bold text-green-800 text-lg">Conversion Complete</span>
+                    </div>
+                    <p className="text-green-700 mb-4">
+                      {conversionResult.original_file} → {conversionResult.converted_file}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <Button 
+                        onClick={handleDownload}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 shadow-lg transition-all duration-300"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </Button>
+                      <Button 
+                        onClick={() => {setActiveTab('edit'); loadFileForEditing(conversionResult);}}
+                        variant="outline"
+                        className="border-blue-500 text-blue-600 hover:bg-blue-50 font-semibold py-2 transition-all duration-300"
+                      >
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Edit File
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
           {/* Analyze Section */}
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-violet-50/50 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
