@@ -1745,6 +1745,551 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
           </Card>
         )}
 
+        {/* PDF Tools Tab */}
+        {activeTab === 'pdf-tools' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-orange-50/50">
+            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <Settings className="h-5 w-5 mr-2" />
+                Professional PDF Toolkit
+                <span className="ml-2 px-2 py-1 text-xs bg-yellow-500 text-white rounded-full">NEW</span>
+              </CardTitle>
+              <CardDescription className="text-orange-100">
+                Comprehensive PDF editing tools for legal professionals
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-8">
+                {/* PDF Operation Tabs */}
+                <div className="flex flex-wrap justify-center gap-2 p-2 bg-orange-50 rounded-xl">
+                  {['merge', 'split', 'encrypt', 'esign'].map((operation) => (
+                    <Button
+                      key={operation}
+                      variant={pdfEditor.activeOperation === operation ? 'default' : 'ghost'}
+                      onClick={() => setPdfEditor(prev => ({ ...prev, activeOperation: operation }))}
+                      className={`${pdfEditor.activeOperation === operation ? 'bg-orange-600 text-white' : 'text-orange-700 hover:text-orange-800'} font-medium capitalize`}
+                    >
+                      {operation === 'merge' && <Package className="h-3 w-3 mr-2" />}
+                      {operation === 'split' && <GitCompare className="h-3 w-3 mr-2" />}
+                      {operation === 'encrypt' && <Settings className="h-3 w-3 mr-2" />}
+                      {operation === 'esign' && <PenTool className="h-3 w-3 mr-2" />}
+                      {operation.charAt(0).toUpperCase() + operation.slice(1)} PDF
+                    </Button>
+                  ))}
+                </div>
+
+                {/* PDF Merge Section */}
+                {pdfEditor.activeOperation === 'merge' && (
+                  <div className="space-y-6">
+                    <div className="text-center p-8 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+                      <Package className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Merge Multiple PDFs</h3>
+                      <p className="text-gray-600 mb-4">Combine multiple PDF documents into a single file</p>
+                      
+                      <div className="max-w-2xl mx-auto space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg">
+                            <h4 className="font-medium text-orange-900 mb-2">Select PDFs to Merge</h4>
+                            <p className="text-sm text-gray-600 mb-3">Upload PDF files in the order you want them merged</p>
+                            <input
+                              type="file"
+                              multiple
+                              accept=".pdf"
+                              onChange={(e) => {
+                                // Handle PDF selection for merge
+                                console.log('PDFs selected for merge:', e.target.files);
+                              }}
+                              className="hidden"
+                              id="merge-pdfs"
+                            />
+                            <label
+                              htmlFor="merge-pdfs"
+                              className="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center"
+                            >
+                              <Upload className="h-3 w-3 mr-2" />
+                              Select PDFs
+                            </label>
+                          </div>
+                          
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg">
+                            <h4 className="font-medium text-orange-900 mb-2">Merge Options</h4>
+                            <div className="space-y-2">
+                              <div className="flex items-center">
+                                <input type="checkbox" id="merge-bookmarks" defaultChecked className="mr-2" />
+                                <label htmlFor="merge-bookmarks" className="text-sm text-gray-700">Preserve bookmarks</label>
+                              </div>
+                              <div className="flex items-center">
+                                <input type="checkbox" id="merge-metadata" defaultChecked className="mr-2" />
+                                <label htmlFor="merge-metadata" className="text-sm text-gray-700">Preserve metadata</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <Button
+                          onClick={() => handlePdfMerge(['sample_id_1', 'sample_id_2'])}
+                          disabled={pdfEditor.isProcessing}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
+                        >
+                          {pdfEditor.isProcessing ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Merging...
+                            </>
+                          ) : (
+                            <>
+                              <Package className="h-4 w-4 mr-2" />
+                              Merge PDFs
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {pdfEditor.mergeResult && (
+                      <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center mb-3">
+                          <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                          <span className="font-bold text-green-800">PDF Merge Complete</span>
+                        </div>
+                        <p className="text-green-700 mb-4">
+                          Merged {pdfEditor.mergeResult.source_files?.length} files into: {pdfEditor.mergeResult.output_file}
+                        </p>
+                        <Button className="bg-green-600 hover:bg-green-700 text-white">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Merged PDF
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* PDF Split Section */}
+                {pdfEditor.activeOperation === 'split' && (
+                  <div className="space-y-6">
+                    <div className="text-center p-8 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+                      <GitCompare className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Split PDF Document</h3>
+                      <p className="text-gray-600 mb-6">Separate PDF into individual pages or custom ranges</p>
+                      
+                      <div className="max-w-2xl mx-auto space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Button
+                            variant={splitOptions.splitType === 'pages' ? 'default' : 'outline'}
+                            onClick={() => setSplitOptions(prev => ({ ...prev, splitType: 'pages' }))}
+                            className="p-4 h-auto flex-col"
+                          >
+                            <FileText className="h-8 w-8 mb-2" />
+                            <span className="font-medium">Split by Pages</span>
+                            <span className="text-xs">Each page becomes a separate PDF</span>
+                          </Button>
+                          
+                          <Button
+                            variant={splitOptions.splitType === 'ranges' ? 'default' : 'outline'}
+                            onClick={() => setSplitOptions(prev => ({ ...prev, splitType: 'ranges' }))}
+                            className="p-4 h-auto flex-col"
+                          >
+                            <Layers className="h-8 w-8 mb-2" />
+                            <span className="font-medium">Split by Ranges</span>
+                            <span className="text-xs">Define custom page ranges</span>
+                          </Button>
+                        </div>
+
+                        {splitOptions.splitType === 'ranges' && (
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg">
+                            <h4 className="font-medium text-orange-900 mb-3">Define Page Ranges</h4>
+                            {splitOptions.pageRanges.map((range, index) => (
+                              <div key={index} className="flex items-center gap-2 mb-2">
+                                <span className="text-sm">Pages</span>
+                                <input
+                                  type="number"
+                                  value={range.start}
+                                  onChange={(e) => {
+                                    const newRanges = [...splitOptions.pageRanges];
+                                    newRanges[index].start = parseInt(e.target.value) || 1;
+                                    setSplitOptions(prev => ({ ...prev, pageRanges: newRanges }));
+                                  }}
+                                  className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
+                                />
+                                <span>to</span>
+                                <input
+                                  type="number"
+                                  value={range.end}
+                                  onChange={(e) => {
+                                    const newRanges = [...splitOptions.pageRanges];
+                                    newRanges[index].end = parseInt(e.target.value) || 1;
+                                    setSplitOptions(prev => ({ ...prev, pageRanges: newRanges }));
+                                  }}
+                                  className="w-16 px-2 py-1 border border-gray-300 rounded text-center"
+                                />
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    const newRanges = splitOptions.pageRanges.filter((_, i) => i !== index);
+                                    setSplitOptions(prev => ({ ...prev, pageRanges: newRanges }));
+                                  }}
+                                >
+                                  Remove
+                                </Button>
+                              </div>
+                            ))}
+                            <Button
+                              size="sm"
+                              onClick={() => {
+                                setSplitOptions(prev => ({
+                                  ...prev,
+                                  pageRanges: [...prev.pageRanges, { start: 1, end: 1 }]
+                                }));
+                              }}
+                              className="mt-2"
+                            >
+                              Add Range
+                            </Button>
+                          </div>
+                        )}
+                        
+                        <Button
+                          onClick={() => handlePdfSplit('sample_pdf_id', splitOptions.splitType, splitOptions.pageRanges)}
+                          disabled={pdfEditor.isProcessing}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
+                        >
+                          {pdfEditor.isProcessing ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Splitting...
+                            </>
+                          ) : (
+                            <>
+                              <GitCompare className="h-4 w-4 mr-2" />
+                              Split PDF
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {pdfEditor.splitResult && (
+                      <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center mb-3">
+                          <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                          <span className="font-bold text-green-800">PDF Split Complete</span>
+                        </div>
+                        <p className="text-green-700 mb-4">
+                          Split into {pdfEditor.splitResult.split_files?.length} files
+                        </p>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                          {pdfEditor.splitResult.split_files?.map((file, index) => (
+                            <Button key={index} size="sm" variant="outline" className="text-green-600 border-green-600">
+                              <Download className="h-3 w-3 mr-1" />
+                              {file.filename}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* PDF Encrypt Section */}
+                {pdfEditor.activeOperation === 'encrypt' && (
+                  <div className="space-y-6">
+                    <div className="text-center p-8 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+                      <Settings className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Password Protect PDF</h3>
+                      <p className="text-gray-600 mb-6">Add password protection and set document permissions</p>
+                      
+                      <div className="max-w-2xl mx-auto space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg text-left">
+                            <h4 className="font-medium text-orange-900 mb-3">Password Settings</h4>
+                            <div className="space-y-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                <input
+                                  type="password"
+                                  value={encryptOptions.password}
+                                  onChange={(e) => setEncryptOptions(prev => ({ ...prev, password: e.target.value }))}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  placeholder="Enter password"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                                <input
+                                  type="password"
+                                  value={encryptOptions.confirmPassword}
+                                  onChange={(e) => setEncryptOptions(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  placeholder="Confirm password"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg text-left">
+                            <h4 className="font-medium text-orange-900 mb-3">Document Permissions</h4>
+                            <div className="space-y-2">
+                              <div className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  id="allow-print"
+                                  checked={encryptOptions.permissions.print}
+                                  onChange={(e) => setEncryptOptions(prev => ({
+                                    ...prev,
+                                    permissions: { ...prev.permissions, print: e.target.checked }
+                                  }))}
+                                  className="mr-2"
+                                />
+                                <label htmlFor="allow-print" className="text-sm text-gray-700">Allow printing</label>
+                              </div>
+                              <div className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  id="allow-copy"
+                                  checked={encryptOptions.permissions.copy}
+                                  onChange={(e) => setEncryptOptions(prev => ({
+                                    ...prev,
+                                    permissions: { ...prev.permissions, copy: e.target.checked }
+                                  }))}
+                                  className="mr-2"
+                                />
+                                <label htmlFor="allow-copy" className="text-sm text-gray-700">Allow copying text</label>
+                              </div>
+                              <div className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  id="allow-modify"
+                                  checked={encryptOptions.permissions.modify}
+                                  onChange={(e) => setEncryptOptions(prev => ({
+                                    ...prev,
+                                    permissions: { ...prev.permissions, modify: e.target.checked }
+                                  }))}
+                                  className="mr-2"
+                                />
+                                <label htmlFor="allow-modify" className="text-sm text-gray-700">Allow modifications</label>
+                              </div>
+                              <div className="flex items-center">
+                                <input
+                                  type="checkbox"
+                                  id="allow-extract"
+                                  checked={encryptOptions.permissions.extract}
+                                  onChange={(e) => setEncryptOptions(prev => ({
+                                    ...prev,
+                                    permissions: { ...prev.permissions, extract: e.target.checked }
+                                  }))}
+                                  className="mr-2"
+                                />
+                                <label htmlFor="allow-extract" className="text-sm text-gray-700">Allow content extraction</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <Button
+                          onClick={() => handlePdfEncrypt('sample_pdf_id', encryptOptions.password, encryptOptions.permissions)}
+                          disabled={pdfEditor.isProcessing || !encryptOptions.password || encryptOptions.password !== encryptOptions.confirmPassword}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
+                        >
+                          {pdfEditor.isProcessing ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Encrypting...
+                            </>
+                          ) : (
+                            <>
+                              <Settings className="h-4 w-4 mr-2" />
+                              Encrypt PDF
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {pdfEditor.encryptResult && (
+                      <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center mb-3">
+                          <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                          <span className="font-bold text-green-800">PDF Encryption Complete</span>
+                        </div>
+                        <p className="text-green-700 mb-4">
+                          {pdfEditor.encryptResult.encrypted_file} is now password protected
+                        </p>
+                        <Button className="bg-green-600 hover:bg-green-700 text-white">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Encrypted PDF
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* PDF eSign Section */}
+                {pdfEditor.activeOperation === 'esign' && (
+                  <div className="space-y-6">
+                    <div className="text-center p-8 border-2 border-dashed border-orange-300 rounded-lg bg-orange-50">
+                      <PenTool className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Electronic Signature</h3>
+                      <p className="text-gray-600 mb-6">Add legally binding electronic signatures to PDF documents</p>
+                      
+                      <div className="max-w-2xl mx-auto space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg text-left">
+                            <h4 className="font-medium text-orange-900 mb-3">Signer Information</h4>
+                            <div className="space-y-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                <input
+                                  type="text"
+                                  value={esignOptions.signerName}
+                                  onChange={(e) => setEsignOptions(prev => ({ ...prev, signerName: e.target.value }))}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  placeholder="Enter signer name"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                                <input
+                                  type="email"
+                                  value={esignOptions.signerEmail}
+                                  onChange={(e) => setEsignOptions(prev => ({ ...prev, signerEmail: e.target.value }))}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  placeholder="Enter email address"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="p-4 bg-white border border-orange-200 rounded-lg text-left">
+                            <h4 className="font-medium text-orange-900 mb-3">Signature Placement</h4>
+                            <div className="space-y-3">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                                <input
+                                  type="number"
+                                  value={esignOptions.position.page}
+                                  onChange={(e) => setEsignOptions(prev => ({
+                                    ...prev,
+                                    position: { ...prev.position, page: parseInt(e.target.value) || 1 }
+                                  }))}
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  min="1"
+                                />
+                              </div>
+                              <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">X Position</label>
+                                  <input
+                                    type="number"
+                                    value={esignOptions.position.x}
+                                    onChange={(e) => setEsignOptions(prev => ({
+                                      ...prev,
+                                      position: { ...prev.position, x: parseInt(e.target.value) || 100 }
+                                    }))}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Y Position</label>
+                                  <input
+                                    type="number"
+                                    value={esignOptions.position.y}
+                                    onChange={(e) => setEsignOptions(prev => ({
+                                      ...prev,
+                                      position: { ...prev.position, y: parseInt(e.target.value) || 100 }
+                                    }))}
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 bg-white border border-orange-200 rounded-lg">
+                          <h4 className="font-medium text-orange-900 mb-3">Signature Preview</h4>
+                          <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                            <div className="text-center">
+                              <PenTool className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                              <p className="text-sm text-gray-500">
+                                {esignOptions.signerName || 'Your signature will appear here'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <Button
+                          onClick={() => handlePdfEsign('sample_pdf_id', 
+                            { name: esignOptions.signerName, email: esignOptions.signerEmail }, 
+                            esignOptions.position
+                          )}
+                          disabled={pdfEditor.isProcessing || !esignOptions.signerName || !esignOptions.signerEmail}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2"
+                        >
+                          {pdfEditor.isProcessing ? (
+                            <>
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                              Signing...
+                            </>
+                          ) : (
+                            <>
+                              <PenTool className="h-4 w-4 mr-2" />
+                              Sign PDF
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    {pdfEditor.esignResult && (
+                      <div className="p-6 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="flex items-center mb-3">
+                          <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
+                          <span className="font-bold text-green-800">PDF Signing Complete</span>
+                        </div>
+                        <p className="text-green-700 mb-2">
+                          Document signed by: {pdfEditor.esignResult.signer_info?.name}
+                        </p>
+                        <p className="text-green-600 text-sm mb-4">
+                          Verification Hash: {pdfEditor.esignResult.signature_verification}
+                        </p>
+                        <Button className="bg-green-600 hover:bg-green-700 text-white">
+                          <Download className="h-4 w-4 mr-2" />
+                          Download Signed PDF
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* PDF Tools Features */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <Package className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">Merge PDFs</h4>
+                    <p className="text-sm text-orange-700">Combine multiple PDFs into one</p>
+                  </div>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <GitCompare className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">Split PDFs</h4>
+                    <p className="text-sm text-orange-700">Extract pages or create ranges</p>
+                  </div>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <Settings className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">Encrypt PDFs</h4>
+                    <p className="text-sm text-orange-700">Password protect documents</p>
+                  </div>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                    <PenTool className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">eSign PDFs</h4>
+                    <p className="text-sm text-orange-700">Add electronic signatures</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Analysis Results */}
         {analysisResult && (
           <Card className="border-0 shadow-2xl bg-gradient-to-br from-white to-slate-50">
