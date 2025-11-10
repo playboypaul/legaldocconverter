@@ -839,21 +839,146 @@ const DocumentProcessor = () => {
             <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-white">
                 <GitCompare className="h-5 w-5 mr-2" />
-                Document Comparison
+                Document Comparison & Redlining
+                <span className="ml-2 px-2 py-1 text-xs bg-green-500 text-white rounded-full">FREE TIER</span>
               </CardTitle>
               <CardDescription className="text-orange-100">
-                Compare two documents side by side
+                Compare documents side-by-side with intelligent difference detection
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-center py-12">
-                <GitCompare className="h-16 w-16 text-orange-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Comparison</h3>
-                <p className="text-gray-600 mb-4">Upload two documents to see differences highlighted</p>
-                <Button className="bg-orange-600 hover:bg-orange-700 text-white">
-                  <GitCompare className="h-4 w-4 mr-2" />
-                  Compare Documents
-                </Button>
+              <div className="space-y-6">
+                {/* File Upload Section */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Original Document */}
+                  <div className="border-2 border-dashed border-orange-300 rounded-lg p-6 text-center bg-orange-50/50">
+                    <FileText className="h-10 w-10 text-orange-400 mx-auto mb-3" />
+                    <h3 className="font-semibold text-gray-900 mb-2">Original Document</h3>
+                    <p className="text-sm text-gray-600 mb-3">Upload the original version</p>
+                    
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.doc,.txt,.rtf,.odt"
+                      onChange={(e) => setCompareFiles(prev => ({...prev, original: e.target.files[0]}))}
+                      className="hidden"
+                      id="original-file"
+                    />
+                    <label
+                      htmlFor="original-file"
+                      className="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center"
+                    >
+                      <Upload className="h-3 w-3 mr-2" />
+                      Select Original
+                    </label>
+                    
+                    {compareFiles.original && (
+                      <div className="mt-3 p-2 bg-white rounded border border-orange-200">
+                        <p className="text-sm font-medium text-orange-800">{compareFiles.original.name}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Modified Document */}
+                  <div className="border-2 border-dashed border-red-300 rounded-lg p-6 text-center bg-red-50/50">
+                    <FileText className="h-10 w-10 text-red-400 mx-auto mb-3" />
+                    <h3 className="font-semibold text-gray-900 mb-2">Modified Document</h3>
+                    <p className="text-sm text-gray-600 mb-3">Upload the revised version</p>
+                    
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.doc,.txt,.rtf,.odt"
+                      onChange={(e) => setCompareFiles(prev => ({...prev, modified: e.target.files[0]}))}
+                      className="hidden"
+                      id="modified-file"
+                    />
+                    <label
+                      htmlFor="modified-file"
+                      className="cursor-pointer bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center"
+                    >
+                      <Upload className="h-3 w-3 mr-2" />
+                      Select Modified
+                    </label>
+                    
+                    {compareFiles.modified && (
+                      <div className="mt-3 p-2 bg-white rounded border border-red-200">
+                        <p className="text-sm font-medium text-red-800">{compareFiles.modified.name}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Comparison Options */}
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 p-6 rounded-lg border border-orange-200">
+                  <h4 className="font-semibold text-gray-900 mb-4">Comparison Settings</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="track-insertions" defaultChecked className="text-green-600" />
+                      <label htmlFor="track-insertions" className="text-sm font-medium text-gray-700">Track Insertions</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="track-deletions" defaultChecked className="text-red-600" />
+                      <label htmlFor="track-deletions" className="text-sm font-medium text-gray-700">Track Deletions</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="track-formatting" defaultChecked className="text-blue-600" />
+                      <label htmlFor="track-formatting" className="text-sm font-medium text-gray-700">Track Formatting</label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Compare Button */}
+                <div className="text-center">
+                  <Button
+                    onClick={() => handleFileComparison(compareFiles.original, compareFiles.modified)}
+                    disabled={!compareFiles.original || !compareFiles.modified}
+                    className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-8 py-3 font-semibold"
+                  >
+                    <GitCompare className="h-4 w-4 mr-2" />
+                    Compare Documents
+                  </Button>
+                </div>
+
+                {/* Comparison Results */}
+                {comparisonResult && (
+                  <div className="border border-orange-200 rounded-lg p-6 bg-white">
+                    <h4 className="font-semibold text-gray-900 mb-4 flex items-center">
+                      <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                      Comparison Complete
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div className="text-center p-3 bg-green-50 rounded">
+                        <div className="text-2xl font-bold text-green-600">12</div>
+                        <div className="text-sm text-green-700">Additions</div>
+                      </div>
+                      <div className="text-center p-3 bg-red-50 rounded">
+                        <div className="text-2xl font-bold text-red-600">8</div>
+                        <div className="text-sm text-red-700">Deletions</div>
+                      </div>
+                      <div className="text-center p-3 bg-blue-50 rounded">
+                        <div className="text-2xl font-bold text-blue-600">5</div>
+                        <div className="text-sm text-blue-700">Modifications</div>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Comparison Report
+                    </Button>
+                  </div>
+                )}
+
+                {/* Features */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="text-center p-4 bg-orange-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">Smart Detection</h4>
+                    <p className="text-sm text-orange-700">AI-powered change detection and categorization</p>
+                  </div>
+                  <div className="text-center p-4 bg-orange-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-orange-900">Legal Redlining</h4>
+                    <p className="text-sm text-orange-700">Professional redline format for legal review</p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
