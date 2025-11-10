@@ -731,20 +731,103 @@ const DocumentProcessor = () => {
               <CardTitle className="flex items-center text-white">
                 <Package className="h-5 w-5 mr-2" />
                 Batch Document Processing
+                <span className="ml-2 px-2 py-1 text-xs bg-green-500 text-white rounded-full">FREE TIER</span>
               </CardTitle>
               <CardDescription className="text-purple-100">
-                Process multiple documents simultaneously
+                Upload and convert multiple documents simultaneously
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-center py-12">
-                <Package className="h-16 w-16 text-purple-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Batch Processing</h3>
-                <p className="text-gray-600 mb-4">Upload multiple files and convert them all at once</p>
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
-                  <Package className="h-4 w-4 mr-2" />
-                  Start Batch Process
-                </Button>
+              <div className="space-y-6">
+                {/* Batch Upload Area */}
+                <div className="border-2 border-dashed border-purple-300 rounded-lg p-8 text-center bg-purple-50/50">
+                  <Package className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Upload Multiple Files</h3>
+                  <p className="text-gray-600 mb-4">Select multiple documents to process in batch</p>
+                  
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.docx,.doc,.txt,.rtf,.odt"
+                    onChange={(e) => handleBatchUpload(e.target.files)}
+                    className="hidden"
+                    id="batch-upload"
+                  />
+                  <label
+                    htmlFor="batch-upload"
+                    className="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Select Multiple Files
+                  </label>
+                </div>
+
+                {/* Batch Processing Options */}
+                {batchFiles.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-lg font-semibold">Files to Process ({batchFiles.length})</h4>
+                      <div className="flex items-center gap-2">
+                        <Select onValueChange={(format) => handleBatchConvert(format)}>
+                          <SelectTrigger className="w-48">
+                            <SelectValue placeholder="Convert all to..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {supportedFormats.output.map((format) => (
+                              <SelectItem key={format} value={format.toLowerCase()}>
+                                Convert all to {format.toUpperCase()}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    
+                    <div className="max-h-64 overflow-y-auto space-y-2">
+                      {batchFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-3 bg-white border border-purple-200 rounded-lg">
+                          <div className="flex items-center">
+                            <FileText className="h-5 w-5 text-purple-500 mr-3" />
+                            <div>
+                              <p className="font-medium">{file.originalFile?.name || 'Unknown file'}</p>
+                              <p className="text-sm text-gray-500">Status: {file.status || 'Ready'}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {file.status === 'converted' && (
+                              <Button size="sm" variant="outline" className="text-green-600 border-green-600">
+                                <Download className="h-3 w-3 mr-1" />
+                                Download
+                              </Button>
+                            )}
+                            {isBatchProcessing && (
+                              <Loader2 className="h-4 w-4 animate-spin text-purple-500" />
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Batch Processing Features */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-purple-900">Bulk Conversion</h4>
+                    <p className="text-sm text-purple-700">Convert dozens of files at once</p>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-purple-900">Progress Tracking</h4>
+                    <p className="text-sm text-purple-700">Monitor each file's processing status</p>
+                  </div>
+                  <div className="text-center p-4 bg-purple-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-purple-900">Batch Download</h4>
+                    <p className="text-sm text-purple-700">Download all converted files as ZIP</p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
