@@ -20,6 +20,17 @@ const DocumentProcessor = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [conversionResult, setConversionResult] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  
+  // New Enhanced Features State
+  const [activeTab, setActiveTab] = useState('convert'); // 'convert', 'batch', 'compare', 'edit', 'annotate'
+  const [batchFiles, setBatchFiles] = useState([]);
+  const [isBatchProcessing, setIsBatchProcessing] = useState(false);
+  const [compareFiles, setCompareFiles] = useState({ original: null, modified: null });
+  const [comparisonResult, setComparisonResult] = useState(null);
+  const [documentEditor, setDocumentEditor] = useState({ content: '', format: '', isEditing: false });
+  const [annotations, setAnnotations] = useState([]);
+  const [integrations, setIntegrations] = useState({ clio: false, westlaw: false, lexis: false });
+  
   const { toast } = useToast();
   const { user, canUpload, canAnalyze, updateUserUsage, setIsSignInOpen } = useAuth();
 
