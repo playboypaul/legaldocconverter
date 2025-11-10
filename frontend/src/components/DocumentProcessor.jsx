@@ -22,7 +22,7 @@ const DocumentProcessor = () => {
   const [analysisResult, setAnalysisResult] = useState(null);
   
   // New Enhanced Features State
-  const [activeTab, setActiveTab] = useState('convert'); // 'convert', 'batch', 'compare', 'edit', 'annotate'
+  const [activeTab, setActiveTab] = useState('convert'); // 'convert', 'batch', 'compare', 'edit', 'annotate', 'pdf-tools'
   const [batchFiles, setBatchFiles] = useState([]);
   const [isBatchProcessing, setIsBatchProcessing] = useState(false);
   const [compareFiles, setCompareFiles] = useState({ original: null, modified: null });
@@ -30,6 +30,36 @@ const DocumentProcessor = () => {
   const [documentEditor, setDocumentEditor] = useState({ content: '', format: '', isEditing: false });
   const [annotations, setAnnotations] = useState([]);
   const [integrations, setIntegrations] = useState({ clio: false, westlaw: false, lexis: false });
+  
+  // PDF Editing Features State
+  const [pdfEditor, setPdfEditor] = useState({
+    activeOperation: 'merge', // 'merge', 'split', 'encrypt', 'esign'
+    selectedFiles: [],
+    mergeResult: null,
+    splitResult: null,
+    encryptResult: null,
+    esignResult: null,
+    isProcessing: false
+  });
+  const [splitOptions, setSplitOptions] = useState({
+    splitType: 'pages', // 'pages' or 'ranges'
+    pageRanges: [{ start: 1, end: 1 }]
+  });
+  const [encryptOptions, setEncryptOptions] = useState({
+    password: '',
+    confirmPassword: '',
+    permissions: {
+      print: true,
+      copy: false,
+      modify: false,
+      extract: false
+    }
+  });
+  const [esignOptions, setEsignOptions] = useState({
+    signerName: '',
+    signerEmail: '',
+    position: { page: 1, x: 100, y: 100, width: 200, height: 50 }
+  });
   
   const { toast } = useToast();
   const { user, canUpload, canAnalyze, updateUserUsage, setIsSignInOpen } = useAuth();
