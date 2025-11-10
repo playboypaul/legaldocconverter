@@ -56,13 +56,21 @@ export const subscriptionPlans = [
     price: "$49.99",
     period: "month",
     features: [
-      "Unlimited document uploads",
-      "Unlimited legal document analysis",
-      "Advanced AI analysis",
-      "All format conversions",
-      "Priority support",
-      "Bulk processing"
+      "Unlimited document uploads & conversions",
+      "Unlimited AI legal analysis",
+      "Advanced AI insights & recommendations",
+      "All format conversions with premium quality",
+      "Digital signature integration",
+      "Template library & document assembly",
+      "Advanced document editor with rich formatting",
+      "Collaborative annotation tools",
+      "Priority legal software integrations",
+      "Advanced batch processing",
+      "Custom workflow automation",
+      "24/7 priority support",
+      "API access for integrations"
     ],
+    limitations: [],
     popular: true
   }
 ];
