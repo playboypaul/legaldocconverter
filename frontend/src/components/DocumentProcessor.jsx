@@ -565,7 +565,155 @@ const DocumentProcessor = () => {
               </Button>
             </CardContent>
           </Card>
-        </div>
+          </div>
+        )}
+
+        {/* Batch Processing Tab */}
+        {activeTab === 'batch' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-purple-50/50">
+            <CardHeader className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <Package className="h-5 w-5 mr-2" />
+                Batch Document Processing
+              </CardTitle>
+              <CardDescription className="text-purple-100">
+                Process multiple documents simultaneously
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="text-center py-12">
+                <Package className="h-16 w-16 text-purple-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Batch Processing</h3>
+                <p className="text-gray-600 mb-4">Upload multiple files and convert them all at once</p>
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                  <Package className="h-4 w-4 mr-2" />
+                  Start Batch Process
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Document Comparison Tab */}
+        {activeTab === 'compare' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-orange-50/50">
+            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <GitCompare className="h-5 w-5 mr-2" />
+                Document Comparison
+              </CardTitle>
+              <CardDescription className="text-orange-100">
+                Compare two documents side by side
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="text-center py-12">
+                <GitCompare className="h-16 w-16 text-orange-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Comparison</h3>
+                <p className="text-gray-600 mb-4">Upload two documents to see differences highlighted</p>
+                <Button className="bg-orange-600 hover:bg-orange-700 text-white">
+                  <GitCompare className="h-4 w-4 mr-2" />
+                  Compare Documents
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Document Editor Tab */}
+        {activeTab === 'edit' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-teal-50/50">
+            <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <Edit3 className="h-5 w-5 mr-2" />
+                Document Editor
+              </CardTitle>
+              <CardDescription className="text-teal-100">
+                Edit your documents directly in the browser
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="text-center py-12">
+                <Edit3 className="h-16 w-16 text-teal-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Editor</h3>
+                <p className="text-gray-600 mb-4">Edit text, formatting, and structure of your documents</p>
+                <Button className="bg-teal-600 hover:bg-teal-700 text-white">
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Open Editor
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Document Annotation Tab */}
+        {activeTab === 'annotate' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-yellow-50/50">
+            <CardHeader className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <PenTool className="h-5 w-5 mr-2" />
+                Document Annotation
+              </CardTitle>
+              <CardDescription className="text-yellow-100">
+                Add notes, highlights, and comments to documents
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="text-center py-12">
+                <PenTool className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Annotation</h3>
+                <p className="text-gray-600 mb-4">Add highlights, comments, and annotations to your documents</p>
+                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                  <PenTool className="h-4 w-4 mr-2" />
+                  Start Annotating
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Integrations Tab */}
+        {activeTab === 'integrations' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-indigo-50/50">
+            <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <Layers className="h-5 w-5 mr-2" />
+                Legal Software Integrations
+              </CardTitle>
+              <CardDescription className="text-indigo-100">
+                Connect with popular legal software platforms
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
+                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
+                  <h4 className="font-semibold text-gray-900 mb-2">Clio Integration</h4>
+                  <p className="text-gray-600 text-sm mb-4">Sync documents with Clio practice management</p>
+                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    Connect Clio
+                  </Button>
+                </div>
+                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
+                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
+                  <h4 className="font-semibold text-gray-900 mb-2">Westlaw Integration</h4>
+                  <p className="text-gray-600 text-sm mb-4">Import research directly from Westlaw</p>
+                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    Connect Westlaw
+                  </Button>
+                </div>
+                <div className="text-center p-6 border-2 border-indigo-200 rounded-xl hover:border-indigo-400 transition-colors">
+                  <Layers className="h-12 w-12 text-indigo-400 mx-auto mb-3" />
+                  <h4 className="font-semibold text-gray-900 mb-2">LexisNexis Integration</h4>
+                  <p className="text-gray-600 text-sm mb-4">Access LexisNexis research tools</p>
+                  <Button size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                    Connect LexisNexis
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Analysis Results */}
         {analysisResult && (
