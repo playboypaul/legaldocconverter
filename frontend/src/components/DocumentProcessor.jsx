@@ -1149,21 +1149,152 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
             <CardHeader className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white rounded-t-lg">
               <CardTitle className="flex items-center text-white">
                 <PenTool className="h-5 w-5 mr-2" />
-                Document Annotation
+                Document Annotation & Markup Tools
+                <span className="ml-2 px-2 py-1 text-xs bg-green-500 text-white rounded-full">FREE TIER</span>
               </CardTitle>
               <CardDescription className="text-yellow-100">
-                Add notes, highlights, and comments to documents
+                Professional annotation tools for legal document review
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
-              <div className="text-center py-12">
-                <PenTool className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Document Annotation</h3>
-                <p className="text-gray-600 mb-4">Add highlights, comments, and annotations to your documents</p>
-                <Button className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                  <PenTool className="h-4 w-4 mr-2" />
-                  Start Annotating
-                </Button>
+              <div className="space-y-6">
+                {/* Annotation Toolbar */}
+                <div className="flex flex-wrap items-center gap-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                    <PenTool className="h-3 w-3 mr-1" />
+                    Highlight
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                    📝 Comment
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                    🔖 Bookmark
+                  </Button>
+                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                    ✏️ Note
+                  </Button>
+                  <div className="border-l border-yellow-300 h-6 mx-2"></div>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-sm text-yellow-700">Color:</span>
+                    <div className="w-6 h-6 bg-yellow-400 rounded cursor-pointer border border-yellow-600"></div>
+                    <div className="w-6 h-6 bg-green-400 rounded cursor-pointer border border-green-600"></div>
+                    <div className="w-6 h-6 bg-blue-400 rounded cursor-pointer border border-blue-600"></div>
+                    <div className="w-6 h-6 bg-red-400 rounded cursor-pointer border border-red-600"></div>
+                  </div>
+                </div>
+
+                {/* Document Viewer with Annotation */}
+                <div className="border border-yellow-200 rounded-lg bg-white">
+                  <div className="p-3 bg-yellow-50 border-b border-yellow-200 flex items-center justify-between">
+                    <span className="font-medium text-yellow-800">Document Annotation View</span>
+                    <div className="flex items-center space-x-2">
+                      <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                        <Download className="h-3 w-3 mr-1" />
+                        Export
+                      </Button>
+                      <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                        Save Annotations
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="p-6 min-h-80">
+                    {fileId ? (
+                      <div className="space-y-4">
+                        <div className="p-4 border-l-4 border-yellow-400 bg-yellow-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "This agreement shall be governed by the laws of the State of California..."
+                          </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              💬 Review jurisdiction clause
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 border-l-4 border-green-400 bg-green-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "The parties agree to binding arbitration for all disputes..."
+                          </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-green-400 text-green-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              ✓ Standard arbitration clause
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="p-4 border-l-4 border-red-400 bg-red-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "Limitation of liability shall not exceed $10,000..."
+                          </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-red-400 text-red-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              ⚠️ Low liability limit - negotiate
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <PenTool className="h-16 w-16 text-yellow-400 mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Start Annotating</h3>
+                        <p className="text-gray-600 mb-4">Upload and convert a document first to begin annotation</p>
+                        <Button
+                          onClick={() => setActiveTab('convert')}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                        >
+                          Upload Document
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Annotations Panel */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Annotations List */}
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <h4 className="font-semibold text-yellow-900 mb-3 flex items-center">
+                      <PenTool className="h-4 w-4 mr-2" />
+                      Annotations (3)
+                    </h4>
+                    <div className="space-y-3">
+                      <div className="bg-white p-3 rounded border border-yellow-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-yellow-800">Page 1, Line 15</span>
+                          <span className="text-xs text-gray-500">2 min ago</span>
+                        </div>
+                        <p className="text-sm text-gray-700">Review jurisdiction clause for international implications</p>
+                      </div>
+                      <div className="bg-white p-3 rounded border border-yellow-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-sm font-medium text-yellow-800">Page 2, Line 8</span>
+                          <span className="text-xs text-gray-500">5 min ago</span>
+                        </div>
+                        <p className="text-sm text-gray-700">Standard arbitration clause - approved</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Annotation Features */}
+                  <div className="space-y-4">
+                    <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <CheckCircle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <h4 className="font-semibold text-yellow-900">Smart Highlighting</h4>
+                      <p className="text-sm text-yellow-700">AI-suggested highlights for important clauses</p>
+                    </div>
+                    <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <CheckCircle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <h4 className="font-semibold text-yellow-900">Collaborative Review</h4>
+                      <p className="text-sm text-yellow-700">Share annotations with team members</p>
+                    </div>
+                    <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <CheckCircle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                      <h4 className="font-semibold text-yellow-900">Export Comments</h4>
+                      <p className="text-sm text-yellow-700">Generate annotation reports and summaries</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
