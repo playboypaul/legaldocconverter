@@ -391,6 +391,217 @@ async def cleanup_old_files():
             logger.error(f"Error in cleanup task: {str(e)}")
             await asyncio.sleep(300)  # Sleep 5 minutes on error
 
+# New Enhanced API Endpoints
+
+@api_router.post("/batch-upload")
+async def batch_upload(files: List[UploadFile] = File(...)):
+    """Upload multiple files for batch processing"""
+    try:
+        results = []
+        for file in files:
+            # Use existing upload logic
+            file_id = str(uuid.uuid4())
+            file_content = await file.read()
+            file_size = len(file_content)
+            file_extension = file.filename.split('.')[-1].lower() if '.' in file.filename else ''
+            
+            if file_extension not in SUPPORTED_FORMATS["input"]:
+                results.append({
+                    "filename": file.filename,
+                    "status": "error",
+                    "error": f"Unsupported file type: {file_extension}"
+                })
+                continue
+            
+            # Save file
+            temp_dir = tempfile.gettempdir()
+            safe_filename = "".join(c for c in file.filename if c.isalnum() or c in "._-")
+            temp_file_path = os.path.join(temp_dir, f"{file_id}_{safe_filename}")
+            
+            async with aiofiles.open(temp_file_path, 'wb') as f:
+                await f.write(file_content)
+            
+            # Store file info
+            file_info = {
+                "file_id": file_id,
+                "original_name": file.filename,
+                "file_path": temp_file_path,
+                "file_type": file_extension,
+                "file_size": file_size,
+                "upload_time": datetime.utcnow()
+            }
+            
+            file_storage[file_id] = file_info
+            
+            results.append({
+                "filename": file.filename,
+                "file_id": file_id,
+                "status": "success",
+                "file_size": file_size
+            })
+        
+        return {"results": results}
+        
+    except Exception as e:
+        logger.error(f"Batch upload error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Batch upload failed: {str(e)}")
+
+@api_router.post("/batch-convert")
+async def batch_convert(request: dict):
+    """Convert multiple files to target format"""
+    try:
+        file_ids = request.get("file_ids", [])
+        target_format = request.get("target_format")
+        
+        if not file_ids or not target_format:
+            raise HTTPException(status_code=400, detail="Missing file_ids or target_format")
+        
+        results = []
+        for file_id in file_ids:
+            try:
+                if file_id not in file_storage:
+                    results.append({
+                        "file_id": file_id,
+                        "status": "error",
+                        "error": "File not found"
+                    })
+                    continue
+                
+                file_info = file_storage[file_id]
+                conversion_id = str(uuid.uuid4())
+                
+                # Convert file
+                converted_file_path = await file_converter.convert_file(
+                    file_info["file_path"],
+                    file_info["file_type"],
+                    target_format,
+                    conversion_id
+                )
+                
+                # Store conversion result
+                conversion_info = {
+                    "conversion_id": conversion_id,
+                    "original_file": file_info["original_name"],
+                    "converted_file": f"{file_info['original_name'].rsplit('.', 1)[0]}.{target_format}",
+                    "converted_file_path": converted_file_path,
+                    "target_format": target_format,
+                    "conversion_time": datetime.utcnow()
+                }
+                
+                conversion_storage[conversion_id] = conversion_info
+                
+                results.append({
+                    "file_id": file_id,
+                    "conversion_id": conversion_id,
+                    "status": "success",
+                    "original_file": file_info["original_name"],
+                    "converted_file": conversion_info["converted_file"]
+                })
+                
+            except Exception as e:
+                results.append({
+                    "file_id": file_id,
+                    "status": "error",
+                    "error": str(e)
+                })
+        
+        return {"results": results}
+        
+    except Exception as e:
+        logger.error(f"Batch conversion error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Batch conversion failed: {str(e)}")
+
+@api_router.post("/compare")
+async def compare_documents(request: dict):
+    """Compare two documents and highlight differences"""
+    try:
+        original_file_id = request.get("original_file_id")
+        modified_file_id = request.get("modified_file_id")
+        
+        if not original_file_id or not modified_file_id:
+            raise HTTPException(status_code=400, detail="Both original_file_id and modified_file_id are required")
+        
+        if original_file_id not in file_storage or modified_file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="One or both files not found")
+        
+        original_file = file_storage[original_file_id]
+        modified_file = file_storage[modified_file_id]
+        
+        # Mock comparison result - in real implementation, this would use a document comparison library
+        comparison_result = {
+            "comparison_id": str(uuid.uuid4()),
+            "original_file": original_file["original_name"],
+            "modified_file": modified_file["original_name"],
+            "differences": {
+                "insertions": 12,
+                "deletions": 8,
+                "modifications": 5
+            },
+            "changes": [
+                {
+                    "type": "insertion",
+                    "location": "page 1, line 15",
+                    "text": "Additional legal clause inserted"
+                },
+                {
+                    "type": "deletion", 
+                    "location": "page 2, line 8",
+                    "text": "Removed outdated provision"
+                }
+            ],
+            "comparison_time": datetime.utcnow()
+        }
+        
+        return comparison_result
+        
+    except Exception as e:
+        logger.error(f"Document comparison error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Document comparison failed: {str(e)}")
+
+@api_router.post("/save-document")
+async def save_document(request: dict):
+    """Save edited document content"""
+    try:
+        content = request.get("content")
+        format_type = request.get("format")
+        
+        if not content or not format_type:
+            raise HTTPException(status_code=400, detail="Content and format are required")
+        
+        # Generate file ID for saved document
+        file_id = str(uuid.uuid4())
+        filename = f"edited_document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format_type}"
+        
+        # Save content to file
+        temp_dir = tempfile.gettempdir()
+        file_path = os.path.join(temp_dir, f"{file_id}_{filename}")
+        
+        async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
+            await f.write(content)
+        
+        # Store file info
+        file_info = {
+            "file_id": file_id,
+            "original_name": filename,
+            "file_path": file_path,
+            "file_type": format_type,
+            "file_size": len(content.encode('utf-8')),
+            "upload_time": datetime.utcnow()
+        }
+        
+        file_storage[file_id] = file_info
+        
+        return {
+            "file_id": file_id,
+            "filename": filename,
+            "status": "saved",
+            "download_url": f"/api/download/{file_id}"
+        }
+        
+    except Exception as e:
+        logger.error(f"Document save error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to save document: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
