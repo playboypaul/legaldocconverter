@@ -38,12 +38,18 @@ export const subscriptionPlans = [
     price: "$0",
     period: "forever",
     features: [
-      "3 document uploads",
-      "1 legal document analysis",
-      "Basic file conversion",
+      "3 document uploads per month",
+      "1 AI legal document analysis",
+      "All format conversions (PDF, DOCX, TXT, etc.)",
+      "Batch document processing",
+      "Document comparison & redlining",
+      "Document annotation & markup tools",
+      "Legal software integrations (Clio, Westlaw, LexisNexis)",
+      "Basic document editor",
       "Standard support"
     ],
-    limitations: ["Limited uploads", "Basic analysis only"]
+    limitations: ["Upload limit: 3/month", "Analysis limit: 1/month", "Basic editor only"],
+    popular: false
   },
   {
     name: "Professional",
