@@ -21,20 +21,10 @@ const Home = () => {
     <>
       <Header />
       <Hero />
-      
-      {/* SUBSTANTIAL CONTENT: Complete Legal Document Guide with Ad Integration */}
-      <LegalDocumentGuideWithAd />
-      
       <Features />
-      
       <DocumentProcessor />
-      
       {/* Affiliate marketing section */}
       <AffiliateSection />
-      
-      {/* SUBSTANTIAL CONTENT: Legal Tech Industry Report with Ad Integration */}
-      <LegalTechReportWithAd />
-      
       <Pricing />
       <Footer />
     </>
