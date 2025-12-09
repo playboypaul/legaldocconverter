@@ -145,13 +145,15 @@ This document contains standard legal provisions for testing purposes."""
         test_files['large_txt'] = os.path.join(temp_dir, 'test_large.txt')
         test_files['docx_file'] = os.path.join(temp_dir, 'test_document.txt')  # Will be treated as txt
         
-        # Write binary files
-        with open(test_files['small_pdf'], 'wb') as f:
-            f.write(small_pdf_content)
-        with open(test_files['medium_pdf'], 'wb') as f:
-            f.write(medium_pdf_content)
-        with open(test_files['large_pdf'], 'wb') as f:
-            f.write(large_pdf_content)
+        # Create additional test files for general testing
+        # Create TXT files
+        small_txt = "This is a small text file for testing upload functionality."
+        medium_txt = "This is a medium text file.\n" + "Sample legal document content. " * 1000
+        large_txt = "Large text file content.\n" + "Legal document text content. " * 10000
+        
+        test_files['small_txt'] = os.path.join(temp_dir, 'test_small.txt')
+        test_files['medium_txt'] = os.path.join(temp_dir, 'test_medium.txt')
+        test_files['large_txt'] = os.path.join(temp_dir, 'test_large.txt')
             
         # Write text files
         with open(test_files['small_txt'], 'w') as f:
