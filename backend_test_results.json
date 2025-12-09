@@ -5,9 +5,9 @@
     "success_rate": 1.0,
     "pdf_success_rate": 1.0,
     "txt_success_rate": 1.0,
-    "pdf_toolkit_success_rate": 1.0,
+    "pdf_toolkit_success_rate": 0.9166666666666666,
     "failed_tests": [],
-    "avg_response_time": 0.03264975547790527
+    "avg_response_time": 0.03150355815887451
   },
   "detailed_results": {
     "upload_tests": [
@@ -16,10 +16,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.07144927978515625,
+        "response_time": 0.07121658325195312,
         "error": null,
         "response_data": {
-          "file_id": "2e88fbd8-31de-4d2a-8648-4e364b44258e",
+          "file_id": "9a9d489d-c057-4727-9144-792816ba0555",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -63,10 +63,10 @@
         "file_path": "/tmp/multi_page_test.pdf",
         "file_size": 2560,
         "success": true,
-        "response_time": 0.008820295333862305,
+        "response_time": 0.009660959243774414,
         "error": null,
         "response_data": {
-          "file_id": "54c8f890-3577-480e-8509-f2b7fe93db93",
+          "file_id": "14588319-7e6a-4dee-805a-48c21c3e0ceb",
           "original_name": "multi_page_test.pdf",
           "file_type": "pdf",
           "file_size": 2560,
@@ -110,10 +110,10 @@
         "file_path": "/tmp/merge_test_1.pdf",
         "file_size": 1482,
         "success": true,
-        "response_time": 0.04982638359069824,
+        "response_time": 0.047893524169921875,
         "error": null,
         "response_data": {
-          "file_id": "1fc3bf21-f44c-4f3a-b3c7-123fde786e5d",
+          "file_id": "78166876-14e3-4f68-b398-ba50e993f095",
           "original_name": "merge_test_1.pdf",
           "file_type": "pdf",
           "file_size": 1482,
@@ -157,10 +157,10 @@
         "file_path": "/tmp/merge_test_2.pdf",
         "file_size": 1483,
         "success": true,
-        "response_time": 0.008566856384277344,
+        "response_time": 0.0077321529388427734,
         "error": null,
         "response_data": {
-          "file_id": "f6fe5b1a-b6e0-4ca8-b022-50d60a83bc2a",
+          "file_id": "202fe17f-9d1f-4588-9603-cea35723fc6c",
           "original_name": "merge_test_2.pdf",
           "file_type": "pdf",
           "file_size": 1483,
@@ -204,10 +204,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.011189937591552734,
+        "response_time": 0.009461641311645508,
         "error": null,
         "response_data": {
-          "file_id": "584b222b-66ad-49cf-b3b9-692a310dbb81",
+          "file_id": "23fa53c6-75e5-4255-b17c-28296666c9e2",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -251,10 +251,10 @@
         "file_path": "/tmp/test_medium.txt",
         "file_size": 31028,
         "success": true,
-        "response_time": 0.04854631423950195,
+        "response_time": 0.04764103889465332,
         "error": null,
         "response_data": {
-          "file_id": "5a8754f4-dd62-413f-8da5-f1ef6eca89ba",
+          "file_id": "7cbaf6d5-bd35-49a3-8f3c-c70f8918a846",
           "original_name": "test_medium.txt",
           "file_type": "txt",
           "file_size": 31028,
@@ -298,10 +298,10 @@
         "file_path": "/tmp/test_large.txt",
         "file_size": 290025,
         "success": true,
-        "response_time": 0.010738611221313477,
+        "response_time": 0.008465290069580078,
         "error": null,
         "response_data": {
-          "file_id": "e39e3f61-3972-4165-89cf-2405d4b92eab",
+          "file_id": "7756bf20-4212-4da4-917d-c4de8bf82a68",
           "original_name": "test_large.txt",
           "file_type": "txt",
           "file_size": 290025,
@@ -345,10 +345,10 @@
         "file_path": "/tmp/test_large.txt",
         "file_size": 290025,
         "success": true,
-        "response_time": 0.05206036567687988,
+        "response_time": 0.049957275390625,
         "error": null,
         "response_data": {
-          "file_id": "0c92bb36-cba9-40c5-8b7b-7c3664df715a",
+          "file_id": "381af1c1-0fd7-47a9-bc2d-4aaf61f251bd",
           "original_name": "test_large.txt",
           "file_type": "txt",
           "file_size": 290025,
@@ -394,9 +394,9 @@
         "status_code": 200,
         "success": true,
         "response_data": {
-          "conversion_id": "5920fd2a-6ee3-44c4-8f5c-118cbceaba73",
+          "conversion_id": "41eac7fe-5edf-4f06-bb39-3a3ab19961a3",
           "status": "completed",
-          "download_url": "/api/download/5920fd2a-6ee3-44c4-8f5c-118cbceaba73",
+          "download_url": "/api/download/41eac7fe-5edf-4f06-bb39-3a3ab19961a3",
           "original_file": "test_small.txt",
           "converted_file": "test_small.html"
         }
@@ -409,10 +409,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.043805599212646484,
+        "response_time": 0.05383133888244629,
         "error": null,
         "response_data": {
-          "file_id": "a13ff1ed-efa2-4cb2-931e-b3522a562d59",
+          "file_id": "fa0281c5-9442-4b6a-b21c-9f39c0f8ecf3",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -457,10 +457,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.07314777374267578,
+        "response_time": 0.055567026138305664,
         "error": null,
         "response_data": {
-          "file_id": "5ed06a9f-7cd2-411a-898b-ec20b3fa161b",
+          "file_id": "97758841-1b7e-4fbe-b197-bac5a2423af7",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -505,10 +505,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06651020050048828,
+        "response_time": 0.05245065689086914,
         "error": null,
         "response_data": {
-          "file_id": "2ed39a21-91f1-488f-8eec-a5c735fc8eca",
+          "file_id": "046d3bb5-028e-410f-884d-b87afc18d8d9",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -553,10 +553,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06815743446350098,
+        "response_time": 0.051367759704589844,
         "error": null,
         "response_data": {
-          "file_id": "a1265e57-52f0-4224-ba9b-ee4024ef6efa",
+          "file_id": "9e213669-d037-4a83-bab4-6b8de8b5dedb",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -601,10 +601,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06211066246032715,
+        "response_time": 0.05711984634399414,
         "error": null,
         "response_data": {
-          "file_id": "be26301d-32a6-4f49-8032-f9935d8bff8a",
+          "file_id": "69bb7a14-7432-40dc-a7eb-5043990e38ab",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -649,10 +649,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06755375862121582,
+        "response_time": 0.0527796745300293,
         "error": null,
         "response_data": {
-          "file_id": "5e1b279e-1581-459c-91e7-f54601dc3e36",
+          "file_id": "31926637-28ea-4e87-965e-c082d07aea07",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -697,10 +697,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.0652613639831543,
+        "response_time": 0.053823232650756836,
         "error": null,
         "response_data": {
-          "file_id": "ec26bf4a-fd23-4088-af39-df7b082d80e6",
+          "file_id": "0a1b1d83-05b9-4541-ba07-f40be385789a",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -745,10 +745,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06404399871826172,
+        "response_time": 0.05452609062194824,
         "error": null,
         "response_data": {
-          "file_id": "beb9574b-efc3-421a-9595-6607eba83a3e",
+          "file_id": "f9e8ca9b-13f7-42cb-9d0f-b4f4c5dd3461",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -793,10 +793,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06770205497741699,
+        "response_time": 0.05252814292907715,
         "error": null,
         "response_data": {
-          "file_id": "5f4dc6a8-fcba-48a7-9cc6-9d6c6e3ee351",
+          "file_id": "b1474c58-476c-4a69-a9a0-297168e8822c",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -841,10 +841,10 @@
         "file_path": "/tmp/single_page_test.pdf",
         "file_size": 1582,
         "success": true,
-        "response_time": 0.06598234176635742,
+        "response_time": 0.05306291580200195,
         "error": null,
         "response_data": {
-          "file_id": "6a58dec3-cab4-437e-8e86-9f49bce01b8b",
+          "file_id": "ca4e63e1-d3f7-4293-a745-ec4bc17bf335",
           "original_name": "single_page_test.pdf",
           "file_type": "pdf",
           "file_size": 1582,
@@ -889,10 +889,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.07773351669311523,
+        "response_time": 0.05988812446594238,
         "error": null,
         "response_data": {
-          "file_id": "7043aa84-8ea0-4630-bb46-a50507c7409c",
+          "file_id": "cdea2b1b-7afa-43e1-b4fb-a105dcc8e8be",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -937,10 +937,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.0764627456665039,
+        "response_time": 0.06035590171813965,
         "error": null,
         "response_data": {
-          "file_id": "974594ff-5854-413c-9a8c-e7c9f0349a22",
+          "file_id": "786c333c-d2d8-4fca-b9a1-786302cec236",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -985,10 +985,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.03786945343017578,
+        "response_time": 0.059644222259521484,
         "error": null,
         "response_data": {
-          "file_id": "43b08249-76f9-4e3c-951c-68fcc2e1be7e",
+          "file_id": "0aca2e92-2713-482e-b321-80f31e2c40a2",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1033,10 +1033,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.041543006896972656,
+        "response_time": 0.019234180450439453,
         "error": null,
         "response_data": {
-          "file_id": "c000a635-3ee8-4041-aa3f-b72b148e4739",
+          "file_id": "14736c18-918f-4fe2-b9b9-e0954d6ed5d7",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1081,10 +1081,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.04191231727600098,
+        "response_time": 0.023907899856567383,
         "error": null,
         "response_data": {
-          "file_id": "7c6b0667-b7b0-442d-9111-0bf1f12946e0",
+          "file_id": "5346eddb-01d0-4ff2-a0f1-ea18867b3655",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1129,10 +1129,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.08008551597595215,
+        "response_time": 0.022726774215698242,
         "error": null,
         "response_data": {
-          "file_id": "b9a14cd0-39e7-4810-8319-9c4f7523e646",
+          "file_id": "e895d855-737f-4991-ba5d-f22422dd9ebd",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1177,10 +1177,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.08212828636169434,
+        "response_time": 0.0607302188873291,
         "error": null,
         "response_data": {
-          "file_id": "d01407be-7089-4e73-a332-349aa67c07e9",
+          "file_id": "d5506888-3d3b-4ec1-b3ae-19e3c666fb69",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1225,10 +1225,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.03777933120727539,
+        "response_time": 0.060887813568115234,
         "error": null,
         "response_data": {
-          "file_id": "3fb67491-cc27-4350-ae5c-0c6ec66b9fd8",
+          "file_id": "60e1ecf3-846b-45dc-88d1-dbcff352dc62",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1273,10 +1273,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.04345083236694336,
+        "response_time": 0.022441625595092773,
         "error": null,
         "response_data": {
-          "file_id": "c6548ff4-fa11-431b-b4ef-f52b91a0b1eb",
+          "file_id": "49e2edf6-5b61-4f86-afa0-1cf0522320f8",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1321,10 +1321,10 @@
         "file_path": "/tmp/test_small.txt",
         "file_size": 59,
         "success": true,
-        "response_time": 0.08093762397766113,
+        "response_time": 0.0608065128326416,
         "error": null,
         "response_data": {
-          "file_id": "9fab588e-6f32-40d3-a71f-3908ad9ca5c7",
+          "file_id": "e15e628d-0fc5-4af4-bb8a-0b7a51674992",
           "original_name": "test_small.txt",
           "file_type": "txt",
           "file_size": 59,
@@ -1368,10 +1368,10 @@
     "error_tests": [
       {
         "file_type": "invalid_extension",
-        "file_path": "/tmp/tmpatgn3zfe.xyz",
+        "file_path": "/tmp/tmpnritsyjq.xyz",
         "file_size": 20,
         "success": false,
-        "response_time": 0.007464885711669922,
+        "response_time": 0.007869243621826172,
         "error": "HTTP 400: {\"detail\":\"Unsupported file type 'xyz'. Supported formats: pdf, docx, doc, txt, rtf, odt, html, xml, csv, xlsx, xls, ppt, pptx, epub, md\"}",
         "response_data": null,
         "status_code": 400,
@@ -1443,6 +1443,42 @@
             "zimwiki"
           ]
         }
+      },
+      {
+        "operation": "error_handling",
+        "total_tests": 4,
+        "passed_tests": 3,
+        "success": false,
+        "error_tests": [
+          {
+            "test": "invalid_file_type",
+            "expected_failure": true,
+            "actual_success": false,
+            "status_code": 400,
+            "passed": true
+          },
+          {
+            "test": "invalid_conversion_format",
+            "expected_failure": true,
+            "actual_success": false,
+            "status_code": 500,
+            "passed": true
+          },
+          {
+            "test": "non_existent_file_download",
+            "expected_failure": true,
+            "actual_success": false,
+            "status_code": 404,
+            "passed": true
+          },
+          {
+            "test": "missing_parameters",
+            "expected_failure": true,
+            "actual_success": false,
+            "status_code": 422,
+            "passed": false
+          }
+        ]
       }
     ],
     "pdf_toolkit_tests": [
@@ -1452,16 +1488,16 @@
         "success": true,
         "input_files": 2,
         "response_data": {
-          "merge_id": "1f2fcf4f-d290-4ea7-91a8-3739cfb50712",
-          "output_file": "merged_document_20251209_080802.pdf",
+          "merge_id": "854178b2-d1a6-4ae1-ba25-075be62bfdb3",
+          "output_file": "merged_document_20251209_085503.pdf",
           "source_files": [
             "merge_test_1.pdf",
             "merge_test_2.pdf"
           ],
-          "download_url": "/api/download/1f2fcf4f-d290-4ea7-91a8-3739cfb50712",
+          "download_url": "/api/download/854178b2-d1a6-4ae1-ba25-075be62bfdb3",
           "status": "completed"
         },
-        "merge_id": "1f2fcf4f-d290-4ea7-91a8-3739cfb50712",
+        "merge_id": "854178b2-d1a6-4ae1-ba25-075be62bfdb3",
         "download_test": {
           "success": true,
           "file_size": 1688,
@@ -1472,29 +1508,29 @@
         "operation": "pdf_split_pages",
         "status_code": 200,
         "success": true,
-        "input_file_id": "54c8f890-3577-480e-8509-f2b7fe93db93",
+        "input_file_id": "14588319-7e6a-4dee-805a-48c21c3e0ceb",
         "response_data": {
-          "split_id": "c12c806c-0379-439e-901e-e39963cb9bcb",
+          "split_id": "0196e6f6-9e74-4e02-b62c-b534972b9246",
           "original_file": "multi_page_test.pdf",
           "split_type": "pages",
           "split_files": [
             {
-              "file_id": "c12c806c-0379-439e-901e-e39963cb9bcb_page_1",
+              "file_id": "0196e6f6-9e74-4e02-b62c-b534972b9246_page_1",
               "filename": "multi_page_test_page_1.pdf",
               "page_number": 1,
-              "download_url": "/api/download/c12c806c-0379-439e-901e-e39963cb9bcb_page_1"
+              "download_url": "/api/download/0196e6f6-9e74-4e02-b62c-b534972b9246_page_1"
             },
             {
-              "file_id": "c12c806c-0379-439e-901e-e39963cb9bcb_page_2",
+              "file_id": "0196e6f6-9e74-4e02-b62c-b534972b9246_page_2",
               "filename": "multi_page_test_page_2.pdf",
               "page_number": 2,
-              "download_url": "/api/download/c12c806c-0379-439e-901e-e39963cb9bcb_page_2"
+              "download_url": "/api/download/0196e6f6-9e74-4e02-b62c-b534972b9246_page_2"
             },
             {
-              "file_id": "c12c806c-0379-439e-901e-e39963cb9bcb_page_3",
+              "file_id": "0196e6f6-9e74-4e02-b62c-b534972b9246_page_3",
               "filename": "multi_page_test_page_3.pdf",
               "page_number": 3,
-              "download_url": "/api/download/c12c806c-0379-439e-901e-e39963cb9bcb_page_3"
+              "download_url": "/api/download/0196e6f6-9e74-4e02-b62c-b534972b9246_page_3"
             }
           ],
           "status": "completed"
@@ -1510,7 +1546,7 @@
         "operation": "pdf_split_ranges",
         "status_code": 200,
         "success": true,
-        "input_file_id": "54c8f890-3577-480e-8509-f2b7fe93db93",
+        "input_file_id": "14588319-7e6a-4dee-805a-48c21c3e0ceb",
         "page_ranges": [
           {
             "start": 1,
@@ -1522,21 +1558,21 @@
           }
         ],
         "response_data": {
-          "split_id": "fefe903b-75a1-44f9-84cc-9edc27c1d9d6",
+          "split_id": "0217d2bd-1a36-4b27-9db8-a7d0f1111b53",
           "original_file": "multi_page_test.pdf",
           "split_type": "ranges",
           "split_files": [
             {
-              "file_id": "fefe903b-75a1-44f9-84cc-9edc27c1d9d6_range_0",
+              "file_id": "0217d2bd-1a36-4b27-9db8-a7d0f1111b53_range_0",
               "filename": "multi_page_test_pages_1-2.pdf",
               "page_range": "1-2",
-              "download_url": "/api/download/fefe903b-75a1-44f9-84cc-9edc27c1d9d6_range_0"
+              "download_url": "/api/download/0217d2bd-1a36-4b27-9db8-a7d0f1111b53_range_0"
             },
             {
-              "file_id": "fefe903b-75a1-44f9-84cc-9edc27c1d9d6_range_1",
+              "file_id": "0217d2bd-1a36-4b27-9db8-a7d0f1111b53_range_1",
               "filename": "multi_page_test_pages_3-3.pdf",
               "page_range": "3-3",
-              "download_url": "/api/download/fefe903b-75a1-44f9-84cc-9edc27c1d9d6_range_1"
+              "download_url": "/api/download/0217d2bd-1a36-4b27-9db8-a7d0f1111b53_range_1"
             }
           ],
           "status": "completed"
@@ -1552,10 +1588,10 @@
         "operation": "pdf_encrypt",
         "status_code": 200,
         "success": true,
-        "input_file_id": "2e88fbd8-31de-4d2a-8648-4e364b44258e",
+        "input_file_id": "9a9d489d-c057-4727-9144-792816ba0555",
         "password_used": "SecurePass123",
         "response_data": {
-          "encrypt_id": "d7900d7b-68bd-4be8-bb5c-d9d0c3b3e8a2",
+          "encrypt_id": "637d8925-5ed1-45dd-bb19-cc1898934c5b",
           "original_file": "single_page_test.pdf",
           "encrypted_file": "single_page_test_encrypted.pdf",
           "permissions": {
@@ -1563,10 +1599,10 @@
             "copy": false,
             "modify": false
           },
-          "download_url": "/api/download/d7900d7b-68bd-4be8-bb5c-d9d0c3b3e8a2",
+          "download_url": "/api/download/637d8925-5ed1-45dd-bb19-cc1898934c5b",
           "status": "completed"
         },
-        "encrypt_id": "d7900d7b-68bd-4be8-bb5c-d9d0c3b3e8a2",
+        "encrypt_id": "637d8925-5ed1-45dd-bb19-cc1898934c5b",
         "download_test": {
           "success": true,
           "file_size": 1423,
@@ -1575,32 +1611,179 @@
       },
       {
         "operation": "pdf_esign",
+        "status_code": 500,
+        "success": false,
+        "input_file_id": "9a9d489d-c057-4727-9144-792816ba0555",
+        "signer": "John Doe",
+        "error": "{\"detail\":\"PDF eSigning failed: name 'PdfReader' is not defined\"}"
+      },
+      {
+        "operation": "document_comparison",
         "status_code": 200,
         "success": true,
-        "input_file_id": "2e88fbd8-31de-4d2a-8648-4e364b44258e",
-        "signer": "John Doe",
+        "original_file_id": "ced8b66e-afb3-485f-971c-54082f2b8e7d",
+        "modified_file_id": "0cfcd17d-6c28-40ba-8b1d-d28ef3598f1d",
         "response_data": {
-          "esign_id": "827bee89-c37c-4279-99a6-b75364d7738e",
-          "original_file": "single_page_test.pdf",
-          "signed_file": "single_page_test_signed.pdf",
-          "signer_info": {
-            "name": "John Doe",
-            "email": "john@example.com",
-            "date": "2025-12-09"
+          "comparison_id": "f748413a-aeb9-4e62-8cc8-264c9c035134",
+          "original_file": "original_doc.txt",
+          "modified_file": "modified_doc.txt",
+          "differences": {
+            "insertions": 5,
+            "deletions": 4,
+            "modifications": 0,
+            "total_changes": 9
           },
-          "signature_verification": "sha256_827bee89-c37c-42",
-          "download_url": "/api/download/827bee89-c37c-4279-99a6-b75364d7738e",
-          "status": "completed"
+          "changes": [
+            {
+              "type": "insertion",
+              "location": "line 4",
+              "text": "This is the MODIFIED version of the legal document."
+            },
+            {
+              "type": "insertion",
+              "location": "line 8",
+              "text": "It contains updated terms and conditions."
+            },
+            {
+              "type": "insertion",
+              "location": "line 13",
+              "text": "1. Enhanced service delivery requirements"
+            },
+            {
+              "type": "insertion",
+              "location": "line 17",
+              "text": "2. Revised payment terms and conditions"
+            },
+            {
+              "type": "insertion",
+              "location": "line 20",
+              "text": "4. Additional termination provisions"
+            },
+            {
+              "type": "deletion",
+              "location": "line 2",
+              "text": "This is the original version of the legal document."
+            },
+            {
+              "type": "deletion",
+              "location": "line 6",
+              "text": "It contains standard terms and conditions."
+            },
+            {
+              "type": "deletion",
+              "location": "line 11",
+              "text": "1. Service delivery requirements"
+            },
+            {
+              "type": "deletion",
+              "location": "line 15",
+              "text": "2. Payment terms and conditions"
+            }
+          ],
+          "diff_summary": "--- original_doc.txt\n+++ modified_doc.txt\n@@ -1,8 +1,9 @@\n Legal Agreement Document\n         \n-This is the original version of the legal document.\n-It contains standard terms and conditions.\n+This is the MODIFIED version of the legal document.\n+It contains updated terms and conditions.\n The parties agree to the following provisions:\n-1. Service delivery requirements\n-2. Payment terms and conditions\n+1. Enhanced service delivery requirements\n+2. Revised payment terms and conditions\n 3. Liability and indemnification clauses\n+4. Additional termination provisions",
+          "comparison_time": "2025-12-09T08:55:03.437620"
         },
-        "esign_id": "827bee89-c37c-4279-99a6-b75364d7738e",
+        "comparison_id": "f748413a-aeb9-4e62-8cc8-264c9c035134",
+        "total_changes": 9
+      },
+      {
+        "operation": "batch_processing",
+        "status_code": 200,
+        "success": true,
+        "input_files": 2,
+        "target_format": "html",
+        "response_data": {
+          "results": [
+            {
+              "file_id": "cf6ec9a1-12a9-4442-b5c4-2b874bbc81c8",
+              "conversion_id": "2d2770c3-f3ab-43dd-a691-e6b37e80fb1b",
+              "status": "success",
+              "original_file": "test_small.txt",
+              "converted_file": "test_small.html"
+            },
+            {
+              "file_id": "d0b19124-c2ec-42af-a85b-87ff6ffc43f4",
+              "conversion_id": "78aed01a-a807-4884-9a6e-cfbdcf7b7ad0",
+              "status": "success",
+              "original_file": "test_medium.txt",
+              "converted_file": "test_medium.html"
+            }
+          ]
+        },
+        "successful_conversions": 2
+      },
+      {
+        "operation": "add_annotation",
+        "status_code": 200,
+        "success": true,
+        "response_data": {
+          "annotation_id": "bf8b1dc4-6930-44fa-95e4-7d50deea1d83",
+          "status": "success",
+          "message": "Annotation added successfully"
+        }
+      },
+      {
+        "operation": "get_annotations",
+        "status_code": 200,
+        "success": true,
+        "file_id": "6a174731-a985-44d5-bccb-1f182fc26888",
+        "response_data": {
+          "file_id": "6a174731-a985-44d5-bccb-1f182fc26888",
+          "annotations": [
+            {
+              "annotation_id": "bf8b1dc4-6930-44fa-95e4-7d50deea1d83",
+              "file_id": "6a174731-a985-44d5-bccb-1f182fc26888",
+              "type": "comment",
+              "text": "This is a test annotation for legal review",
+              "location": "top",
+              "color": "yellow",
+              "page": 1,
+              "position": {},
+              "created_at": "2025-12-09T08:55:03.567046",
+              "author": "Legal Reviewer"
+            }
+          ],
+          "total": 1
+        },
+        "annotations_count": 1
+      },
+      {
+        "operation": "export_annotations",
+        "status_code": 200,
+        "success": true,
+        "file_id": "6a174731-a985-44d5-bccb-1f182fc26888",
+        "response_data": {
+          "export_id": "8c8a539b-6c0e-46db-8b45-68fa21354ab0",
+          "filename": "annotations_20251209_085503.json",
+          "format": "json",
+          "download_url": "/api/download/8c8a539b-6c0e-46db-8b45-68fa21354ab0",
+          "status": "success"
+        },
         "download_test": {
           "success": true,
-          "file_size": 1792,
+          "file_size": 580,
           "content_type": "application/octet-stream"
         }
+      },
+      {
+        "operation": "delete_annotation",
+        "status_code": 200,
+        "success": true,
+        "annotation_id": "bf8b1dc4-6930-44fa-95e4-7d50deea1d83",
+        "response_data": {
+          "annotation_id": "bf8b1dc4-6930-44fa-95e4-7d50deea1d83",
+          "status": "success",
+          "message": "Annotation deleted successfully"
+        }
+      },
+      {
+        "operation": "file_persistence",
+        "file_id": "7d1c2c38-8935-4c18-8d89-82bb5e3a6b94",
+        "success": true,
+        "wait_time": 5
       }
     ]
   },
   "backend_url": "https://legaldoc-fix-1.preview.emergentagent.com",
-  "timestamp": 1765267683.1047552
+  "timestamp": 1765270508.8168478
 }
