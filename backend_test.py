@@ -744,9 +744,10 @@ This document contains standard legal provisions for testing purposes."""
             # Test file uploads
             await self.test_file_upload_endpoint()
             
-            # Test conversion flow
-            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=60)) as session:
+            # Test conversion flow and PDF Toolkit
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120)) as session:
                 await self.test_conversion_flow(session)
+                await self.test_pdf_toolkit_comprehensive(session)
             
             # Analyze results
             analysis = self.analyze_results()
