@@ -445,10 +445,15 @@ async def merge_pdfs(request: dict):
         temp_dir = tempfile.gettempdir()
         output_path = os.path.join(temp_dir, f"{merge_id}_{output_filename}")
         
-        # Mock PDF merge operation (in production, use PyPDF2 or similar)
-        import shutil
-        # For demo purposes, copy first PDF as merged result
-        shutil.copy2(pdf_paths[0], output_path)
+        # Merge PDFs using PyPDF2
+        from PyPDF2 import PdfMerger
+        merger = PdfMerger()
+        
+        for pdf_path in pdf_paths:
+            merger.append(pdf_path)
+        
+        merger.write(output_path)
+        merger.close()
         
         # Store merge result
         merge_info = {
