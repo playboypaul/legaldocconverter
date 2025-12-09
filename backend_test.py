@@ -134,14 +134,7 @@ Legal Document Test Content:
 
 This document contains standard legal provisions for testing purposes."""
 
-        # Create additional text files for testing
-        test_files['small_txt'] = os.path.join(temp_dir, 'test_small.txt')
-        test_files['medium_txt'] = os.path.join(temp_dir, 'test_medium.txt')
-        test_files['large_txt'] = os.path.join(temp_dir, 'test_large.txt')
-        test_files['docx_file'] = os.path.join(temp_dir, 'test_document.txt')  # Will be treated as txt
-        
-        # Create additional test files for general testing
-        # Create TXT files
+        # Create TXT files for testing
         small_txt = "This is a small text file for testing upload functionality."
         medium_txt = "This is a medium text file.\n" + "Sample legal document content. " * 1000
         large_txt = "Large text file content.\n" + "Legal document text content. " * 10000
