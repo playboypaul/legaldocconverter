@@ -324,20 +324,6 @@ const DocumentProcessor = () => {
   // Helper function to get format descriptions
   const getFormatDescription = (format) => {
     const descriptions = {
-      pdf: 'Portable Document Format',
-      docx: 'Microsoft Word Document',
-      doc: 'Legacy Word Document',
-      txt: 'Plain Text File',
-      rtf: 'Rich Text Format',
-      odt: 'OpenDocument Text',
-      html: 'Web Page Format'
-    };
-    return descriptions[format.toLowerCase()] || 'Document Format';
-  };
-
-  // Helper function to get format descriptions
-  const getFormatDescription = (format) => {
-    const descriptions = {
       pdf: "Portable Document Format",
       docx: "Microsoft Word Document",
       doc: "Legacy Word Document", 
