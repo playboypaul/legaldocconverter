@@ -621,15 +621,33 @@ async def encrypt_pdf(request: dict):
         if file_info["file_type"].lower() != "pdf":
             raise HTTPException(status_code=400, detail="File must be a PDF")
         
-        # Create encrypted PDF
+        # Encrypt PDF using PyPDF2
+        from PyPDF2 import PdfReader, PdfWriter
+        
         encrypt_id = str(uuid.uuid4())
         base_name = file_info["original_name"].rsplit('.', 1)[0]
         encrypted_filename = f"{base_name}_encrypted.pdf"
         temp_dir = tempfile.gettempdir()
         encrypted_path = os.path.join(temp_dir, f"{encrypt_id}_{encrypted_filename}")
         
-        # Mock PDF encryption (in production, use PyPDF2 encryption)
-        shutil.copy2(file_info["file_path"], encrypted_path)
+        # Read and encrypt the PDF
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        # Copy all pages
+        for page in reader.pages:
+            writer.add_page(page)
+        
+        # Encrypt with password and permissions
+        writer.encrypt(
+            user_password=password,
+            owner_password=password,
+            permissions_flag=0 if not any(permissions.values()) else -1
+        )
+        
+        # Write encrypted PDF
+        with open(encrypted_path, 'wb') as output_file:
+            writer.write(output_file)
         
         # Store encrypted file info
         file_storage[encrypt_id] = {
