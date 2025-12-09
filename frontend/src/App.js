@@ -71,6 +71,39 @@ const GuidesPage = () => {
   );
 };
 
+// Legal Pages Wrappers
+const TermsPage = () => (
+  <>
+    <Header />
+    <TermsOfService />
+    <Footer />
+  </>
+);
+
+const PrivacyPage = () => (
+  <>
+    <Header />
+    <PrivacyPolicy />
+    <Footer />
+  </>
+);
+
+const CookiePage = () => (
+  <>
+    <Header />
+    <CookiePolicy />
+    <Footer />
+  </>
+);
+
+const SecurityPageWrapper = () => (
+  <>
+    <Header />
+    <SecurityPage />
+    <Footer />
+  </>
+);
+
 function App() {
   return (
     <div className="App">
