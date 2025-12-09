@@ -113,6 +113,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/guides" element={<GuidesPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/cookies" element={<CookiePage />} />
+            <Route path="/security" element={<SecurityPageWrapper />} />
           </Routes>
         </BrowserRouter>
         <SignInModal />
