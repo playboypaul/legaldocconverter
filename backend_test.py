@@ -193,6 +193,9 @@ This document contains standard legal provisions for testing purposes."""
                         response_json = await response.json()
                         result["success"] = True
                         result["response_data"] = response_json
+                        # Store file ID for PDF operations
+                        if 'pdf' in file_type and 'file_id' in response_json:
+                            self.uploaded_files[file_type] = response_json['file_id']
                         logger.info(f"✅ Upload successful: {filename} ({result['file_size']} bytes)")
                     else:
                         error_text = await response.text()
