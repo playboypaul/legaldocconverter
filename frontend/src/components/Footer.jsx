@@ -150,30 +150,30 @@ const Footer = () => {
               © 2025 LegalDocConverter.com. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <button 
-                onClick={() => window.openPrivacyPolicy && window.openPrivacyPolicy()}
-                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              <Link 
+                to="/privacy"
+                className="text-slate-400 hover:text-white text-sm transition-colors"
               >
                 Privacy Policy
-              </button>
-              <button 
-                onClick={() => window.openTermsOfService && window.openTermsOfService()}
-                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              </Link>
+              <Link 
+                to="/terms"
+                className="text-slate-400 hover:text-white text-sm transition-colors"
               >
                 Terms of Service
-              </button>
-              <button 
-                onClick={() => window.openCookiePolicy && window.openCookiePolicy()}
-                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              </Link>
+              <Link 
+                to="/cookies"
+                className="text-slate-400 hover:text-white text-sm transition-colors"
               >
                 Cookie Policy
-              </button>
-              <button 
-                onClick={() => window.openSecurityPage && window.openSecurityPage()}
-                className="text-slate-400 hover:text-white text-sm transition-colors cursor-pointer"
+              </Link>
+              <Link 
+                to="/security"
+                className="text-slate-400 hover:text-white text-sm transition-colors"
               >
                 Security
-              </button>
+              </Link>
             </div>
           </div>
         </div>
