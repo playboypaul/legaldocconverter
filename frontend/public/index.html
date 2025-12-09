@@ -42,18 +42,20 @@
     <meta property="twitter:image" content="%PUBLIC_URL%/twitter-image.jpg" />
     <meta property="twitter:creator" content="@legaldocconverter" />
     
-    <!-- Enhanced Structured Data for SEO and AdSense -->
+    <!-- Enhanced Structured Data for SEO, AI Search, and Traditional Search -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "LegalDocConverter",
+      "alternateName": "Legal Document Converter",
       "url": "https://legaldocconverter.com",
-      "description": "Professional legal document converter and AI analyzer for law firms and legal professionals. Convert between PDF, DOCX, TXT and other formats with advanced AI-powered analysis.",
+      "description": "Comprehensive legal document processing platform with 30+ format conversions, advanced PDF toolkit, AI analysis, and workflow automation for legal professionals worldwide.",
       "applicationCategory": "LegalTech",
+      "applicationSubCategory": "Document Management",
       "operatingSystem": "Web Browser",
-      "browserRequirements": "Requires JavaScript",
-      "softwareVersion": "2.0",
+      "browserRequirements": "Modern web browser with JavaScript",
+      "softwareVersion": "3.0",
       "datePublished": "2024-01-01",
       "dateModified": "2025-01-01",
       "author": {
@@ -66,34 +68,68 @@
         "name": "LegalDocConverter",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://legaldocconverter.com/logo.png"
+          "url": "https://legaldocconverter.com/logo.png",
+          "width": 200,
+          "height": 60
         }
       },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD",
-        "priceValidUntil": "2025-12-31",
-        "availability": "https://schema.org/InStock",
-        "validFrom": "2025-01-01"
-      },
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "Free Plan",
+          "price": "0",
+          "priceCurrency": "USD",
+          "priceValidUntil": "2025-12-31",
+          "availability": "https://schema.org/InStock",
+          "validFrom": "2025-01-01",
+          "description": "Free access to document conversion, PDF tools, and basic AI analysis"
+        },
+        {
+          "@type": "Offer",
+          "name": "Professional Plan",
+          "price": "49.99",
+          "priceCurrency": "USD",
+          "billingIncrement": "Month",
+          "priceValidUntil": "2025-12-31",
+          "availability": "https://schema.org/InStock",
+          "validFrom": "2025-01-01",
+          "description": "Unlimited conversions, advanced AI analysis, digital signatures, and template library"
+        }
+      ],
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "4.8",
-        "reviewCount": "2150",
+        "reviewCount": "3247",
         "bestRating": "5",
         "worstRating": "1"
       },
       "featureList": [
-        "PDF to DOCX conversion",
-        "AI-powered legal document analysis",
-        "Multi-format document conversion",
-        "Legal compliance checking",
-        "Risk assessment and scoring",
-        "Contract clause identification",
-        "Secure document processing",
-        "Professional legal insights"
-      ]
+        "30+ document format conversions (PDF, DOCX, TXT, Excel, PowerPoint, etc.)",
+        "PDF toolkit: merge, split, encrypt, decrypt PDFs",
+        "Electronic signature (eSign) integration",
+        "AI-powered legal document analysis and risk assessment",
+        "Batch document processing and workflow automation",
+        "Document comparison and redlining tools",
+        "OCR text recognition for scanned documents",
+        "Legal compliance checking and validation",
+        "Contract clause identification and analysis",
+        "Document annotation and markup tools",
+        "Legal software integrations (Clio, Westlaw, LexisNexis)",
+        "Secure document processing with bank-grade encryption",
+        "Mobile-responsive interface for all devices",
+        "API access for enterprise integrations"
+      ],
+      "supportedFileFormat": [
+        "PDF", "DOCX", "DOC", "TXT", "RTF", "ODT", "HTML", "XML", "CSV", 
+        "XLSX", "XLS", "PPT", "PPTX", "EPUB", "MD", "JSON", "YAML", "TEX",
+        "DocBook", "OPML", "RST", "AsciiDoc", "Wiki", "Jira", "FB2"
+      ],
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Legal Professionals",
+        "geographicArea": "Worldwide"
+      },
+      "usageInfo": "Professional document conversion and analysis for law firms, corporate legal departments, and independent legal practitioners"
     }
     </script>
 
