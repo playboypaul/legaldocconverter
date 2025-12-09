@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Comprehensive Backend API Testing for Legal Document Converter
-Testing file upload API endpoint thoroughly to identify PDF upload failures
+Testing PDF Toolkit functionality with real PDF operations
 """
 
 import asyncio
@@ -16,6 +16,9 @@ from pathlib import Path
 from typing import Dict, List, Any
 import random
 import string
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from PyPDF2 import PdfReader
 
 # Configure logging
 logging.basicConfig(
