@@ -314,7 +314,7 @@ const PrivacyPolicy = ({ onBack }) => {
                     <p className="text-slate-700"><strong>Privacy Officer:</strong> privacy@legaldocconverter.com</p>
                     <p className="text-slate-700"><strong>General Contact:</strong> support@legaldocconverter.com</p>
                     <p className="text-slate-700"><strong>Website:</strong> https://legaldocconverter.com</p>
-                    <p className="text-slate-700"><strong>Address:</strong> LegalDocConverter, San Francisco, CA</p>
+                    <p className="text-slate-700"><strong>Address:</strong> LegalDocConverter, Alberta, Canada</p>
                   </div>
                 </section>
 

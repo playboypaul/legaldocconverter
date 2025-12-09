@@ -252,7 +252,7 @@ const TermsOfService = ({ onBack }) => {
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
                     <p className="text-slate-700"><strong>Email:</strong> legal@legaldocconverter.com</p>
                     <p className="text-slate-700"><strong>Website:</strong> https://legaldocconverter.com</p>
-                    <p className="text-slate-700"><strong>Address:</strong> LegalDocConverter, San Francisco, CA</p>
+                    <p className="text-slate-700"><strong>Address:</strong> LegalDocConverter, Alberta, Canada</p>
                   </div>
                 </section>
 
