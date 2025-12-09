@@ -134,12 +134,7 @@ Legal Document Test Content:
 
 This document contains standard legal provisions for testing purposes."""
 
-        # Write test files
-        temp_dir = tempfile.gettempdir()
-        
-        test_files['small_pdf'] = os.path.join(temp_dir, 'test_small.pdf')
-        test_files['medium_pdf'] = os.path.join(temp_dir, 'test_medium.pdf')  
-        test_files['large_pdf'] = os.path.join(temp_dir, 'test_large.pdf')
+        # Create additional text files for testing
         test_files['small_txt'] = os.path.join(temp_dir, 'test_small.txt')
         test_files['medium_txt'] = os.path.join(temp_dir, 'test_medium.txt')
         test_files['large_txt'] = os.path.join(temp_dir, 'test_large.txt')
