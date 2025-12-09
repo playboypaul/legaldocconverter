@@ -938,30 +938,93 @@ async def compare_documents(request: dict):
         original_file = file_storage[original_file_id]
         modified_file = file_storage[modified_file_id]
         
-        # Mock comparison result - in real implementation, this would use a document comparison library
+        # Extract text content from both files
+        import difflib
+        import re
+        
+        def extract_text(file_path, file_type):
+            """Extract text from various file types"""
+            try:
+                if file_type.lower() == 'pdf':
+                    from PyPDF2 import PdfReader
+                    reader = PdfReader(file_path)
+                    text = ""
+                    for page in reader.pages:
+                        text += page.extract_text() + "\n"
+                    return text
+                elif file_type.lower() in ['txt', 'text']:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        return f.read()
+                elif file_type.lower() in ['docx']:
+                    # For DOCX, we'd need python-docx library
+                    # For now, return a placeholder
+                    return "Document comparison for DOCX files requires python-docx library"
+                else:
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        return f.read()
+            except Exception as e:
+                return f"Error extracting text: {str(e)}"
+        
+        # Extract text from both documents
+        original_text = extract_text(original_file["file_path"], original_file["file_type"])
+        modified_text = extract_text(modified_file["file_path"], modified_file["file_type"])
+        
+        # Split into lines for comparison
+        original_lines = original_text.splitlines()
+        modified_lines = modified_text.splitlines()
+        
+        # Perform diff comparison
+        differ = difflib.Differ()
+        diff = list(differ.compare(original_lines, modified_lines))
+        
+        # Analyze differences
+        insertions = []
+        deletions = []
+        modifications = []
+        
+        for i, line in enumerate(diff):
+            if line.startswith('+ '):
+                insertions.append({
+                    "type": "insertion",
+                    "location": f"line {i}",
+                    "text": line[2:].strip()
+                })
+            elif line.startswith('- '):
+                deletions.append({
+                    "type": "deletion",
+                    "location": f"line {i}",
+                    "text": line[2:].strip()
+                })
+            elif line.startswith('? '):
+                # This indicates a modification in the previous line
+                if modifications:
+                    modifications[-1]["hint"] = line[2:].strip()
+        
+        # Generate unified diff for redlining
+        unified_diff = list(difflib.unified_diff(
+            original_lines,
+            modified_lines,
+            fromfile=original_file["original_name"],
+            tofile=modified_file["original_name"],
+            lineterm=''
+        ))
+        
         comparison_result = {
             "comparison_id": str(uuid.uuid4()),
             "original_file": original_file["original_name"],
             "modified_file": modified_file["original_name"],
             "differences": {
-                "insertions": 12,
-                "deletions": 8,
-                "modifications": 5
+                "insertions": len(insertions),
+                "deletions": len(deletions),
+                "modifications": len(modifications),
+                "total_changes": len(insertions) + len(deletions) + len(modifications)
             },
-            "changes": [
-                {
-                    "type": "insertion",
-                    "location": "page 1, line 15",
-                    "text": "Additional legal clause inserted"
-                },
-                {
-                    "type": "deletion", 
-                    "location": "page 2, line 8",
-                    "text": "Removed outdated provision"
-                }
-            ],
-            "comparison_time": datetime.utcnow()
+            "changes": (insertions + deletions + modifications)[:50],  # Limit to first 50 changes
+            "diff_summary": "\n".join(unified_diff[:100]),  # Limit unified diff
+            "comparison_time": datetime.utcnow().isoformat()
         }
+        
+        logger.info(f"Document comparison completed: {original_file['original_name']} vs {modified_file['original_name']}")
         
         return comparison_result
         
