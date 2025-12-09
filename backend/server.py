@@ -459,10 +459,10 @@ async def merge_pdfs(request: dict):
             
             pdf_paths.append(file_info["file_path"])
         
-        # Create merged PDF
-        merge_id = str(uuid.uuid4())
-        output_filename = f"merged_document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
-        temp_dir = tempfile.gettempdir()
+        # Use persistent PDF operations directory
+
+        
+        temp_dir = PDF_OPERATIONS_DIR
         output_path = os.path.join(temp_dir, f"{merge_id}_{output_filename}")
         
         # Merge PDFs using PyPDF2
@@ -532,7 +532,7 @@ async def split_pdf(request: dict):
         
         split_id = str(uuid.uuid4())
         base_name = file_info["original_name"].rsplit('.', 1)[0]
-        temp_dir = tempfile.gettempdir()
+        temp_dir = CONVERSIONS_DIR
         
         # Read the PDF
         reader = PdfReader(file_info["file_path"])
@@ -647,7 +647,7 @@ async def encrypt_pdf(request: dict):
         encrypt_id = str(uuid.uuid4())
         base_name = file_info["original_name"].rsplit('.', 1)[0]
         encrypted_filename = f"{base_name}_encrypted.pdf"
-        temp_dir = tempfile.gettempdir()
+        temp_dir = CONVERSIONS_DIR
         encrypted_path = os.path.join(temp_dir, f"{encrypt_id}_{encrypted_filename}")
         
         # Read and encrypt the PDF
@@ -721,16 +721,10 @@ async def esign_pdf(request: dict):
         if file_info["file_type"].lower() != "pdf":
             raise HTTPException(status_code=400, detail="File must be a PDF")
         
-        # Create signed PDF using PyPDF2
-        from PyPDF2 import PdfReader, PdfWriter
-        from reportlab.pdfgen import canvas
-        from reportlab.lib.pagesizes import letter
-        import io
+        # Use persistent PDF operations directory
+
         
-        esign_id = str(uuid.uuid4())
-        base_name = file_info["original_name"].rsplit('.', 1)[0]
-        signed_filename = f"{base_name}_signed.pdf"
-        temp_dir = tempfile.gettempdir()
+        temp_dir = PDF_OPERATIONS_DIR
         signed_path = os.path.join(temp_dir, f"{esign_id}_{signed_filename}")
         
         # Read the original PDF
@@ -828,7 +822,7 @@ async def batch_upload(files: List[UploadFile] = File(...)):
                 continue
             
             # Save file
-            temp_dir = tempfile.gettempdir()
+            temp_dir = CONVERSIONS_DIR
             safe_filename = "".join(c for c in file.filename if c.isalnum() or c in "._-")
             temp_file_path = os.path.join(temp_dir, f"{file_id}_{safe_filename}")
             
@@ -1050,7 +1044,7 @@ async def save_document(request: dict):
         filename = f"edited_document_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format_type}"
         
         # Save content to file
-        temp_dir = tempfile.gettempdir()
+        temp_dir = CONVERSIONS_DIR
         file_path = os.path.join(temp_dir, f"{file_id}_{filename}")
         
         async with aiofiles.open(file_path, 'w', encoding='utf-8') as f:
@@ -1194,7 +1188,7 @@ async def export_annotations(request: dict):
             # Export as JSON
             export_id = str(uuid.uuid4())
             export_filename = f"annotations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-            temp_dir = tempfile.gettempdir()
+            temp_dir = CONVERSIONS_DIR
             export_path = os.path.join(temp_dir, f"{export_id}_{export_filename}")
             
             import json
