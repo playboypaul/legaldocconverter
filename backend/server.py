@@ -33,28 +33,8 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Add file size limit middleware
+# Configure FastAPI max request size to prevent internal 413 errors
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
-
-async def validate_file_size(request: Request, call_next):
-    """Middleware to validate file size before processing"""
-    try:
-        if request.url.path == "/api/upload" and request.method == "POST":
-            content_length = request.headers.get("content-length")
-            if content_length and int(content_length) > MAX_FILE_SIZE:
-                from fastapi.responses import JSONResponse
-                return JSONResponse(
-                    status_code=413,
-                    content={"detail": f"File too large. Maximum size allowed is {MAX_FILE_SIZE // (1024*1024)}MB"}
-                )
-        
-        response = await call_next(request)
-        return response
-    except Exception as e:
-        logger.error(f"File size validation error: {str(e)}")
-        return await call_next(request)
-
-app.middleware("http")(validate_file_size)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
