@@ -87,28 +87,28 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <button 
-                  onClick={() => window.openTermsOfService && window.openTermsOfService()}
-                  className="hover:text-white transition-colors text-left"
+                <Link 
+                  to="/terms"
+                  className="hover:text-white transition-colors"
                 >
                   Terms of Service
-                </button>
+                </Link>
               </li>
               <li>
-                <button 
-                  onClick={() => window.openPrivacyPolicy && window.openPrivacyPolicy()}
-                  className="hover:text-white transition-colors text-left"
+                <Link 
+                  to="/privacy"
+                  className="hover:text-white transition-colors"
                 >
                   Privacy Policy
-                </button>
+                </Link>
               </li>
               <li>
-                <button 
-                  onClick={() => window.openCookiePolicy && window.openCookiePolicy()}
-                  className="hover:text-white transition-colors text-left"
+                <Link 
+                  to="/cookies"
+                  className="hover:text-white transition-colors"
                 >
                   Cookie Policy
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
