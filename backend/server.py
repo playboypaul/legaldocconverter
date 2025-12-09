@@ -178,20 +178,13 @@ async def upload_file(file: UploadFile = File(...)):
         file_id = str(uuid.uuid4())
         logger.info(f"Starting upload process for {file.filename} with ID: {file_id}")
         
-        # Create temporary file with enhanced error handling
-        temp_dir = tempfile.gettempdir()
-        try:
-            os.makedirs(temp_dir, exist_ok=True)
-        except Exception as e:
-            logger.error(f"Failed to create temp directory: {str(e)}")
-            raise HTTPException(status_code=500, detail="Server storage error")
-        
+        # Create file in persistent uploads directory
         # Enhanced filename sanitization
         safe_filename = "".join(c for c in file.filename if c.isalnum() or c in "._-")
         if len(safe_filename) == 0:
             safe_filename = f"uploaded_file.{file_extension}"
         
-        temp_file_path = os.path.join(temp_dir, f"{file_id}_{safe_filename}")
+        temp_file_path = os.path.join(UPLOADS_DIR, f"{file_id}_{safe_filename}")
         
         # Save uploaded file with comprehensive error handling
         try:
