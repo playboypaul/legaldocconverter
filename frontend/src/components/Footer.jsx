@@ -116,22 +116,24 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <div className="space-y-3 text-slate-400">
-              <div className="flex items-center space-x-3">
-                <Mail className="h-4 w-4" />
-                <a 
-                  href="mailto:support@legaldocconverter.com"
-                  className="text-sm hover:text-white transition-colors"
-                >
-                  support@legaldocconverter.com
-                </a>
+              <div className="flex items-start space-x-3">
+                <Mail className="h-4 w-4 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-white mb-1">Email Support</p>
+                  <a 
+                    href="mailto:support@legaldocconverter.com"
+                    className="text-sm hover:text-white transition-colors"
+                  >
+                    support@legaldocconverter.com
+                  </a>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4" />
-                <span className="text-sm">+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-4 w-4" />
-                <span className="text-sm">San Francisco, CA</span>
+              <div className="flex items-start space-x-3">
+                <MapPin className="h-4 w-4 mt-1" />
+                <div>
+                  <p className="text-sm font-medium text-white mb-1">Location</p>
+                  <span className="text-sm">Alberta, Canada</span>
+                </div>
               </div>
               <div className="mt-4 p-3 bg-slate-800 rounded-lg">
                 <p className="text-sm font-medium text-white">Visit us at:</p>
