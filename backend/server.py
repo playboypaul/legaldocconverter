@@ -734,6 +734,7 @@ async def esign_pdf(request: dict):
         signed_path = os.path.join(temp_dir, f"{esign_id}_{signed_filename}")
         
         # Read the original PDF
+        from PyPDF2 import PdfReader, PdfWriter
         reader = PdfReader(file_info["file_path"])
         writer = PdfWriter()
         
