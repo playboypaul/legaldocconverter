@@ -1746,21 +1746,48 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
           </Card>
         )}
 
-        {/* PDF Tools Tab */}
+        {/* Enhanced PDF Tools Tab */}
         {activeTab === 'pdf-tools' && (
-          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-orange-50/50">
-            <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
-              <CardTitle className="flex items-center text-white">
-                <Settings className="h-5 w-5 mr-2" />
-                Professional PDF Toolkit
-                <span className="ml-2 px-2 py-1 text-xs bg-yellow-500 text-white rounded-full">NEW</span>
-              </CardTitle>
-              <CardDescription className="text-orange-100">
-                Comprehensive PDF editing tools for legal professionals
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-8">
+          <div className="space-y-8">
+            {/* Advanced PDF Manager */}
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-orange-50/50">
+              <CardHeader className="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <Settings className="h-5 w-5 mr-2" />
+                  Professional PDF Toolkit
+                  <span className="ml-2 px-2 py-1 text-xs bg-yellow-500 text-white rounded-full">ENHANCED</span>
+                </CardTitle>
+                <CardDescription className="text-orange-100">
+                  16 professional PDF tools for comprehensive document management
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <AdvancedPdfManager 
+                  onToolSelect={(toolId) => {
+                    setPdfEditor(prev => ({ ...prev, activeOperation: toolId }));
+                    toast({
+                      title: "PDF Tool Selected",
+                      description: `${toolId.charAt(0).toUpperCase() + toolId.slice(1)} tool is ready to use.`,
+                    });
+                  }}
+                  files={batchFiles}
+                />
+              </CardContent>
+            </Card>
+
+            {/* Original PDF Tools Interface */}
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-blue-50/50">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <Settings className="h-5 w-5 mr-2" />
+                  Quick PDF Operations
+                </CardTitle>
+                <CardDescription className="text-blue-100">
+                  Fast access to most common PDF editing tasks
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-8">
                 {/* PDF Operation Tabs */}
                 <div className="flex flex-wrap justify-center gap-2 p-2 bg-orange-50 rounded-xl">
                   {['merge', 'split', 'encrypt', 'esign'].map((operation) => (
