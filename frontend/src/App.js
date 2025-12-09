@@ -15,6 +15,10 @@ import { Toaster } from "./components/ui/toaster";
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from "./components/ads/AdSenseAd";
 import AffiliateSection from "./components/marketing/AffiliateSection";
 import LegalBlog from "./components/content/LegalBlog";
+import TermsOfService from "./components/legal/TermsOfService";
+import PrivacyPolicy from "./components/legal/PrivacyPolicy";
+import CookiePolicy from "./components/legal/CookiePolicy";
+import SecurityPage from "./components/legal/SecurityPage";
 
 const Home = () => {
   return (
