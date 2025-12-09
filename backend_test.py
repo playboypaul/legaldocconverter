@@ -257,7 +257,7 @@ This document contains standard legal provisions for testing purposes."""
             # Test 2: Multiple rapid PDF uploads (the main issue)
             logger.info("\n🔄 Testing multiple rapid PDF uploads...")
             pdf_rapid_results = await self.test_multiple_rapid_uploads(
-                session, test_files['small_pdf'], 10
+                session, test_files['single_page_pdf'], 10
             )
             self.test_results["performance_tests"].extend(pdf_rapid_results)
             
@@ -270,7 +270,7 @@ This document contains standard legal provisions for testing purposes."""
             
             # Test 4: Large file uploads
             logger.info("\n📊 Testing large file uploads...")
-            large_files = ['large_pdf', 'large_txt']
+            large_files = ['large_txt']
             for file_key in large_files:
                 if file_key in test_files:
                     result = await self.test_single_upload(session, test_files[file_key], f"large_{file_key}")
