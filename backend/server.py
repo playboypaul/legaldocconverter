@@ -166,35 +166,48 @@ async def upload_file(file: UploadFile = File(...)):
         
         # Generate unique file ID
         file_id = str(uuid.uuid4())
+        logger.info(f"Starting upload process for {file.filename} with ID: {file_id}")
         
-        # Create temporary file with better error handling
+        # Create temporary file with enhanced error handling
         temp_dir = tempfile.gettempdir()
-        os.makedirs(temp_dir, exist_ok=True)
+        try:
+            os.makedirs(temp_dir, exist_ok=True)
+        except Exception as e:
+            logger.error(f"Failed to create temp directory: {str(e)}")
+            raise HTTPException(status_code=500, detail="Server storage error")
         
-        # Sanitize filename to prevent path traversal
+        # Enhanced filename sanitization
         safe_filename = "".join(c for c in file.filename if c.isalnum() or c in "._-")
+        if len(safe_filename) == 0:
+            safe_filename = f"uploaded_file.{file_extension}"
+        
         temp_file_path = os.path.join(temp_dir, f"{file_id}_{safe_filename}")
         
-        # Save uploaded file with atomic write
+        # Save uploaded file with comprehensive error handling
         try:
             async with aiofiles.open(temp_file_path, 'wb') as f:
                 await f.write(file_content)
                 
             # Verify file was written correctly
             if not os.path.exists(temp_file_path):
+                logger.error(f"File not found after write: {temp_file_path}")
                 raise Exception("Failed to save uploaded file")
                 
             actual_size = os.path.getsize(temp_file_path)
             if actual_size != file_size:
+                logger.error(f"File size mismatch for {file.filename}: expected {file_size}, got {actual_size}")
                 raise Exception(f"File size mismatch: expected {file_size}, got {actual_size}")
                 
         except Exception as e:
             # Cleanup on failure
-            if os.path.exists(temp_file_path):
+            if temp_file_path and os.path.exists(temp_file_path):
                 try:
                     os.remove(temp_file_path)
-                except:
-                    pass
+                    logger.info(f"Cleaned up failed upload file: {temp_file_path}")
+                except Exception as cleanup_error:
+                    logger.error(f"Failed to cleanup file {temp_file_path}: {str(cleanup_error)}")
+            
+            logger.error(f"File save error for {file.filename}: {str(e)}")
             raise Exception(f"Failed to save file: {str(e)}")
         
         # Store file metadata
