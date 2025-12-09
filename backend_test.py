@@ -57,17 +57,64 @@ class BackendTester:
             return "http://localhost:8001"
     
     async def create_test_files(self):
-        """Create various test files for upload testing"""
+        """Create various test files for upload testing including real PDFs"""
         test_files = {}
+        temp_dir = tempfile.gettempdir()
         
-        # Create small PDF (mock - will be treated as binary)
-        small_pdf_content = b"%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n2 0 obj\n<<\n/Type /Pages\n/Kids [3 0 R]\n/Count 1\n>>\nendobj\n3 0 obj\n<<\n/Type /Page\n/Parent 2 0 R\n/MediaBox [0 0 612 792]\n/Contents 4 0 R\n>>\nendobj\n4 0 obj\n<<\n/Length 44\n>>\nstream\nBT\n/F1 12 Tf\n72 720 Td\n(Small PDF Test) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n0000000115 00000 n \n0000000206 00000 n \ntrailer\n<<\n/Size 5\n/Root 1 0 R\n>>\nstartxref\n299\n%%EOF"
+        # Create real PDF files using reportlab
+        # Single page PDF
+        single_page_pdf = os.path.join(temp_dir, 'single_page_test.pdf')
+        c = canvas.Canvas(single_page_pdf, pagesize=letter)
+        c.drawString(100, 750, "Legal Document Converter Test - Page 1")
+        c.drawString(100, 730, "This is a single page PDF for testing purposes.")
+        c.drawString(100, 710, "Contract Terms and Conditions")
+        c.drawString(100, 690, "1. Service Agreement")
+        c.drawString(100, 670, "2. Payment Terms")
+        c.drawString(100, 650, "3. Liability Clauses")
+        c.save()
         
-        # Create medium PDF content (larger mock)
-        medium_pdf_content = small_pdf_content + b"\n" + b"A" * 1024 * 500  # ~500KB
+        # Multi-page PDF (3 pages)
+        multi_page_pdf = os.path.join(temp_dir, 'multi_page_test.pdf')
+        c = canvas.Canvas(multi_page_pdf, pagesize=letter)
         
-        # Create large PDF content
-        large_pdf_content = small_pdf_content + b"\n" + b"B" * 1024 * 1024 * 2  # ~2MB
+        # Page 1
+        c.drawString(100, 750, "Legal Document - Page 1")
+        c.drawString(100, 730, "Introduction and Overview")
+        c.drawString(100, 710, "This document contains multiple pages for testing PDF operations.")
+        c.showPage()
+        
+        # Page 2
+        c.drawString(100, 750, "Legal Document - Page 2")
+        c.drawString(100, 730, "Terms and Conditions")
+        c.drawString(100, 710, "Detailed terms and conditions for the service agreement.")
+        c.showPage()
+        
+        # Page 3
+        c.drawString(100, 750, "Legal Document - Page 3")
+        c.drawString(100, 730, "Conclusion and Signatures")
+        c.drawString(100, 710, "Final page with signature requirements.")
+        c.save()
+        
+        # Another single page PDF for merge testing
+        merge_pdf_1 = os.path.join(temp_dir, 'merge_test_1.pdf')
+        c = canvas.Canvas(merge_pdf_1, pagesize=letter)
+        c.drawString(100, 750, "Merge Test Document 1")
+        c.drawString(100, 730, "This is the first document to be merged.")
+        c.drawString(100, 710, "Legal Agreement Part A")
+        c.save()
+        
+        # Second PDF for merge testing
+        merge_pdf_2 = os.path.join(temp_dir, 'merge_test_2.pdf')
+        c = canvas.Canvas(merge_pdf_2, pagesize=letter)
+        c.drawString(100, 750, "Merge Test Document 2")
+        c.drawString(100, 730, "This is the second document to be merged.")
+        c.drawString(100, 710, "Legal Agreement Part B")
+        c.save()
+        
+        test_files['single_page_pdf'] = single_page_pdf
+        test_files['multi_page_pdf'] = multi_page_pdf
+        test_files['merge_pdf_1'] = merge_pdf_1
+        test_files['merge_pdf_2'] = merge_pdf_2
         
         # Create TXT files
         small_txt = "This is a small text file for testing upload functionality."
