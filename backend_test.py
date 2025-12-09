@@ -726,12 +726,19 @@ This document contains standard legal provisions for testing purposes."""
             max_time = max(response_times)
             logger.info(f"\nPerformance: Avg {avg_time:.2f}s, Max {max_time:.2f}s")
         
+        # PDF Toolkit analysis
+        pdf_toolkit_tests = self.test_results["pdf_toolkit_tests"]
+        pdf_toolkit_success = sum(1 for test in pdf_toolkit_tests if test["success"])
+        if pdf_toolkit_tests:
+            logger.info(f"PDF Toolkit Success Rate: {pdf_toolkit_success}/{len(pdf_toolkit_tests)} ({pdf_toolkit_success/len(pdf_toolkit_tests)*100:.1f}%)")
+        
         return {
             "total_tests": total_uploads,
             "successful_tests": successful_uploads,
             "success_rate": successful_uploads/total_uploads if total_uploads > 0 else 0,
             "pdf_success_rate": pdf_success/len(pdf_tests) if pdf_tests else 0,
             "txt_success_rate": txt_success/len(txt_tests) if txt_tests else 0,
+            "pdf_toolkit_success_rate": pdf_toolkit_success/len(pdf_toolkit_tests) if pdf_toolkit_tests else 0,
             "failed_tests": failed_tests,
             "avg_response_time": sum(response_times)/len(response_times) if response_times else 0
         }
