@@ -15,7 +15,10 @@ class FileConverter:
     """Handle file format conversions"""
     
     def __init__(self):
-        self.temp_dir = tempfile.gettempdir()
+        # Use persistent storage directory
+        storage_base = os.path.join(os.path.dirname(__file__), "storage")
+        self.temp_dir = os.path.join(storage_base, "conversions")
+        os.makedirs(self.temp_dir, exist_ok=True)
     
     async def convert_file(self, input_path: str, input_format: str, output_format: str, conversion_id: str) -> str:
         """Convert file from input format to output format"""
