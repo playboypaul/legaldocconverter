@@ -114,32 +114,55 @@ async def get_supported_formats():
 
 @api_router.post("/upload", response_model=FileUploadResponse)
 async def upload_file(file: UploadFile = File(...)):
-    """Upload a document for processing"""
+    """Upload a document for processing with enhanced error handling"""
+    temp_file_path = None
     try:
-        # Validate file exists
+        # Validate file exists and has a filename
         if not file or not file.filename:
+            logger.error("Upload attempt with no file or filename")
             raise HTTPException(status_code=400, detail="No file provided")
         
-        # Validate file size
-        file_content = await file.read()
+        # Read file content with proper error handling
+        try:
+            file_content = await file.read()
+        except Exception as e:
+            logger.error(f"Failed to read uploaded file {file.filename}: {str(e)}")
+            raise HTTPException(status_code=400, detail="Failed to read uploaded file. File may be corrupted.")
+        
         file_size = len(file_content)
         
+        # Validate file is not empty
         if file_size == 0:
+            logger.error(f"Empty file uploaded: {file.filename}")
             raise HTTPException(status_code=400, detail="File is empty")
         
+        # Check file size against limit (redundant check as FastAPI should handle this, but kept for safety)
         if file_size > MAX_FILE_SIZE:
+            logger.error(f"File too large: {file.filename} ({file_size} bytes)")
             raise HTTPException(
                 status_code=413,
                 detail=f"File too large. Maximum size allowed is {MAX_FILE_SIZE // (1024*1024)}MB"
             )
         
-        # Validate file type
+        # Enhanced file type validation
         file_extension = file.filename.split('.')[-1].lower() if '.' in file.filename else ''
+        if not file_extension:
+            logger.error(f"File without extension: {file.filename}")
+            raise HTTPException(status_code=400, detail="File must have a valid extension")
+        
         if file_extension not in SUPPORTED_FORMATS["input"]:
+            logger.error(f"Unsupported file type: {file_extension} for file {file.filename}")
             raise HTTPException(
                 status_code=400, 
-                detail=f"Unsupported file type. Supported formats: {', '.join(SUPPORTED_FORMATS['input'])}"
+                detail=f"Unsupported file type '{file_extension}'. Supported formats: {', '.join(SUPPORTED_FORMATS['input'])}"
             )
+        
+        # Special validation for PDF files
+        if file_extension == 'pdf':
+            # Check if file starts with PDF signature
+            if not file_content.startswith(b'%PDF'):
+                logger.error(f"Invalid PDF file: {file.filename} - missing PDF signature")
+                raise HTTPException(status_code=400, detail="Invalid PDF file format")
         
         # Generate unique file ID
         file_id = str(uuid.uuid4())
