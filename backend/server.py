@@ -298,6 +298,16 @@ async def convert_file(request: ConversionRequest):
         
         conversion_storage[conversion_id] = conversion_info
         
+        # ALSO add converted file to file_storage so it can be converted again
+        file_storage[conversion_id] = {
+            "file_id": conversion_id,
+            "original_name": converted_filename,
+            "file_path": converted_file_path,
+            "file_type": request.target_format,
+            "file_size": os.path.getsize(converted_file_path),
+            "upload_time": datetime.utcnow()
+        }
+        
         logger.info(f"File converted: {file_info['original_name']} to {request.target_format}")
         
         return ConversionResponse(
