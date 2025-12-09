@@ -6,6 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#3B82F6" />
     
+    <!-- Suppress ResizeObserver errors (harmless React/shadcn UI warning) -->
+    <script>
+      // Suppress ResizeObserver loop limit exceeded errors
+      window.addEventListener('error', (e) => {
+        if (e.message === 'ResizeObserver loop completed with undelivered notifications.' || 
+            e.message === 'ResizeObserver loop limit exceeded') {
+          e.stopImmediatePropagation();
+          e.preventDefault();
+          return false;
+        }
+      });
+    </script>
+    
     <!-- Google AdSense - AdSense Policy Compliant Implementation -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8306818191166444"
          crossorigin="anonymous"></script>
