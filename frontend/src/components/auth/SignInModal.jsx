@@ -66,20 +66,16 @@ const SignInModal = () => {
     <Dialog open={isSignInOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Welcome Back</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">
+            <div className="flex items-center justify-center space-x-2 mb-2">
+              <Scale className="h-8 w-8 text-blue-600" />
+              <span>Sign In</span>
+            </div>
+          </DialogTitle>
           <DialogDescription className="text-center">
             Sign in to your LegalDocConverter account
           </DialogDescription>
         </DialogHeader>
-        
-        {/* Demo Credentials Info */}
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-4">
-          <h4 className="font-semibold text-blue-900 mb-2">Demo Accounts:</h4>
-          <div className="text-sm text-blue-800 space-y-1">
-            <p><strong>Free:</strong> demo@legaldocconverter.com / password</p>
-            <p><strong>Pro:</strong> pro@legaldocconverter.com / password</p>
-          </div>
-        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
