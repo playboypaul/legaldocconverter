@@ -91,8 +91,8 @@ class FileConverter:
                 cmd = [
                     "pandoc",
                     input_path,
-                    "-f", input_format,
-                    "-t", output_format,
+                    "-f", input_fmt,  # Use mapped format
+                    "-t", output_fmt,  # Use mapped format
                     "-o", output_path
                 ]
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
