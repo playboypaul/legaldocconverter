@@ -459,8 +459,9 @@ async def merge_pdfs(request: dict):
             
             pdf_paths.append(file_info["file_path"])
         
-        # Use persistent PDF operations directory
-
+        # Generate merge ID and output filename
+        merge_id = str(uuid.uuid4())
+        output_filename = f"merged_document_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.pdf"
         
         temp_dir = PDF_OPERATIONS_DIR
         output_path = os.path.join(temp_dir, f"{merge_id}_{output_filename}")
