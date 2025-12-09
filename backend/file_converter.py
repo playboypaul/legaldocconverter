@@ -78,11 +78,17 @@ class FileConverter:
             output_fmt = format_mapping.get(output_format, output_format)
             
             # Use pypandoc for conversion
+            extra_args = []
+            if output_fmt == "pdf":
+                # Use wkhtmltopdf as PDF engine
+                extra_args = ['--pdf-engine=wkhtmltopdf']
+            
             pypandoc.convert_file(
                 input_path,
                 output_fmt,
                 outputfile=output_path,
-                format=input_fmt
+                format=input_fmt,
+                extra_args=extra_args
             )
             
         except Exception as e:
