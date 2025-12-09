@@ -15,8 +15,11 @@ import tempfile
 import shutil
 import aiofiles
 import asyncio
+import io
 from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
