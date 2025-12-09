@@ -790,12 +790,15 @@ async def main():
         print(f"📊 Overall Success Rate: {results['success_rate']*100:.1f}%")
         print(f"📄 PDF Success Rate: {results['pdf_success_rate']*100:.1f}%") 
         print(f"📝 TXT Success Rate: {results['txt_success_rate']*100:.1f}%")
+        print(f"🔧 PDF Toolkit Success Rate: {results['pdf_toolkit_success_rate']*100:.1f}%")
         print(f"⏱️  Average Response Time: {results['avg_response_time']:.2f}s")
         
         if results['success_rate'] < 0.8:
             print("⚠️  WARNING: Low success rate detected!")
         if results['pdf_success_rate'] < 0.5:
             print("🚨 CRITICAL: PDF upload success rate is very low!")
+        if results['pdf_toolkit_success_rate'] < 0.8:
+            print("🚨 CRITICAL: PDF Toolkit operations failing!")
     else:
         print(f"❌ Testing failed: {results['error']}")
 
