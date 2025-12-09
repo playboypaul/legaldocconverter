@@ -722,8 +722,10 @@ async def esign_pdf(request: dict):
         if file_info["file_type"].lower() != "pdf":
             raise HTTPException(status_code=400, detail="File must be a PDF")
         
-        # Use persistent PDF operations directory
-
+        # Generate eSign ID and signed filename
+        esign_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        signed_filename = f"{base_name}_signed.pdf"
         
         temp_dir = PDF_OPERATIONS_DIR
         signed_path = os.path.join(temp_dir, f"{esign_id}_{signed_filename}")
