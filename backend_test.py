@@ -366,6 +366,323 @@ This document contains standard legal provisions for testing purposes."""
             except Exception as e:
                 logger.error(f"Conversion test error: {e}")
     
+    async def test_pdf_merge(self, session: aiohttp.ClientSession):
+        """Test PDF merge functionality"""
+        logger.info("\n🔗 Testing PDF Merge...")
+        
+        # Upload test PDFs first
+        test_files = await self.create_test_files()
+        
+        # Upload merge test files
+        merge_file_ids = []
+        for file_key in ['merge_pdf_1', 'merge_pdf_2']:
+            upload_result = await self.test_single_upload(session, test_files[file_key], file_key)
+            if upload_result["success"]:
+                merge_file_ids.append(upload_result["response_data"]["file_id"])
+        
+        if len(merge_file_ids) < 2:
+            logger.error("❌ Failed to upload files for merge test")
+            return
+        
+        # Test merge operation
+        merge_data = {"file_ids": merge_file_ids}
+        
+        try:
+            async with session.post(f"{self.api_base}/pdf/merge", json=merge_data) as response:
+                result = {
+                    "operation": "pdf_merge",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_files": len(merge_file_ids)
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["merge_id"] = response_json.get("merge_id")
+                    logger.info(f"✅ PDF Merge successful: {response_json.get('output_file')}")
+                    
+                    # Test download of merged file
+                    if "merge_id" in result:
+                        download_result = await self.test_download(session, result["merge_id"])
+                        result["download_test"] = download_result
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ PDF Merge failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"PDF Merge test error: {e}")
+    
+    async def test_pdf_split_pages(self, session: aiohttp.ClientSession):
+        """Test PDF split into individual pages"""
+        logger.info("\n✂️ Testing PDF Split (Individual Pages)...")
+        
+        # Use multi-page PDF
+        if 'multi_page_pdf' not in self.uploaded_files:
+            test_files = await self.create_test_files()
+            upload_result = await self.test_single_upload(session, test_files['multi_page_pdf'], 'multi_page_pdf')
+            if not upload_result["success"]:
+                logger.error("❌ Failed to upload multi-page PDF for split test")
+                return
+            file_id = upload_result["response_data"]["file_id"]
+        else:
+            file_id = self.uploaded_files['multi_page_pdf']
+        
+        # Test split operation
+        split_data = {
+            "file_id": file_id,
+            "split_type": "pages"
+        }
+        
+        try:
+            async with session.post(f"{self.api_base}/pdf/split", json=split_data) as response:
+                result = {
+                    "operation": "pdf_split_pages",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_file_id": file_id
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["split_files_count"] = len(response_json.get("split_files", []))
+                    logger.info(f"✅ PDF Split successful: {result['split_files_count']} pages created")
+                    
+                    # Test download of first split file
+                    split_files = response_json.get("split_files", [])
+                    if split_files:
+                        first_file_id = split_files[0]["file_id"]
+                        download_result = await self.test_download(session, first_file_id)
+                        result["download_test"] = download_result
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ PDF Split failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"PDF Split test error: {e}")
+    
+    async def test_pdf_split_ranges(self, session: aiohttp.ClientSession):
+        """Test PDF split by page ranges"""
+        logger.info("\n📄 Testing PDF Split (Page Ranges)...")
+        
+        # Use multi-page PDF
+        if 'multi_page_pdf' not in self.uploaded_files:
+            test_files = await self.create_test_files()
+            upload_result = await self.test_single_upload(session, test_files['multi_page_pdf'], 'multi_page_pdf')
+            if not upload_result["success"]:
+                logger.error("❌ Failed to upload multi-page PDF for range split test")
+                return
+            file_id = upload_result["response_data"]["file_id"]
+        else:
+            file_id = self.uploaded_files['multi_page_pdf']
+        
+        # Test split by ranges
+        split_data = {
+            "file_id": file_id,
+            "split_type": "ranges",
+            "page_ranges": [
+                {"start": 1, "end": 2},
+                {"start": 3, "end": 3}
+            ]
+        }
+        
+        try:
+            async with session.post(f"{self.api_base}/pdf/split", json=split_data) as response:
+                result = {
+                    "operation": "pdf_split_ranges",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_file_id": file_id,
+                    "page_ranges": split_data["page_ranges"]
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["split_files_count"] = len(response_json.get("split_files", []))
+                    logger.info(f"✅ PDF Range Split successful: {result['split_files_count']} range files created")
+                    
+                    # Test download of first range file
+                    split_files = response_json.get("split_files", [])
+                    if split_files:
+                        first_file_id = split_files[0]["file_id"]
+                        download_result = await self.test_download(session, first_file_id)
+                        result["download_test"] = download_result
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ PDF Range Split failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"PDF Range Split test error: {e}")
+    
+    async def test_pdf_encrypt(self, session: aiohttp.ClientSession):
+        """Test PDF encryption"""
+        logger.info("\n🔒 Testing PDF Encrypt...")
+        
+        # Use single page PDF
+        if 'single_page_pdf' not in self.uploaded_files:
+            test_files = await self.create_test_files()
+            upload_result = await self.test_single_upload(session, test_files['single_page_pdf'], 'single_page_pdf')
+            if not upload_result["success"]:
+                logger.error("❌ Failed to upload PDF for encrypt test")
+                return
+            file_id = upload_result["response_data"]["file_id"]
+        else:
+            file_id = self.uploaded_files['single_page_pdf']
+        
+        # Test encryption
+        encrypt_data = {
+            "file_id": file_id,
+            "password": "SecurePass123",
+            "permissions": {
+                "print": True,
+                "copy": False,
+                "modify": False
+            }
+        }
+        
+        try:
+            async with session.post(f"{self.api_base}/pdf/encrypt", json=encrypt_data) as response:
+                result = {
+                    "operation": "pdf_encrypt",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_file_id": file_id,
+                    "password_used": "SecurePass123"
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["encrypt_id"] = response_json.get("encrypt_id")
+                    logger.info(f"✅ PDF Encrypt successful: {response_json.get('encrypted_file')}")
+                    
+                    # Test download of encrypted file
+                    if "encrypt_id" in result:
+                        download_result = await self.test_download(session, result["encrypt_id"])
+                        result["download_test"] = download_result
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ PDF Encrypt failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"PDF Encrypt test error: {e}")
+    
+    async def test_pdf_esign(self, session: aiohttp.ClientSession):
+        """Test PDF electronic signature"""
+        logger.info("\n✍️ Testing PDF eSign...")
+        
+        # Use single page PDF
+        if 'single_page_pdf' not in self.uploaded_files:
+            test_files = await self.create_test_files()
+            upload_result = await self.test_single_upload(session, test_files['single_page_pdf'], 'single_page_pdf')
+            if not upload_result["success"]:
+                logger.error("❌ Failed to upload PDF for eSign test")
+                return
+            file_id = upload_result["response_data"]["file_id"]
+        else:
+            file_id = self.uploaded_files['single_page_pdf']
+        
+        # Test eSign
+        esign_data = {
+            "file_id": file_id,
+            "signer_info": {
+                "name": "John Doe",
+                "email": "john@example.com",
+                "date": "2025-12-09"
+            },
+            "position": {
+                "page": 1,
+                "x": 100,
+                "y": 100
+            }
+        }
+        
+        try:
+            async with session.post(f"{self.api_base}/pdf/esign", json=esign_data) as response:
+                result = {
+                    "operation": "pdf_esign",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_file_id": file_id,
+                    "signer": esign_data["signer_info"]["name"]
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["esign_id"] = response_json.get("esign_id")
+                    logger.info(f"✅ PDF eSign successful: {response_json.get('signed_file')}")
+                    
+                    # Test download of signed file
+                    if "esign_id" in result:
+                        download_result = await self.test_download(session, result["esign_id"])
+                        result["download_test"] = download_result
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ PDF eSign failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"PDF eSign test error: {e}")
+    
+    async def test_download(self, session: aiohttp.ClientSession, file_id: str):
+        """Test file download"""
+        try:
+            async with session.get(f"{self.api_base}/download/{file_id}") as response:
+                if response.status == 200:
+                    content = await response.read()
+                    return {
+                        "success": True,
+                        "file_size": len(content),
+                        "content_type": response.headers.get('content-type', 'unknown')
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "error": f"HTTP {response.status}: {await response.text()}"
+                    }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    async def test_pdf_toolkit_comprehensive(self, session: aiohttp.ClientSession):
+        """Run comprehensive PDF Toolkit tests"""
+        logger.info("\n🔧 STARTING PDF TOOLKIT COMPREHENSIVE TESTING...")
+        
+        # Test all PDF operations
+        await self.test_pdf_merge(session)
+        await self.test_pdf_split_pages(session)
+        await self.test_pdf_split_ranges(session)
+        await self.test_pdf_encrypt(session)
+        await self.test_pdf_esign(session)
+        
+        # Analyze PDF Toolkit results
+        pdf_tests = self.test_results["pdf_toolkit_tests"]
+        successful_tests = sum(1 for test in pdf_tests if test["success"])
+        total_tests = len(pdf_tests)
+        
+        logger.info(f"\n📊 PDF Toolkit Results: {successful_tests}/{total_tests} operations successful")
+        
+        # Log failed operations
+        failed_tests = [test for test in pdf_tests if not test["success"]]
+        if failed_tests:
+            logger.info("❌ Failed PDF Operations:")
+            for test in failed_tests:
+                logger.info(f"  - {test['operation']}: {test.get('error', 'Unknown error')}")
+    
     def analyze_results(self):
         """Analyze test results and identify issues"""
         logger.info("\n📊 ANALYZING TEST RESULTS...")
