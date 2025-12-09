@@ -246,14 +246,15 @@ const SecurityPage = ({ onBack }) => {
                     </div>
 
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                      <h3 className="font-semibold text-purple-900 mb-3">CCPA Compliance</h3>
+                      <h3 className="font-semibold text-purple-900 mb-3">PIPEDA Compliance</h3>
                       <p className="text-purple-800 text-sm leading-relaxed mb-3">
-                        California Consumer Privacy Act compliance for all California residents.
+                        Personal Information Protection and Electronic Documents Act compliance for Canadian users.
                       </p>
                       <ul className="text-purple-700 text-xs space-y-1">
-                        <li>• Transparent data practices</li>
-                        <li>• Consumer rights protection</li>
-                        <li>• Data sale prohibition</li>
+                        <li>• Transparent data collection practices</li>
+                        <li>• Individual consent and rights</li>
+                        <li>• Secure data safeguarding</li>
+                        <li>• Accountability measures</li>
                       </ul>
                     </div>
 
