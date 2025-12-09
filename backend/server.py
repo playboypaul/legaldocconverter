@@ -701,15 +701,50 @@ async def esign_pdf(request: dict):
         if file_info["file_type"].lower() != "pdf":
             raise HTTPException(status_code=400, detail="File must be a PDF")
         
-        # Create signed PDF
+        # Create signed PDF using PyPDF2
+        from PyPDF2 import PdfReader, PdfWriter
+        from reportlab.pdfgen import canvas
+        from reportlab.lib.pagesizes import letter
+        import io
+        
         esign_id = str(uuid.uuid4())
         base_name = file_info["original_name"].rsplit('.', 1)[0]
         signed_filename = f"{base_name}_signed.pdf"
         temp_dir = tempfile.gettempdir()
         signed_path = os.path.join(temp_dir, f"{esign_id}_{signed_filename}")
         
-        # Mock PDF signing (in production, use digital signature libraries)
-        shutil.copy2(file_info["file_path"], signed_path)
+        # Read the original PDF
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        # Create signature overlay
+        packet = io.BytesIO()
+        can = canvas.Canvas(packet, pagesize=letter)
+        
+        # Get signature position
+        page_num = signature_position.get("page", 1) - 1  # Convert to 0-based index
+        x = signature_position.get("x", 100)
+        y = signature_position.get("y", 100)
+        
+        # Draw signature text
+        can.setFont("Helvetica", 12)
+        can.drawString(x, y, f"Signed by: {signer_info.get('name', 'Unknown')}")
+        can.drawString(x, y - 15, f"Date: {signer_info.get('date', datetime.now().strftime('%Y-%m-%d'))}")
+        can.save()
+        
+        # Merge signature with PDF
+        packet.seek(0)
+        signature_pdf = PdfReader(packet)
+        
+        # Copy all pages and add signature to specified page
+        for i, page in enumerate(reader.pages):
+            if i == page_num and len(signature_pdf.pages) > 0:
+                page.merge_page(signature_pdf.pages[0])
+            writer.add_page(page)
+        
+        # Write signed PDF
+        with open(signed_path, 'wb') as output_file:
+            writer.write(output_file)
         
         # Store signature metadata
         signature_info = {
