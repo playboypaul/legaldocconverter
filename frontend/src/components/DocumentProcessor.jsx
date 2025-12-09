@@ -2313,9 +2313,10 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
                     <p className="text-sm text-orange-700">Add electronic signatures</p>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Analysis Results */}
