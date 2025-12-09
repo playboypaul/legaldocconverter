@@ -98,9 +98,14 @@ class FileConverter:
                     "pandoc",
                     input_path,
                     "-f", input_fmt,  # Use mapped format
-                    "-t", output_fmt,  # Use mapped format
                     "-o", output_path
                 ]
+                # Add PDF engine for PDF output
+                if output_fmt == "pdf":
+                    cmd.extend(["--pdf-engine=wkhtmltopdf"])
+                else:
+                    cmd.extend(["-t", output_fmt])
+                
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
                 raise Exception(f"Pandoc conversion failed: {e.stderr}")
