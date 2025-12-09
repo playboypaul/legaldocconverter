@@ -17,6 +17,16 @@ import aiofiles
 import asyncio
 from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
+# Persistent storage directories
+STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
+UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
+CONVERSIONS_DIR = os.path.join(STORAGE_BASE_DIR, "conversions")
+PDF_OPERATIONS_DIR = os.path.join(STORAGE_BASE_DIR, "pdf_operations")
+
+# Ensure directories exist
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+os.makedirs(CONVERSIONS_DIR, exist_ok=True)
+os.makedirs(PDF_OPERATIONS_DIR, exist_ok=True)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
