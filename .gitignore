@@ -87,3 +87,7 @@ ENHANCED-LEGALDOCCONVERTER-COMPLETE.zip
 *.env
 *.env.*
 SUPER-ENHANCED-LEGALDOCCONVERTER-PDF-TOOLKIT.zip
+-e 
+# Environment files
+*.env
+*.env.*
