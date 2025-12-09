@@ -233,11 +233,21 @@ async def upload_file(file: UploadFile = File(...)):
             supported_conversions=file_info["supported_conversions"]
         )
         
-    except HTTPException:
-        raise
+    except HTTPException as he:
+        # Re-raise HTTP exceptions with proper logging
+        logger.error(f"HTTP error during upload of {file.filename if file else 'unknown'}: {he.detail}")
+        raise he
     except Exception as e:
-        logger.error(f"Error uploading file: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error uploading file: {str(e)}")
+        # Cleanup temp file if it was created
+        if temp_file_path and os.path.exists(temp_file_path):
+            try:
+                os.remove(temp_file_path)
+                logger.info(f"Cleaned up temp file after error: {temp_file_path}")
+            except Exception as cleanup_error:
+                logger.error(f"Failed to cleanup temp file {temp_file_path}: {str(cleanup_error)}")
+        
+        logger.error(f"Unexpected error uploading file {file.filename if file else 'unknown'}: {str(e)}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred while processing your file. Please try again.")
 
 @api_router.post("/convert", response_model=ConversionResponse)
 async def convert_file(request: ConversionRequest):
