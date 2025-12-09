@@ -226,10 +226,13 @@ const TermsOfService = ({ onBack }) => {
 
                 <section>
                   <h2 className="text-2xl font-bold text-slate-900 mb-4">
-                    13. Governing Law
+                    13. Governing Law and Jurisdiction
                   </h2>
                   <p className="text-slate-700 leading-relaxed mb-4">
-                    These Terms shall be interpreted and governed by the laws of the State of Delaware, United States, without regard to its conflict of law provisions.
+                    These Terms shall be governed by and construed in accordance with the laws of the Province of Alberta and the federal laws of Canada applicable therein, without regard to conflict of law provisions.
+                  </p>
+                  <p className="text-slate-700 leading-relaxed mb-4">
+                    Any dispute arising from or relating to these Terms or your use of the Service shall be subject to the exclusive jurisdiction of the courts located in Alberta, Canada.
                   </p>
                 </section>
 
