@@ -1,0 +1,3 @@
+Legal Document Test
+This is a sample legal document for testing conversion.
+It should convert to PDF successfully.
