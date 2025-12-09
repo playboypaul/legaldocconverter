@@ -646,6 +646,388 @@ This document contains standard legal provisions for testing purposes."""
                 "error": str(e)
             }
     
+    async def test_document_comparison(self, session: aiohttp.ClientSession):
+        """Test document comparison functionality"""
+        logger.info("\n🔍 Testing Document Comparison...")
+        
+        # Create two test files with differences
+        temp_dir = tempfile.gettempdir()
+        
+        # Original document
+        original_content = """Legal Agreement Document
+        
+This is the original version of the legal document.
+It contains standard terms and conditions.
+The parties agree to the following provisions:
+1. Service delivery requirements
+2. Payment terms and conditions
+3. Liability and indemnification clauses"""
+        
+        # Modified document
+        modified_content = """Legal Agreement Document
+        
+This is the MODIFIED version of the legal document.
+It contains updated terms and conditions.
+The parties agree to the following provisions:
+1. Enhanced service delivery requirements
+2. Revised payment terms and conditions
+3. Liability and indemnification clauses
+4. Additional termination provisions"""
+        
+        original_file = os.path.join(temp_dir, 'original_doc.txt')
+        modified_file = os.path.join(temp_dir, 'modified_doc.txt')
+        
+        with open(original_file, 'w') as f:
+            f.write(original_content)
+        with open(modified_file, 'w') as f:
+            f.write(modified_content)
+        
+        try:
+            # Upload both files
+            original_upload = await self.test_single_upload(session, original_file, 'original_comparison')
+            modified_upload = await self.test_single_upload(session, modified_file, 'modified_comparison')
+            
+            if not (original_upload["success"] and modified_upload["success"]):
+                logger.error("❌ Failed to upload files for comparison test")
+                return
+            
+            original_file_id = original_upload["response_data"]["file_id"]
+            modified_file_id = modified_upload["response_data"]["file_id"]
+            
+            # Test comparison
+            comparison_data = {
+                "original_file_id": original_file_id,
+                "modified_file_id": modified_file_id
+            }
+            
+            async with session.post(f"{self.api_base}/compare", json=comparison_data) as response:
+                result = {
+                    "operation": "document_comparison",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "original_file_id": original_file_id,
+                    "modified_file_id": modified_file_id
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    result["comparison_id"] = response_json.get("comparison_id")
+                    differences = response_json.get("differences", {})
+                    result["total_changes"] = differences.get("total_changes", 0)
+                    logger.info(f"✅ Document Comparison successful: {result['total_changes']} changes detected")
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ Document Comparison failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"Document Comparison test error: {e}")
+        finally:
+            # Cleanup
+            for file_path in [original_file, modified_file]:
+                if os.path.exists(file_path):
+                    os.unlink(file_path)
+    
+    async def test_batch_processing(self, session: aiohttp.ClientSession):
+        """Test batch processing functionality"""
+        logger.info("\n📦 Testing Batch Processing...")
+        
+        # Create multiple test files
+        test_files = await self.create_test_files()
+        batch_files = ['small_txt', 'medium_txt']
+        
+        # Upload files for batch processing
+        file_ids = []
+        for file_key in batch_files:
+            if file_key in test_files:
+                upload_result = await self.test_single_upload(session, test_files[file_key], f"batch_{file_key}")
+                if upload_result["success"]:
+                    file_ids.append(upload_result["response_data"]["file_id"])
+        
+        if len(file_ids) < 2:
+            logger.error("❌ Failed to upload enough files for batch test")
+            return
+        
+        # Test batch conversion
+        batch_data = {
+            "file_ids": file_ids,
+            "target_format": "html"
+        }
+        
+        try:
+            async with session.post(f"{self.api_base}/batch-convert", json=batch_data) as response:
+                result = {
+                    "operation": "batch_processing",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "input_files": len(file_ids),
+                    "target_format": "html"
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    result["response_data"] = response_json
+                    results_array = response_json.get("results", [])
+                    successful_conversions = sum(1 for r in results_array if r.get("status") == "success")
+                    result["successful_conversions"] = successful_conversions
+                    logger.info(f"✅ Batch Processing successful: {successful_conversions}/{len(file_ids)} conversions completed")
+                else:
+                    result["error"] = await response.text()
+                    logger.error(f"❌ Batch Processing failed: {result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(result)
+                
+        except Exception as e:
+            logger.error(f"Batch Processing test error: {e}")
+    
+    async def test_annotation_system(self, session: aiohttp.ClientSession):
+        """Test document annotation system"""
+        logger.info("\n📝 Testing Annotation System...")
+        
+        # Upload a test document for annotation
+        test_files = await self.create_test_files()
+        upload_result = await self.test_single_upload(session, test_files['single_page_pdf'], 'annotation_test')
+        
+        if not upload_result["success"]:
+            logger.error("❌ Failed to upload file for annotation test")
+            return
+        
+        file_id = upload_result["response_data"]["file_id"]
+        annotation_id = None
+        
+        try:
+            # Test 1: Add annotation
+            annotation_data = {
+                "file_id": file_id,
+                "annotation": {
+                    "type": "comment",
+                    "text": "This is a test annotation for legal review",
+                    "page": 1,
+                    "location": "top",
+                    "color": "yellow",
+                    "author": "Legal Reviewer"
+                }
+            }
+            
+            async with session.post(f"{self.api_base}/annotate", json=annotation_data) as response:
+                add_result = {
+                    "operation": "add_annotation",
+                    "status_code": response.status,
+                    "success": response.status == 200
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    add_result["response_data"] = response_json
+                    annotation_id = response_json.get("annotation_id")
+                    logger.info(f"✅ Add Annotation successful: {annotation_id}")
+                else:
+                    add_result["error"] = await response.text()
+                    logger.error(f"❌ Add Annotation failed: {add_result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(add_result)
+            
+            # Test 2: Get annotations
+            async with session.get(f"{self.api_base}/annotations/{file_id}") as response:
+                get_result = {
+                    "operation": "get_annotations",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "file_id": file_id
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    get_result["response_data"] = response_json
+                    annotations_count = response_json.get("total", 0)
+                    get_result["annotations_count"] = annotations_count
+                    logger.info(f"✅ Get Annotations successful: {annotations_count} annotations found")
+                else:
+                    get_result["error"] = await response.text()
+                    logger.error(f"❌ Get Annotations failed: {get_result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(get_result)
+            
+            # Test 3: Export annotations
+            export_data = {"file_id": file_id, "format": "json"}
+            
+            async with session.post(f"{self.api_base}/annotations/export", json=export_data) as response:
+                export_result = {
+                    "operation": "export_annotations",
+                    "status_code": response.status,
+                    "success": response.status == 200,
+                    "file_id": file_id
+                }
+                
+                if response.status == 200:
+                    response_json = await response.json()
+                    export_result["response_data"] = response_json
+                    export_id = response_json.get("export_id")
+                    logger.info(f"✅ Export Annotations successful: {export_id}")
+                    
+                    # Test download of exported annotations
+                    if export_id:
+                        download_result = await self.test_download(session, export_id)
+                        export_result["download_test"] = download_result
+                else:
+                    export_result["error"] = await response.text()
+                    logger.error(f"❌ Export Annotations failed: {export_result['error']}")
+                
+                self.test_results["pdf_toolkit_tests"].append(export_result)
+            
+            # Test 4: Delete annotation
+            if annotation_id:
+                async with session.delete(f"{self.api_base}/annotations/{annotation_id}") as response:
+                    delete_result = {
+                        "operation": "delete_annotation",
+                        "status_code": response.status,
+                        "success": response.status == 200,
+                        "annotation_id": annotation_id
+                    }
+                    
+                    if response.status == 200:
+                        response_json = await response.json()
+                        delete_result["response_data"] = response_json
+                        logger.info(f"✅ Delete Annotation successful: {annotation_id}")
+                    else:
+                        delete_result["error"] = await response.text()
+                        logger.error(f"❌ Delete Annotation failed: {delete_result['error']}")
+                    
+                    self.test_results["pdf_toolkit_tests"].append(delete_result)
+                    
+        except Exception as e:
+            logger.error(f"Annotation System test error: {e}")
+    
+    async def test_error_handling(self, session: aiohttp.ClientSession):
+        """Test error handling and edge cases"""
+        logger.info("\n⚠️ Testing Error Handling...")
+        
+        error_tests = []
+        
+        # Test 1: Invalid file type upload
+        try:
+            temp_file = tempfile.NamedTemporaryFile(suffix='.invalid', delete=False)
+            temp_file.write(b"Invalid file content")
+            temp_file.close()
+            
+            result = await self.test_single_upload(session, temp_file.name, "invalid_file_type")
+            error_tests.append({
+                "test": "invalid_file_type",
+                "expected_failure": True,
+                "actual_success": result["success"],
+                "status_code": result.get("status_code"),
+                "passed": not result["success"]  # Should fail
+            })
+            
+            os.unlink(temp_file.name)
+        except Exception as e:
+            logger.error(f"Error in invalid file type test: {e}")
+        
+        # Test 2: Convert with invalid format
+        try:
+            # First upload a valid file
+            test_files = await self.create_test_files()
+            upload_result = await self.test_single_upload(session, test_files['small_txt'], 'error_test')
+            
+            if upload_result["success"]:
+                file_id = upload_result["response_data"]["file_id"]
+                
+                conversion_data = {
+                    "file_id": file_id,
+                    "target_format": "invalid_format"
+                }
+                
+                async with session.post(f"{self.api_base}/convert", json=conversion_data) as response:
+                    error_tests.append({
+                        "test": "invalid_conversion_format",
+                        "expected_failure": True,
+                        "actual_success": response.status == 200,
+                        "status_code": response.status,
+                        "passed": response.status != 200  # Should fail
+                    })
+        except Exception as e:
+            logger.error(f"Error in invalid conversion test: {e}")
+        
+        # Test 3: Request non-existent file
+        try:
+            fake_file_id = "non-existent-file-id"
+            async with session.get(f"{self.api_base}/download/{fake_file_id}") as response:
+                error_tests.append({
+                    "test": "non_existent_file_download",
+                    "expected_failure": True,
+                    "actual_success": response.status == 200,
+                    "status_code": response.status,
+                    "passed": response.status == 404  # Should return 404
+                })
+        except Exception as e:
+            logger.error(f"Error in non-existent file test: {e}")
+        
+        # Test 4: Missing parameters
+        try:
+            async with session.post(f"{self.api_base}/convert", json={}) as response:
+                error_tests.append({
+                    "test": "missing_parameters",
+                    "expected_failure": True,
+                    "actual_success": response.status == 200,
+                    "status_code": response.status,
+                    "passed": response.status == 400  # Should return 400
+                })
+        except Exception as e:
+            logger.error(f"Error in missing parameters test: {e}")
+        
+        # Analyze error handling results
+        passed_tests = sum(1 for test in error_tests if test["passed"])
+        total_tests = len(error_tests)
+        
+        result = {
+            "operation": "error_handling",
+            "total_tests": total_tests,
+            "passed_tests": passed_tests,
+            "success": passed_tests == total_tests,
+            "error_tests": error_tests
+        }
+        
+        logger.info(f"Error Handling Results: {passed_tests}/{total_tests} tests passed")
+        self.test_results["error_tests"].append(result)
+    
+    async def test_file_persistence(self, session: aiohttp.ClientSession):
+        """Test file persistence over time"""
+        logger.info("\n💾 Testing File Persistence...")
+        
+        # Upload a test file
+        test_files = await self.create_test_files()
+        upload_result = await self.test_single_upload(session, test_files['small_txt'], 'persistence_test')
+        
+        if not upload_result["success"]:
+            logger.error("❌ Failed to upload file for persistence test")
+            return
+        
+        file_id = upload_result["response_data"]["file_id"]
+        
+        # Wait 5 seconds
+        logger.info("Waiting 5 seconds to test file persistence...")
+        await asyncio.sleep(5)
+        
+        # Try to download the file again
+        download_result = await self.test_download(session, file_id)
+        
+        result = {
+            "operation": "file_persistence",
+            "file_id": file_id,
+            "success": download_result["success"],
+            "wait_time": 5
+        }
+        
+        if download_result["success"]:
+            logger.info(f"✅ File Persistence successful: File still available after 5 seconds")
+        else:
+            logger.error(f"❌ File Persistence failed: {download_result.get('error', 'Unknown error')}")
+            result["error"] = download_result.get("error")
+        
+        self.test_results["pdf_toolkit_tests"].append(result)
+    
     async def test_pdf_toolkit_comprehensive(self, session: aiohttp.ClientSession):
         """Run comprehensive PDF Toolkit tests"""
         logger.info("\n🔧 STARTING PDF TOOLKIT COMPREHENSIVE TESTING...")
@@ -656,6 +1038,13 @@ This document contains standard legal provisions for testing purposes."""
         await self.test_pdf_split_ranges(session)
         await self.test_pdf_encrypt(session)
         await self.test_pdf_esign(session)
+        
+        # Test new features
+        await self.test_document_comparison(session)
+        await self.test_batch_processing(session)
+        await self.test_annotation_system(session)
+        await self.test_error_handling(session)
+        await self.test_file_persistence(session)
         
         # Analyze PDF Toolkit results
         pdf_tests = self.test_results["pdf_toolkit_tests"]
