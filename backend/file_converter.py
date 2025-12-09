@@ -67,7 +67,7 @@ class FileConverter:
             format_mapping = {
                 "docx": "docx",
                 "doc": "doc",
-                "txt": "plain",
+                "txt": "markdown",  # Use markdown instead of plain for better compatibility
                 "html": "html",
                 "rtf": "rtf",
                 "odt": "odt",
