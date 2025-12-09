@@ -37,8 +37,10 @@ class BackendTester:
             "conversion_tests": [],
             "analysis_tests": [],
             "performance_tests": [],
-            "error_tests": []
+            "error_tests": [],
+            "pdf_toolkit_tests": []
         }
+        self.uploaded_files = {}  # Store uploaded file IDs for PDF operations
         
     def _get_backend_url(self) -> str:
         """Get backend URL from frontend .env file"""
