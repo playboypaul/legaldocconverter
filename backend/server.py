@@ -1076,6 +1076,160 @@ async def save_document(request: dict):
         logger.error(f"Document save error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to save document: {str(e)}")
 
+# Annotation storage
+annotation_storage = {}
+
+@api_router.post("/annotate")
+async def add_annotation(request: dict):
+    """Add annotation to a document"""
+    try:
+        file_id = request.get("file_id")
+        annotation = request.get("annotation")
+        
+        if not file_id or not annotation:
+            raise HTTPException(status_code=400, detail="file_id and annotation are required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        # Initialize annotation storage for this file if needed
+        if file_id not in annotation_storage:
+            annotation_storage[file_id] = []
+        
+        # Add annotation with unique ID
+        annotation_id = str(uuid.uuid4())
+        annotation_data = {
+            "annotation_id": annotation_id,
+            "file_id": file_id,
+            "type": annotation.get("type", "comment"),  # comment, highlight, note, bookmark
+            "text": annotation.get("text", ""),
+            "location": annotation.get("location", ""),
+            "color": annotation.get("color", "yellow"),
+            "page": annotation.get("page", 1),
+            "position": annotation.get("position", {}),
+            "created_at": datetime.utcnow().isoformat(),
+            "author": annotation.get("author", "Anonymous")
+        }
+        
+        annotation_storage[file_id].append(annotation_data)
+        
+        logger.info(f"Annotation added to file {file_id}: {annotation_data['type']}")
+        
+        return {
+            "annotation_id": annotation_id,
+            "status": "success",
+            "message": "Annotation added successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Annotation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to add annotation: {str(e)}")
+
+@api_router.get("/annotations/{file_id}")
+async def get_annotations(file_id: str):
+    """Get all annotations for a document"""
+    try:
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        annotations = annotation_storage.get(file_id, [])
+        
+        return {
+            "file_id": file_id,
+            "annotations": annotations,
+            "total": len(annotations)
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Get annotations error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get annotations: {str(e)}")
+
+@api_router.delete("/annotations/{annotation_id}")
+async def delete_annotation(annotation_id: str):
+    """Delete a specific annotation"""
+    try:
+        # Find and delete the annotation
+        for file_id, annotations in annotation_storage.items():
+            for i, annotation in enumerate(annotations):
+                if annotation["annotation_id"] == annotation_id:
+                    del annotation_storage[file_id][i]
+                    logger.info(f"Annotation {annotation_id} deleted from file {file_id}")
+                    return {
+                        "annotation_id": annotation_id,
+                        "status": "success",
+                        "message": "Annotation deleted successfully"
+                    }
+        
+        raise HTTPException(status_code=404, detail="Annotation not found")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Delete annotation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete annotation: {str(e)}")
+
+@api_router.post("/annotations/export")
+async def export_annotations(request: dict):
+    """Export annotations to a file"""
+    try:
+        file_id = request.get("file_id")
+        export_format = request.get("format", "json")  # json or pdf
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        annotations = annotation_storage.get(file_id, [])
+        
+        if export_format == "json":
+            # Export as JSON
+            export_id = str(uuid.uuid4())
+            export_filename = f"annotations_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+            temp_dir = tempfile.gettempdir()
+            export_path = os.path.join(temp_dir, f"{export_id}_{export_filename}")
+            
+            import json
+            with open(export_path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    "file_id": file_id,
+                    "file_name": file_storage[file_id]["original_name"],
+                    "annotations": annotations,
+                    "total_annotations": len(annotations),
+                    "export_date": datetime.utcnow().isoformat()
+                }, f, indent=2)
+            
+            # Store export file
+            file_storage[export_id] = {
+                "file_id": export_id,
+                "original_name": export_filename,
+                "file_path": export_path,
+                "file_type": "json",
+                "file_size": os.path.getsize(export_path),
+                "upload_time": datetime.utcnow()
+            }
+            
+            return {
+                "export_id": export_id,
+                "filename": export_filename,
+                "format": export_format,
+                "download_url": f"/api/download/{export_id}",
+                "status": "success"
+            }
+        else:
+            raise HTTPException(status_code=400, detail="Unsupported export format")
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Export annotations error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to export annotations: {str(e)}")
+
 # Include the router in the main app
 app.include_router(api_router)
 
