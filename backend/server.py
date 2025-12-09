@@ -344,26 +344,43 @@ async def analyze_document(request: AnalysisRequest):
         logger.error(f"Error analyzing document: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error analyzing document: {str(e)}")
 
-@api_router.get("/download/{conversion_id}")
-async def download_file(conversion_id: str):
-    """Download converted file"""
+@api_router.get("/download/{file_id}")
+async def download_file(file_id: str):
+    """Download converted file or PDF operation result"""
     try:
-        # Check if conversion exists
-        if conversion_id not in conversion_storage:
-            raise HTTPException(status_code=404, detail="Conversion not found")
+        # Check if it's a conversion result
+        if file_id in conversion_storage:
+            conversion_info = conversion_storage[file_id]
+            
+            # Check if file exists
+            if not os.path.exists(conversion_info["converted_file_path"]):
+                raise HTTPException(status_code=404, detail="Converted file not found")
+            
+            return FileResponse(
+                path=conversion_info["converted_file_path"],
+                filename=conversion_info["converted_file"],
+                media_type='application/octet-stream'
+            )
         
-        conversion_info = conversion_storage[conversion_id]
+        # Check if it's a file in file_storage (PDF operations, uploads)
+        elif file_id in file_storage:
+            file_info = file_storage[file_id]
+            
+            # Check if file exists
+            if not os.path.exists(file_info["file_path"]):
+                raise HTTPException(status_code=404, detail="File not found")
+            
+            return FileResponse(
+                path=file_info["file_path"],
+                filename=file_info["original_name"],
+                media_type='application/octet-stream'
+            )
         
-        # Check if file exists
-        if not os.path.exists(conversion_info["converted_file_path"]):
-            raise HTTPException(status_code=404, detail="Converted file not found")
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
         
-        return FileResponse(
-            path=conversion_info["converted_file_path"],
-            filename=conversion_info["converted_file"],
-            media_type='application/octet-stream'
-        )
-        
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error downloading file: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error downloading file: {str(e)}")
