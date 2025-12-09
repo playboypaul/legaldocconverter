@@ -75,6 +75,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<BlogPage />} />
+            <Route path="/guides" element={<GuidesPage />} />
           </Routes>
         </BrowserRouter>
         <SignInModal />
