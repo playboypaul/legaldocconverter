@@ -1,0 +1,20 @@
+{
+  "file_id": "738076ff-1151-4ee1-9afe-c04d42ee5711",
+  "file_name": "single_page_test.pdf",
+  "annotations": [
+    {
+      "annotation_id": "d7b9aa8c-a826-4198-aa93-03bd89c8aa5e",
+      "file_id": "738076ff-1151-4ee1-9afe-c04d42ee5711",
+      "type": "comment",
+      "text": "This is a test annotation for legal review",
+      "location": "top",
+      "color": "yellow",
+      "page": 1,
+      "position": {},
+      "created_at": "2025-12-09T08:55:42.994005",
+      "author": "Legal Reviewer"
+    }
+  ],
+  "total_annotations": 1,
+  "export_date": "2025-12-09T08:55:43.090703"
+}
