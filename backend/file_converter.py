@@ -33,7 +33,11 @@ class FileConverter:
                 elif output_format == "docx":
                     await self._convert_pdf_to_docx(input_path, output_path)
                 else:
-                    await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
+                    # For other formats, convert PDF → TXT → target format
+                    # Since pandoc can't read PDFs
+                    temp_txt_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.txt")
+                    await self._convert_pdf_to_text_based(input_path, temp_txt_path, "txt")
+                    await self._convert_with_pandoc(temp_txt_path, output_path, "txt", output_format)
             
             elif input_format in ["docx", "doc"]:
                 if output_format == "pdf":
