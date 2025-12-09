@@ -154,7 +154,6 @@ This document contains standard legal provisions for testing purposes."""
         test_files['small_txt'] = os.path.join(temp_dir, 'test_small.txt')
         test_files['medium_txt'] = os.path.join(temp_dir, 'test_medium.txt')
         test_files['large_txt'] = os.path.join(temp_dir, 'test_large.txt')
-            
         # Write text files
         with open(test_files['small_txt'], 'w') as f:
             f.write(small_txt)
@@ -162,8 +161,6 @@ This document contains standard legal provisions for testing purposes."""
             f.write(medium_txt)
         with open(test_files['large_txt'], 'w') as f:
             f.write(large_txt)
-        with open(test_files['docx_file'], 'w') as f:
-            f.write(docx_content)
             
         logger.info(f"Created test files in {temp_dir}")
         return test_files
