@@ -323,14 +323,17 @@ const PrivacyPolicy = ({ onBack }) => {
                     13. Regulatory Compliance
                   </h2>
                   <p className="text-slate-700 leading-relaxed mb-4">
-                    We comply with applicable privacy regulations, including:
+                    As a Canadian company based in Alberta, we comply with applicable privacy regulations, including:
                   </p>
                   <ul className="list-disc pl-6 space-y-2 text-slate-700">
-                    <li><strong>GDPR:</strong> General Data Protection Regulation (EU)</li>
-                    <li><strong>CCPA:</strong> California Consumer Privacy Act (California)</li>
-                    <li><strong>PIPEDA:</strong> Personal Information Protection and Electronic Documents Act (Canada)</li>
-                    <li><strong>Other applicable regional privacy laws</strong></li>
+                    <li><strong>PIPEDA:</strong> Personal Information Protection and Electronic Documents Act (Canada) - Our primary governing privacy law</li>
+                    <li><strong>Alberta PIPA:</strong> Personal Information Protection Act (Alberta)</li>
+                    <li><strong>GDPR:</strong> General Data Protection Regulation (EU) - For European users</li>
+                    <li><strong>Other applicable international privacy laws</strong> where our services are used</li>
                   </ul>
+                  <p className="text-slate-700 leading-relaxed mt-4">
+                    Our data practices are designed to meet or exceed Canadian federal and provincial privacy standards.
+                  </p>
                 </section>
 
               </div>
