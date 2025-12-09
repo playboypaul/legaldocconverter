@@ -64,12 +64,12 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <button 
-                  onClick={() => window.openSecurityPage && window.openSecurityPage()}
-                  className="hover:text-white transition-colors text-left"
+                <Link 
+                  to="/security"
+                  className="hover:text-white transition-colors"
                 >
                   Security
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
