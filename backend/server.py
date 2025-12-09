@@ -507,23 +507,32 @@ async def split_pdf(request: dict):
         if file_info["file_type"].lower() != "pdf":
             raise HTTPException(status_code=400, detail="File must be a PDF")
         
-        # Mock PDF split operation
+        # Split PDF using PyPDF2
+        from PyPDF2 import PdfReader, PdfWriter
+        
         split_id = str(uuid.uuid4())
         base_name = file_info["original_name"].rsplit('.', 1)[0]
+        temp_dir = tempfile.gettempdir()
         
-        # Generate split files (mock operation)
+        # Read the PDF
+        reader = PdfReader(file_info["file_path"])
+        total_pages = len(reader.pages)
+        
         split_files = []
+        
         if split_type == "pages":
-            # Split into individual pages (mock 5 pages)
-            for i in range(1, 6):
-                page_filename = f"{base_name}_page_{i}.pdf"
-                temp_dir = tempfile.gettempdir()
-                page_path = os.path.join(temp_dir, f"{split_id}_page_{i}_{page_filename}")
+            # Split into individual pages
+            for i in range(total_pages):
+                writer = PdfWriter()
+                writer.add_page(reader.pages[i])
                 
-                # Copy original file as mock page (in production, extract actual page)
-                shutil.copy2(file_info["file_path"], page_path)
+                page_filename = f"{base_name}_page_{i+1}.pdf"
+                page_path = os.path.join(temp_dir, f"{split_id}_page_{i+1}_{page_filename}")
                 
-                page_id = f"{split_id}_page_{i}"
+                with open(page_path, 'wb') as output_file:
+                    writer.write(output_file)
+                
+                page_id = f"{split_id}_page_{i+1}"
                 file_storage[page_id] = {
                     "file_id": page_id,
                     "original_name": page_filename,
@@ -536,18 +545,25 @@ async def split_pdf(request: dict):
                 split_files.append({
                     "file_id": page_id,
                     "filename": page_filename,
-                    "page_number": i,
+                    "page_number": i + 1,
                     "download_url": f"/api/download/{page_id}"
                 })
         else:
             # Split by ranges
             for idx, range_info in enumerate(page_ranges):
-                range_filename = f"{base_name}_pages_{range_info['start']}-{range_info['end']}.pdf"
-                temp_dir = tempfile.gettempdir()
+                writer = PdfWriter()
+                start_page = range_info.get('start', 1) - 1  # Convert to 0-based index
+                end_page = min(range_info.get('end', total_pages), total_pages)  # Ensure within bounds
+                
+                for page_num in range(start_page, end_page):
+                    if 0 <= page_num < total_pages:
+                        writer.add_page(reader.pages[page_num])
+                
+                range_filename = f"{base_name}_pages_{start_page+1}-{end_page}.pdf"
                 range_path = os.path.join(temp_dir, f"{split_id}_range_{idx}_{range_filename}")
                 
-                # Copy original file as mock range
-                shutil.copy2(file_info["file_path"], range_path)
+                with open(range_path, 'wb') as output_file:
+                    writer.write(output_file)
                 
                 range_id = f"{split_id}_range_{idx}"
                 file_storage[range_id] = {
@@ -562,7 +578,7 @@ async def split_pdf(request: dict):
                 split_files.append({
                     "file_id": range_id,
                     "filename": range_filename,
-                    "page_range": f"{range_info['start']}-{range_info['end']}",
+                    "page_range": f"{start_page+1}-{end_page}",
                     "download_url": f"/api/download/{range_id}"
                 })
         
