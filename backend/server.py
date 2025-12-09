@@ -879,6 +879,7 @@ async def save_document(request: dict):
 # Include the router in the main app
 app.include_router(api_router)
 
+# Add CORS middleware with proper configuration
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
