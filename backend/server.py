@@ -148,8 +148,11 @@ def load_storage():
                         file_info['upload_time'] = datetime.fromisoformat(file_info['upload_time'])
                     file_storage[file_id] = file_info
                 logger.info(f"Loaded {len(file_storage)} files from persistent storage")
+        else:
+            logger.info("No existing file storage found - starting fresh")
     except Exception as e:
-        logger.error(f"Error loading file storage: {e}")
+        logger.warning(f"Error loading file storage, starting fresh: {e}")
+        file_storage = {}
     
     try:
         if os.path.exists(CONVERSION_METADATA_FILE):
@@ -160,8 +163,11 @@ def load_storage():
                         conv_info['conversion_time'] = datetime.fromisoformat(conv_info['conversion_time'])
                     conversion_storage[conv_id] = conv_info
                 logger.info(f"Loaded {len(conversion_storage)} conversions from persistent storage")
+        else:
+            logger.info("No existing conversion storage found - starting fresh")
     except Exception as e:
-        logger.error(f"Error loading conversion storage: {e}")
+        logger.warning(f"Error loading conversion storage, starting fresh: {e}")
+        conversion_storage = {}
     
     return file_storage, conversion_storage
 
