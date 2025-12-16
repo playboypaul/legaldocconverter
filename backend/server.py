@@ -684,6 +684,7 @@ async def split_pdf(request: dict):
                     "download_url": f"/api/download/{range_id}"
                 })
         
+        save_storage()
         logger.info(f"PDF split completed: {file_info['original_name']} split into {len(split_files)} files")
         
         return {
