@@ -293,6 +293,7 @@ async def upload_file(file: UploadFile = File(...)):
         }
         
         file_storage[file_id] = file_info
+        save_storage()
         
         logger.info(f"File uploaded successfully: {file.filename} ({file_size} bytes) with ID: {file_id}")
         
