@@ -936,6 +936,7 @@ async def batch_upload(files: List[UploadFile] = File(...)):
                 "file_size": file_size
             })
         
+        save_storage()
         return {"results": results}
         
     except Exception as e:
