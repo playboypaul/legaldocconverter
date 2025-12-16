@@ -53,6 +53,28 @@ MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
+# Health check endpoints for Kubernetes
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes liveness probe"""
+    return {"status": "healthy", "service": "LegalDocConverter API"}
+
+@app.get("/ready")
+async def readiness_check():
+    """Readiness check endpoint for Kubernetes readiness probe"""
+    try:
+        # Check if we can access the database
+        await db.command('ping')
+        return {"status": "ready", "database": "connected"}
+    except Exception as e:
+        # Return 503 if not ready
+        from fastapi import Response
+        return Response(
+            content='{"status": "not ready", "error": "database unavailable"}',
+            status_code=503,
+            media_type="application/json"
+        )
+
 # Initialize services
 file_converter = FileConverter()
 ai_analyzer = AIAnalyzer()
