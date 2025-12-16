@@ -508,6 +508,7 @@ async def cleanup_old_files():
                 del analysis_storage[analysis_id]
             
             if files_to_remove or conversions_to_remove or analyses_to_remove:
+                save_storage()
                 logger.info(f"Cleaned up {len(files_to_remove)} files, {len(conversions_to_remove)} conversions, {len(analyses_to_remove)} analyses")
             
             # Sleep for 30 minutes before next cleanup
