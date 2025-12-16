@@ -573,6 +573,7 @@ async def merge_pdfs(request: dict):
             "file_size": os.path.getsize(output_path),
             "upload_time": datetime.utcnow()
         }
+        save_storage()
         
         logger.info(f"PDF merge completed: {len(file_ids)} files merged into {output_filename}")
         
