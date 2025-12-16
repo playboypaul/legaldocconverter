@@ -763,6 +763,7 @@ async def encrypt_pdf(request: dict):
             "encrypted": True,
             "permissions": permissions
         }
+        save_storage()
         
         logger.info(f"PDF encryption completed: {file_info['original_name']} encrypted as {encrypted_filename}")
         
