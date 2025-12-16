@@ -1301,6 +1301,7 @@ async def export_annotations(request: dict):
                 "file_size": os.path.getsize(export_path),
                 "upload_time": datetime.utcnow()
             }
+            save_storage()
             
             return {
                 "export_id": export_id,
