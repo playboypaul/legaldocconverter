@@ -373,6 +373,7 @@ async def convert_file(request: ConversionRequest):
             "file_size": os.path.getsize(converted_file_path),
             "upload_time": datetime.utcnow()
         }
+        save_storage()
         
         logger.info(f"File converted: {file_info['original_name']} to {request.target_format}")
         
