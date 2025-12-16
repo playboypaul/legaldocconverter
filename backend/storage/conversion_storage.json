@@ -1,1 +1,12 @@
-{}
+{
+  "afef89df-8516-4c83-b1d3-79744f497614": {
+    "conversion_id": "afef89df-8516-4c83-b1d3-79744f497614",
+    "original_file_id": "b595b928-cc6c-4a4e-bd47-bbe607589de3",
+    "converted_file_path": "/app/backend/storage/conversions/afef89df-8516-4c83-b1d3-79744f497614_converted.docx",
+    "original_file": "persistent_test.txt",
+    "converted_file": "persistent_test.docx",
+    "target_format": "docx",
+    "conversion_time": "2025-12-16T02:03:39.867762",
+    "status": "completed"
+  }
+}

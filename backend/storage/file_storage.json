@@ -46,5 +46,53 @@
       "ms",
       "zimwiki"
     ]
+  },
+  "b595b928-cc6c-4a4e-bd47-bbe607589de3": {
+    "file_id": "b595b928-cc6c-4a4e-bd47-bbe607589de3",
+    "original_name": "persistent_test.txt",
+    "file_path": "/app/backend/storage/uploads/b595b928-cc6c-4a4e-bd47-bbe607589de3_persistent_test.txt",
+    "file_type": "txt",
+    "file_size": 34,
+    "upload_time": "2025-12-16T02:03:31.993752",
+    "supported_conversions": [
+      "pdf",
+      "docx",
+      "doc",
+      "rtf",
+      "odt",
+      "html",
+      "xml",
+      "csv",
+      "xlsx",
+      "xls",
+      "ppt",
+      "pptx",
+      "epub",
+      "md",
+      "json",
+      "yaml",
+      "tex",
+      "docbook",
+      "opml",
+      "rst",
+      "asciidoc",
+      "wiki",
+      "jira",
+      "fb2",
+      "icml",
+      "tei",
+      "context",
+      "man",
+      "ms",
+      "zimwiki"
+    ]
+  },
+  "afef89df-8516-4c83-b1d3-79744f497614": {
+    "file_id": "afef89df-8516-4c83-b1d3-79744f497614",
+    "original_name": "persistent_test.docx",
+    "file_path": "/app/backend/storage/conversions/afef89df-8516-4c83-b1d3-79744f497614_converted.docx",
+    "file_type": "docx",
+    "file_size": 36604,
+    "upload_time": "2025-12-16T02:03:39.867775"
   }
 }
