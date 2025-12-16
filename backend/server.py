@@ -1151,6 +1151,7 @@ async def save_document(request: dict):
         }
         
         file_storage[file_id] = file_info
+        save_storage()
         
         return {
             "file_id": file_id,
