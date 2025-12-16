@@ -867,6 +867,7 @@ async def esign_pdf(request: dict):
             "signed": True,
             "signature_info": signature_info
         }
+        save_storage()
         
         logger.info(f"PDF eSigning completed: {file_info['original_name']} signed as {signed_filename}")
         
