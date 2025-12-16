@@ -1002,6 +1002,7 @@ async def batch_convert(request: dict):
                     "error": str(e)
                 })
         
+        save_storage()
         return {"results": results}
         
     except Exception as e:
