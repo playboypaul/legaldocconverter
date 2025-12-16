@@ -16,6 +16,7 @@ import shutil
 import aiofiles
 import asyncio
 import io
+import json
 from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
 from reportlab.pdfgen import canvas
