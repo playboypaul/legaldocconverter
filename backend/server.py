@@ -105,9 +105,73 @@ class SupportedFormats(BaseModel):
     input: List[str]
     output: List[str]
 
-# In-memory storage for file metadata (temporary)
-file_storage = {}
-conversion_storage = {}
+# Persistent storage file paths
+STORAGE_METADATA_FILE = os.path.join(STORAGE_BASE_DIR, "file_storage.json")
+CONVERSION_METADATA_FILE = os.path.join(STORAGE_BASE_DIR, "conversion_storage.json")
+
+# Load or initialize storage from disk
+def load_storage():
+    """Load file storage metadata from disk"""
+    file_storage = {}
+    conversion_storage = {}
+    
+    try:
+        if os.path.exists(STORAGE_METADATA_FILE):
+            with open(STORAGE_METADATA_FILE, 'r') as f:
+                data = json.load(f)
+                # Convert datetime strings back to datetime objects
+                for file_id, file_info in data.items():
+                    if 'upload_time' in file_info and isinstance(file_info['upload_time'], str):
+                        file_info['upload_time'] = datetime.fromisoformat(file_info['upload_time'])
+                    file_storage[file_id] = file_info
+                logger.info(f"Loaded {len(file_storage)} files from persistent storage")
+    except Exception as e:
+        logger.error(f"Error loading file storage: {e}")
+    
+    try:
+        if os.path.exists(CONVERSION_METADATA_FILE):
+            with open(CONVERSION_METADATA_FILE, 'r') as f:
+                data = json.load(f)
+                for conv_id, conv_info in data.items():
+                    if 'conversion_time' in conv_info and isinstance(conv_info['conversion_time'], str):
+                        conv_info['conversion_time'] = datetime.fromisoformat(conv_info['conversion_time'])
+                    conversion_storage[conv_id] = conv_info
+                logger.info(f"Loaded {len(conversion_storage)} conversions from persistent storage")
+    except Exception as e:
+        logger.error(f"Error loading conversion storage: {e}")
+    
+    return file_storage, conversion_storage
+
+def save_storage():
+    """Save file storage metadata to disk"""
+    try:
+        # Convert datetime objects to strings for JSON serialization
+        file_data = {}
+        for file_id, file_info in file_storage.items():
+            info_copy = file_info.copy()
+            if 'upload_time' in info_copy and isinstance(info_copy['upload_time'], datetime):
+                info_copy['upload_time'] = info_copy['upload_time'].isoformat()
+            file_data[file_id] = info_copy
+        
+        with open(STORAGE_METADATA_FILE, 'w') as f:
+            json.dump(file_data, f, indent=2)
+        
+        # Save conversion storage
+        conv_data = {}
+        for conv_id, conv_info in conversion_storage.items():
+            info_copy = conv_info.copy()
+            if 'conversion_time' in info_copy and isinstance(info_copy['conversion_time'], datetime):
+                info_copy['conversion_time'] = info_copy['conversion_time'].isoformat()
+            conv_data[conv_id] = info_copy
+        
+        with open(CONVERSION_METADATA_FILE, 'w') as f:
+            json.dump(conv_data, f, indent=2)
+            
+    except Exception as e:
+        logger.error(f"Error saving storage metadata: {e}")
+
+# Load existing storage on startup
+file_storage, conversion_storage = load_storage()
 analysis_storage = {}
 
 # Supported formats
