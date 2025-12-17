@@ -48,10 +48,13 @@ const LegalBlog = () => {
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-sm">{post.date}</span>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                      Read More
-                    </button>
+                    <span className="text-gray-500 text-sm">{post.date} • {post.readTime}</span>
+                    <Link 
+                      to={`/blog/${post.id}`}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-block"
+                    >
+                      Read More →
+                    </Link>
                   </div>
                 </div>
               </article>
