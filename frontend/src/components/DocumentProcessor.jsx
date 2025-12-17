@@ -1406,7 +1406,7 @@ ${documentEditor.format === 'pdf' ? 'Edit PDF content (will be converted for edi
                       <div className="space-y-4">
                         <div className="p-4 border-l-4 border-yellow-400 bg-yellow-50 relative">
                           <p className="text-gray-800 mb-2">
-                            "This agreement shall be governed by the laws of the State of California..."
+                            "This agreement shall be governed by the laws of the Province of Alberta, Canada..."
                           </p>
                           <div className="absolute -right-2 top-2">
                             <div className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
