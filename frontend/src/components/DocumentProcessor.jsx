@@ -30,6 +30,10 @@ const DocumentProcessor = () => {
   const [comparisonResult, setComparisonResult] = useState(null);
   const [documentEditor, setDocumentEditor] = useState({ content: '', format: '', isEditing: false });
   const [annotations, setAnnotations] = useState([]);
+  const [selectedAnnotationColor, setSelectedAnnotationColor] = useState('yellow');
+  const [annotationText, setAnnotationText] = useState('');
+  const [isLoadingAnnotations, setIsLoadingAnnotations] = useState(false);
+  const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
   const [integrations, setIntegrations] = useState({ clio: false, westlaw: false, lexis: false });
   
   // PDF Editing Features State
