@@ -754,29 +754,12 @@ const DocumentProcessor = () => {
               <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
             </Button>
             <Button
-              variant={activeTab === 'edit' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('edit')}
-              className={`${activeTab === 'edit' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
-            >
-              <Edit3 className="h-4 w-4 mr-2" />
-              Edit
-            </Button>
-            <Button
               variant={activeTab === 'annotate' ? 'default' : 'ghost'}
               onClick={() => setActiveTab('annotate')}
               className={`${activeTab === 'annotate' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
             >
               <PenTool className="h-4 w-4 mr-2" />
               Annotate
-              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
-            </Button>
-            <Button
-              variant={activeTab === 'integrations' ? 'default' : 'ghost'}
-              onClick={() => setActiveTab('integrations')}
-              className={`${activeTab === 'integrations' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
-            >
-              <Layers className="h-4 w-4 mr-2" />
-              Integrations
               <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
             </Button>
             <Button
