@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { articles } from './articlesData';
+import Header from '../Header';
+import Footer from '../Footer';
 
 const BlogArticle = () => {
   const { id } = useParams();
@@ -9,19 +11,25 @@ const BlogArticle = () => {
 
   if (!article) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Article Not Found</h1>
-          <Link to="/blog" className="text-blue-600 hover:text-blue-800">
-            ← Back to Blog
-          </Link>
+      <>
+        <Header />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Article Not Found</h1>
+            <Link to="/blog" className="text-blue-600 hover:text-blue-800">
+              ← Back to Blog
+            </Link>
+          </div>
         </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <>
+      <Header />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Link to="/blog" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8">
           <ArrowLeft className="h-4 w-4 mr-2" />
