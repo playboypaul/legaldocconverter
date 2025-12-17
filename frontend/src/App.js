@@ -15,6 +15,7 @@ import { Toaster } from "./components/ui/toaster";
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from "./components/ads/AdSenseAd";
 import AffiliateSection from "./components/marketing/AffiliateSection";
 import LegalBlog from "./components/content/LegalBlog";
+import BlogArticle from "./components/content/BlogArticle";
 import TermsOfService from "./components/legal/TermsOfService";
 import PrivacyPolicy from "./components/legal/PrivacyPolicy";
 import CookiePolicy from "./components/legal/CookiePolicy";
