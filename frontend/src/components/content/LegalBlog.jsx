@@ -1,49 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { articles, legalNews } from './articlesData';
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from '../ads/AdSenseAd';
 
 const LegalBlog = () => {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "5 Essential Legal Document Formats Every Attorney Should Master",
-      excerpt: "Understanding the nuances of PDF/A, DOCX, and other legal document formats is crucial for modern legal practice. Learn which formats to use when and why.",
-      date: "2025-01-15",
-      readTime: "8 min read",
-      category: "Document Management"
-    },
-    {
-      id: 2,
-      title: "AI in Legal Practice: Document Analysis Revolution",
-      excerpt: "Artificial intelligence is transforming how lawyers review contracts and legal documents. Discover the latest AI tools and their practical applications.",
-      date: "2025-01-12",
-      readTime: "12 min read",
-      category: "Legal Technology"
-    },
-    {
-      id: 3,
-      title: "Compliance Checklist: Legal Document Security Best Practices",
-      excerpt: "Protect client confidentiality and ensure regulatory compliance with these essential security practices for legal document handling.",
-      date: "2025-01-10",
-      readTime: "15 min read",
-      category: "Compliance"
-    },
-    {
-      id: 4,
-      title: "Court Filing Requirements: Digital Document Standards 2025",
-      excerpt: "Stay current with the latest court filing requirements and digital document standards across different jurisdictions.",
-      date: "2025-01-08",
-      readTime: "10 min read",
-      category: "Court Procedures"
-    },
-    {
-      id: 5,
-      title: "Contract Review Automation: Tools and Techniques",
-      excerpt: "Streamline your contract review process with automated tools and AI-powered analysis. Increase accuracy while reducing review time.",
-      date: "2025-01-05",
-      readTime: "14 min read",
-      category: "Contract Law"
-    }
-  ];
+  const blogPosts = articles;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
