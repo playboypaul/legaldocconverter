@@ -87,6 +87,13 @@ const DocumentProcessor = () => {
     loadSupportedFormats();
   }, []);
 
+  // Load annotations when tab is active and file is selected
+  useEffect(() => {
+    if (activeTab === 'annotate' && fileId) {
+      loadAnnotations();
+    }
+  }, [activeTab, fileId]);
+
   const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
     if (!uploadedFile) return;
