@@ -1259,10 +1259,22 @@ const DocumentProcessor = () => {
                   <div className="border-l border-yellow-300 h-6 mx-2"></div>
                   <div className="flex items-center space-x-1">
                     <span className="text-sm text-yellow-700">Color:</span>
-                    <div className="w-6 h-6 bg-yellow-400 rounded cursor-pointer border border-yellow-600"></div>
-                    <div className="w-6 h-6 bg-green-400 rounded cursor-pointer border border-green-600"></div>
-                    <div className="w-6 h-6 bg-blue-400 rounded cursor-pointer border border-blue-600"></div>
-                    <div className="w-6 h-6 bg-red-400 rounded cursor-pointer border border-red-600"></div>
+                    <div 
+                      className={`w-6 h-6 bg-yellow-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'yellow' ? 'border-yellow-700 ring-2 ring-yellow-300' : 'border-yellow-600'}`}
+                      onClick={() => setSelectedAnnotationColor('yellow')}
+                    ></div>
+                    <div 
+                      className={`w-6 h-6 bg-green-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'green' ? 'border-green-700 ring-2 ring-green-300' : 'border-green-600'}`}
+                      onClick={() => setSelectedAnnotationColor('green')}
+                    ></div>
+                    <div 
+                      className={`w-6 h-6 bg-blue-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'blue' ? 'border-blue-700 ring-2 ring-blue-300' : 'border-blue-600'}`}
+                      onClick={() => setSelectedAnnotationColor('blue')}
+                    ></div>
+                    <div 
+                      className={`w-6 h-6 bg-red-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'red' ? 'border-red-700 ring-2 ring-red-300' : 'border-red-600'}`}
+                      onClick={() => setSelectedAnnotationColor('red')}
+                    ></div>
                   </div>
                 </div>
 
