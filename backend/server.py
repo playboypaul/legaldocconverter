@@ -16,6 +16,7 @@ import shutil
 import aiofiles
 import asyncio
 import io
+import json
 from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
 from reportlab.pdfgen import canvas
@@ -51,6 +52,28 @@ MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
+
+# Health check endpoints for Kubernetes
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Kubernetes liveness probe"""
+    return {"status": "healthy", "service": "LegalDocConverter API"}
+
+@app.get("/ready")
+async def readiness_check():
+    """Readiness check endpoint for Kubernetes readiness probe"""
+    try:
+        # Check if we can access the database
+        await db.command('ping')
+        return {"status": "ready", "database": "connected"}
+    except Exception as e:
+        # Return 503 if not ready
+        from fastapi import Response
+        return Response(
+            content='{"status": "not ready", "error": "database unavailable"}',
+            status_code=503,
+            media_type="application/json"
+        )
 
 # Initialize services
 file_converter = FileConverter()
@@ -105,9 +128,79 @@ class SupportedFormats(BaseModel):
     input: List[str]
     output: List[str]
 
-# In-memory storage for file metadata (temporary)
-file_storage = {}
-conversion_storage = {}
+# Persistent storage file paths
+STORAGE_METADATA_FILE = os.path.join(STORAGE_BASE_DIR, "file_storage.json")
+CONVERSION_METADATA_FILE = os.path.join(STORAGE_BASE_DIR, "conversion_storage.json")
+
+# Load or initialize storage from disk
+def load_storage():
+    """Load file storage metadata from disk"""
+    file_storage = {}
+    conversion_storage = {}
+    
+    try:
+        if os.path.exists(STORAGE_METADATA_FILE):
+            with open(STORAGE_METADATA_FILE, 'r') as f:
+                data = json.load(f)
+                # Convert datetime strings back to datetime objects
+                for file_id, file_info in data.items():
+                    if 'upload_time' in file_info and isinstance(file_info['upload_time'], str):
+                        file_info['upload_time'] = datetime.fromisoformat(file_info['upload_time'])
+                    file_storage[file_id] = file_info
+                logger.info(f"Loaded {len(file_storage)} files from persistent storage")
+        else:
+            logger.info("No existing file storage found - starting fresh")
+    except Exception as e:
+        logger.warning(f"Error loading file storage, starting fresh: {e}")
+        file_storage = {}
+    
+    try:
+        if os.path.exists(CONVERSION_METADATA_FILE):
+            with open(CONVERSION_METADATA_FILE, 'r') as f:
+                data = json.load(f)
+                for conv_id, conv_info in data.items():
+                    if 'conversion_time' in conv_info and isinstance(conv_info['conversion_time'], str):
+                        conv_info['conversion_time'] = datetime.fromisoformat(conv_info['conversion_time'])
+                    conversion_storage[conv_id] = conv_info
+                logger.info(f"Loaded {len(conversion_storage)} conversions from persistent storage")
+        else:
+            logger.info("No existing conversion storage found - starting fresh")
+    except Exception as e:
+        logger.warning(f"Error loading conversion storage, starting fresh: {e}")
+        conversion_storage = {}
+    
+    return file_storage, conversion_storage
+
+def save_storage():
+    """Save file storage metadata to disk"""
+    try:
+        # Convert datetime objects to strings for JSON serialization
+        file_data = {}
+        for file_id, file_info in file_storage.items():
+            info_copy = file_info.copy()
+            if 'upload_time' in info_copy and isinstance(info_copy['upload_time'], datetime):
+                info_copy['upload_time'] = info_copy['upload_time'].isoformat()
+            file_data[file_id] = info_copy
+        
+        with open(STORAGE_METADATA_FILE, 'w') as f:
+            json.dump(file_data, f, indent=2)
+        
+        # Save conversion storage
+        conv_data = {}
+        for conv_id, conv_info in conversion_storage.items():
+            info_copy = conv_info.copy()
+            if 'conversion_time' in info_copy and isinstance(info_copy['conversion_time'], datetime):
+                info_copy['conversion_time'] = info_copy['conversion_time'].isoformat()
+            conv_data[conv_id] = info_copy
+        
+        with open(CONVERSION_METADATA_FILE, 'w') as f:
+            json.dump(conv_data, f, indent=2)
+            
+    except Exception as e:
+        logger.error(f"Error saving storage metadata: {e}")
+
+# Load existing storage on startup
+file_storage, conversion_storage = load_storage()
 analysis_storage = {}
 
 # Supported formats
@@ -228,6 +321,7 @@ async def upload_file(file: UploadFile = File(...)):
         }
         
         file_storage[file_id] = file_info
+        save_storage()
         
         logger.info(f"File uploaded successfully: {file.filename} ({file_size} bytes) with ID: {file_id}")
         
@@ -307,6 +401,7 @@ async def convert_file(request: ConversionRequest):
             "file_size": os.path.getsize(converted_file_path),
             "upload_time": datetime.utcnow()
         }
+        save_storage()
         
         logger.info(f"File converted: {file_info['original_name']} to {request.target_format}")
         
@@ -441,6 +536,7 @@ async def cleanup_old_files():
                 del analysis_storage[analysis_id]
             
             if files_to_remove or conversions_to_remove or analyses_to_remove:
+                save_storage()
                 logger.info(f"Cleaned up {len(files_to_remove)} files, {len(conversions_to_remove)} conversions, {len(analyses_to_remove)} analyses")
             
             # Sleep for 30 minutes before next cleanup
@@ -506,6 +602,7 @@ async def merge_pdfs(request: dict):
             "file_size": os.path.getsize(output_path),
             "upload_time": datetime.utcnow()
         }
+        save_storage()
         
         logger.info(f"PDF merge completed: {len(file_ids)} files merged into {output_filename}")
         
@@ -616,6 +713,7 @@ async def split_pdf(request: dict):
                     "download_url": f"/api/download/{range_id}"
                 })
         
+        save_storage()
         logger.info(f"PDF split completed: {file_info['original_name']} split into {len(split_files)} files")
         
         return {
@@ -694,6 +792,7 @@ async def encrypt_pdf(request: dict):
             "encrypted": True,
             "permissions": permissions
         }
+        save_storage()
         
         logger.info(f"PDF encryption completed: {file_info['original_name']} encrypted as {encrypted_filename}")
         
@@ -797,6 +896,7 @@ async def esign_pdf(request: dict):
             "signed": True,
             "signature_info": signature_info
         }
+        save_storage()
         
         logger.info(f"PDF eSigning completed: {file_info['original_name']} signed as {signed_filename}")
         
@@ -865,6 +965,7 @@ async def batch_upload(files: List[UploadFile] = File(...)):
                 "file_size": file_size
             })
         
+        save_storage()
         return {"results": results}
         
     except Exception as e:
@@ -930,6 +1031,7 @@ async def batch_convert(request: dict):
                     "error": str(e)
                 })
         
+        save_storage()
         return {"results": results}
         
     except Exception as e:
@@ -1078,6 +1180,7 @@ async def save_document(request: dict):
         }
         
         file_storage[file_id] = file_info
+        save_storage()
         
         return {
             "file_id": file_id,
@@ -1227,6 +1330,7 @@ async def export_annotations(request: dict):
                 "file_size": os.path.getsize(export_path),
                 "upload_time": datetime.utcnow()
             }
+            save_storage()
             
             return {
                 "export_id": export_id,
