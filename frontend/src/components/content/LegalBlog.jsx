@@ -95,36 +95,22 @@ const LegalBlog = () => {
           {/* Industry News */}
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Legal Tech Industry News
+              Latest Legal Industry News
             </h3>
             <div className="space-y-6">
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  Major Law Firms Adopt AI Document Review
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  Leading law firms report 40% efficiency gains with AI-powered document analysis tools.
-                </p>
-                <span className="text-blue-600 text-xs">Legal Tech Weekly</span>
-              </div>
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  New Court E-Filing Requirements
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  Federal courts announce updated digital filing standards for 2025.
-                </p>
-                <span className="text-blue-600 text-xs">Court Administrator News</span>
-              </div>
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  Legal Document Security Standards
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  New cybersecurity guidelines for legal document handling released.
-                </p>
-                <span className="text-blue-600 text-xs">Legal Security Today</span>
-              </div>
+              {legalNews.map((news, index) => (
+                <div key={index} className="pb-4 border-b border-gray-200 last:border-0">
+                  <Link to={news.url} className="block hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                    <h4 className="font-semibold text-gray-900 mb-2 hover:text-blue-600">
+                      {news.title}
+                    </h4>
+                    <p className="text-gray-600 text-sm mb-2">
+                      {news.excerpt}
+                    </p>
+                    <span className="text-blue-600 text-xs">{news.date} →</span>
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </div>
