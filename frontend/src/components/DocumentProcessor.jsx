@@ -363,13 +363,75 @@ const DocumentProcessor = () => {
     return descriptions[format.toLowerCase()] || format.toUpperCase();
   };
 
-  // Helper function to load file for editing
-  const loadFileForEditing = (result) => {
-    setDocumentEditor({
-      content: result.converted_file,
-      format: result.target_format,
-      isEditing: true
-    });
+  // Annotation Functions
+  const loadAnnotations = async () => {
+    if (!fileId) return;
+    setIsLoadingAnnotations(true);
+    try {
+      const response = await axios.get(`${API}/annotations/${fileId}`);
+      setAnnotations(response.data.annotations || []);
+      toast({ title: "Annotations loaded", description: `${response.data.total} annotations found` });
+    } catch (error) {
+      console.error('Error loading annotations:', error);
+      toast({ title: "Error", description: "Failed to load annotations", variant: "destructive" });
+    } finally {
+      setIsLoadingAnnotations(false);
+    }
+  };
+
+  const saveAnnotation = async () => {
+    if (!fileId || !annotationText.trim()) {
+      toast({ title: "Error", description: "Please enter annotation text", variant: "destructive" });
+      return;
+    }
+    
+    setIsSavingAnnotation(true);
+    try {
+      await axios.post(`${API}/annotate`, {
+        file_id: fileId,
+        annotation: {
+          type: "comment",
+          text: annotationText,
+          color: selectedAnnotationColor,
+          page: 1,
+          location: "document",
+          author: user?.email || "Anonymous"
+        }
+      });
+      
+      toast({ title: "Success", description: "Annotation saved successfully" });
+      setAnnotationText('');
+      await loadAnnotations();
+    } catch (error) {
+      console.error('Error saving annotation:', error);
+      toast({ title: "Error", description: "Failed to save annotation", variant: "destructive" });
+    } finally {
+      setIsSavingAnnotation(false);
+    }
+  };
+
+  const deleteAnnotation = async (annotationId) => {
+    try {
+      await axios.delete(`${API}/annotations/${annotationId}`);
+      toast({ title: "Success", description: "Annotation deleted" });
+      await loadAnnotations();
+    } catch (error) {
+      console.error('Error deleting annotation:', error);
+      toast({ title: "Error", description: "Failed to delete annotation", variant: "destructive" });
+    }
+  };
+
+  const exportAnnotations = async () => {
+    if (!fileId) return;
+    try {
+      const response = await axios.post(`${API}/annotations/export`, { file_id: fileId });
+      const downloadUrl = `${API}/download/${response.data.export_id}`;
+      window.open(downloadUrl, '_blank');
+      toast({ title: "Success", description: "Annotations exported successfully" });
+    } catch (error) {
+      console.error('Error exporting annotations:', error);
+      toast({ title: "Error", description: "Failed to export annotations", variant: "destructive" });
+    }
   };
 
   // Batch Processing Functions
