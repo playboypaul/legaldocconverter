@@ -1283,12 +1283,23 @@ const DocumentProcessor = () => {
                   <div className="p-3 bg-yellow-50 border-b border-yellow-200 flex items-center justify-between">
                     <span className="font-medium text-yellow-800">Document Annotation View</span>
                     <div className="flex items-center space-x-2">
-                      <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="text-yellow-700 border-yellow-300"
+                        onClick={exportAnnotations}
+                        disabled={!fileId || annotations.length === 0}
+                      >
                         <Download className="h-3 w-3 mr-1" />
-                        Export
+                        Export ({annotations.length})
                       </Button>
-                      <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
-                        Save Annotations
+                      <Button 
+                        size="sm" 
+                        className="bg-yellow-600 hover:bg-yellow-700 text-white"
+                        onClick={saveAnnotation}
+                        disabled={isSavingAnnotation || !fileId}
+                      >
+                        {isSavingAnnotation ? 'Saving...' : 'Save Annotation'}
                       </Button>
                     </div>
                   </div>
