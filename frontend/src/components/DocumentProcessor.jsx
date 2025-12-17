@@ -1307,38 +1307,56 @@ const DocumentProcessor = () => {
                   <div className="p-6 min-h-80">
                     {fileId ? (
                       <div className="space-y-4">
-                        <div className="p-4 border-l-4 border-yellow-400 bg-yellow-50 relative">
-                          <p className="text-gray-800 mb-2">
-                            "This agreement shall be governed by the laws of the Province of Alberta, Canada..."
+                        {/* Add New Annotation */}
+                        <div className="p-4 border-2 border-dashed border-yellow-300 rounded-lg bg-yellow-50/50">
+                          <label className="block text-sm font-medium text-yellow-900 mb-2">
+                            Add Annotation
+                          </label>
+                          <textarea
+                            value={annotationText}
+                            onChange={(e) => setAnnotationText(e.target.value)}
+                            placeholder="Type your annotation or comment here..."
+                            className="w-full p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                            rows={3}
+                          />
+                          <p className="text-xs text-yellow-700 mt-1">
+                            Selected color: <span className={`inline-block w-3 h-3 rounded bg-${selectedAnnotationColor}-400 border border-${selectedAnnotationColor}-600`}></span>
                           </p>
-                          <div className="absolute -right-2 top-2">
-                            <div className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
-                              💬 Review jurisdiction clause
-                            </div>
-                          </div>
                         </div>
-                        
-                        <div className="p-4 border-l-4 border-green-400 bg-green-50 relative">
-                          <p className="text-gray-800 mb-2">
-                            "The parties agree to binding arbitration for all disputes..."
-                          </p>
-                          <div className="absolute -right-2 top-2">
-                            <div className="bg-green-400 text-green-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
-                              ✓ Standard arbitration clause
-                            </div>
+
+                        {/* Display Annotations */}
+                        {isLoadingAnnotations ? (
+                          <div className="text-center text-gray-500 py-8">
+                            Loading annotations...
                           </div>
-                        </div>
-                        
-                        <div className="p-4 border-l-4 border-red-400 bg-red-50 relative">
-                          <p className="text-gray-800 mb-2">
-                            "Limitation of liability shall not exceed $10,000..."
-                          </p>
-                          <div className="absolute -right-2 top-2">
-                            <div className="bg-red-400 text-red-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
-                              ⚠️ Low liability limit - negotiate
-                            </div>
+                        ) : annotations.length > 0 ? (
+                          <div className="space-y-3">
+                            <h4 className="font-semibold text-gray-900">Saved Annotations ({annotations.length})</h4>
+                            {annotations.map((annotation) => (
+                              <div 
+                                key={annotation.annotation_id}
+                                className={`p-4 border-l-4 border-${annotation.color}-400 bg-${annotation.color}-50 relative`}
+                              >
+                                <p className="text-gray-800 mb-2">{annotation.text}</p>
+                                <div className="flex items-center justify-between text-xs text-gray-600 mt-2">
+                                  <span>By: {annotation.author} • {new Date(annotation.created_at).toLocaleDateString()}</span>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => deleteAnnotation(annotation.annotation_id)}
+                                    className="text-red-600 hover:text-red-800"
+                                  >
+                                    <Trash2 className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        </div>
+                        ) : (
+                          <div className="text-center text-gray-500 py-8">
+                            No annotations yet. Add your first annotation above!
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-12">
