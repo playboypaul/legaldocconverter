@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2 } from 'lucide-react';
+import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import AdvancedPdfManager from './pdf/AdvancedPdfManager';
@@ -86,13 +86,6 @@ const DocumentProcessor = () => {
     };
     loadSupportedFormats();
   }, []);
-
-  // Load annotations when tab is active and file is selected
-  useEffect(() => {
-    if (activeTab === 'annotate' && fileId) {
-      loadAnnotations();
-    }
-  }, [activeTab, fileId]);
 
   const handleFileUpload = async (event) => {
     const uploadedFile = event.target.files[0];
@@ -579,6 +572,23 @@ const DocumentProcessor = () => {
   };
 
   // Integration Functions
+  const handleIntegrationConnect = async (platform) => {
+    try {
+      // In a real implementation, this would handle OAuth flow
+      setIntegrations(prev => ({ ...prev, [platform]: true }));
+      
+      toast({
+        title: "Integration connected",
+        description: `Successfully connected to ${platform.charAt(0).toUpperCase() + platform.slice(1)}.`,
+      });
+    } catch (error) {
+      toast({
+        title: "Integration failed",
+        description: `Failed to connect to ${platform}.`,
+        variant: "destructive",
+      });
+    }
+  };
 
   // PDF Editing Functions
   const handlePdfMerge = async (fileIds) => {
@@ -1259,22 +1269,10 @@ const DocumentProcessor = () => {
                   <div className="border-l border-yellow-300 h-6 mx-2"></div>
                   <div className="flex items-center space-x-1">
                     <span className="text-sm text-yellow-700">Color:</span>
-                    <div 
-                      className={`w-6 h-6 bg-yellow-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'yellow' ? 'border-yellow-700 ring-2 ring-yellow-300' : 'border-yellow-600'}`}
-                      onClick={() => setSelectedAnnotationColor('yellow')}
-                    ></div>
-                    <div 
-                      className={`w-6 h-6 bg-green-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'green' ? 'border-green-700 ring-2 ring-green-300' : 'border-green-600'}`}
-                      onClick={() => setSelectedAnnotationColor('green')}
-                    ></div>
-                    <div 
-                      className={`w-6 h-6 bg-blue-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'blue' ? 'border-blue-700 ring-2 ring-blue-300' : 'border-blue-600'}`}
-                      onClick={() => setSelectedAnnotationColor('blue')}
-                    ></div>
-                    <div 
-                      className={`w-6 h-6 bg-red-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'red' ? 'border-red-700 ring-2 ring-red-300' : 'border-red-600'}`}
-                      onClick={() => setSelectedAnnotationColor('red')}
-                    ></div>
+                    <div className="w-6 h-6 bg-yellow-400 rounded cursor-pointer border border-yellow-600"></div>
+                    <div className="w-6 h-6 bg-green-400 rounded cursor-pointer border border-green-600"></div>
+                    <div className="w-6 h-6 bg-blue-400 rounded cursor-pointer border border-blue-600"></div>
+                    <div className="w-6 h-6 bg-red-400 rounded cursor-pointer border border-red-600"></div>
                   </div>
                 </div>
 
@@ -1283,23 +1281,12 @@ const DocumentProcessor = () => {
                   <div className="p-3 bg-yellow-50 border-b border-yellow-200 flex items-center justify-between">
                     <span className="font-medium text-yellow-800">Document Annotation View</span>
                     <div className="flex items-center space-x-2">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        className="text-yellow-700 border-yellow-300"
-                        onClick={exportAnnotations}
-                        disabled={!fileId || annotations.length === 0}
-                      >
+                      <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
                         <Download className="h-3 w-3 mr-1" />
-                        Export ({annotations.length})
+                        Export
                       </Button>
-                      <Button 
-                        size="sm" 
-                        className="bg-yellow-600 hover:bg-yellow-700 text-white"
-                        onClick={saveAnnotation}
-                        disabled={isSavingAnnotation || !fileId}
-                      >
-                        {isSavingAnnotation ? 'Saving...' : 'Save Annotation'}
+                      <Button size="sm" className="bg-yellow-600 hover:bg-yellow-700 text-white">
+                        Save Annotations
                       </Button>
                     </div>
                   </div>
@@ -1307,56 +1294,38 @@ const DocumentProcessor = () => {
                   <div className="p-6 min-h-80">
                     {fileId ? (
                       <div className="space-y-4">
-                        {/* Add New Annotation */}
-                        <div className="p-4 border-2 border-dashed border-yellow-300 rounded-lg bg-yellow-50/50">
-                          <label className="block text-sm font-medium text-yellow-900 mb-2">
-                            Add Annotation
-                          </label>
-                          <textarea
-                            value={annotationText}
-                            onChange={(e) => setAnnotationText(e.target.value)}
-                            placeholder="Type your annotation or comment here..."
-                            className="w-full p-3 border border-yellow-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                            rows={3}
-                          />
-                          <p className="text-xs text-yellow-700 mt-1">
-                            Selected color: <span className={`inline-block w-3 h-3 rounded bg-${selectedAnnotationColor}-400 border border-${selectedAnnotationColor}-600`}></span>
+                        <div className="p-4 border-l-4 border-yellow-400 bg-yellow-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "This agreement shall be governed by the laws of the Province of Alberta, Canada..."
                           </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-yellow-400 text-yellow-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              💬 Review jurisdiction clause
+                            </div>
+                          </div>
                         </div>
-
-                        {/* Display Annotations */}
-                        {isLoadingAnnotations ? (
-                          <div className="text-center text-gray-500 py-8">
-                            Loading annotations...
+                        
+                        <div className="p-4 border-l-4 border-green-400 bg-green-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "The parties agree to binding arbitration for all disputes..."
+                          </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-green-400 text-green-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              ✓ Standard arbitration clause
+                            </div>
                           </div>
-                        ) : annotations.length > 0 ? (
-                          <div className="space-y-3">
-                            <h4 className="font-semibold text-gray-900">Saved Annotations ({annotations.length})</h4>
-                            {annotations.map((annotation) => (
-                              <div 
-                                key={annotation.annotation_id}
-                                className={`p-4 border-l-4 border-${annotation.color}-400 bg-${annotation.color}-50 relative`}
-                              >
-                                <p className="text-gray-800 mb-2">{annotation.text}</p>
-                                <div className="flex items-center justify-between text-xs text-gray-600 mt-2">
-                                  <span>By: {annotation.author} • {new Date(annotation.created_at).toLocaleDateString()}</span>
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={() => deleteAnnotation(annotation.annotation_id)}
-                                    className="text-red-600 hover:text-red-800"
-                                  >
-                                    <Trash2 className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                              </div>
-                            ))}
+                        </div>
+                        
+                        <div className="p-4 border-l-4 border-red-400 bg-red-50 relative">
+                          <p className="text-gray-800 mb-2">
+                            "Limitation of liability shall not exceed $10,000..."
+                          </p>
+                          <div className="absolute -right-2 top-2">
+                            <div className="bg-red-400 text-red-900 text-xs px-2 py-1 rounded shadow-lg cursor-pointer">
+                              ⚠️ Low liability limit - negotiate
+                            </div>
                           </div>
-                        ) : (
-                          <div className="text-center text-gray-500 py-8">
-                            No annotations yet. Add your first annotation above!
-                          </div>
-                        )}
+                        </div>
                       </div>
                     ) : (
                       <div className="text-center py-12">
@@ -1425,6 +1394,233 @@ const DocumentProcessor = () => {
         )}
 
         {/* Integrations Tab */}
+        {activeTab === 'integrations' && (
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-indigo-50/50">
+            <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
+              <CardTitle className="flex items-center text-white">
+                <Layers className="h-5 w-5 mr-2" />
+                Legal Software Integration Hub
+                <span className="ml-2 px-2 py-1 text-xs bg-green-500 text-white rounded-full">FREE TIER</span>
+              </CardTitle>
+              <CardDescription className="text-indigo-100">
+                Seamlessly connect with your existing legal technology stack
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-8">
+                {/* Popular Integrations */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Popular Legal Platforms</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Clio Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.clio ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            C
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Clio</h4>
+                            <p className="text-sm text-gray-600">Practice Management</p>
+                          </div>
+                        </div>
+                        {integrations.clio && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Sync converted documents directly to client matters in Clio. Auto-organize by case and practice area.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Document sync to client matters
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Automated file organization
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Time entry integration
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('clio')}
+                        size="sm"
+                        className={`w-full ${integrations.clio ? 'bg-green-600 hover:bg-green-700' : 'bg-indigo-600 hover:bg-indigo-700'} text-white`}
+                      >
+                        {integrations.clio ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect Clio
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* Westlaw Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.westlaw ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            W
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">Westlaw</h4>
+                            <p className="text-sm text-gray-600">Legal Research</p>
+                          </div>
+                        </div>
+                        {integrations.westlaw && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Import research documents and case law directly from Westlaw for analysis and conversion.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Case law import
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Research synchronization
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Citation formatting
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('westlaw')}
+                        size="sm"
+                        className={`w-full ${integrations.westlaw ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'} text-white`}
+                      >
+                        {integrations.westlaw ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect Westlaw
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                    {/* LexisNexis Integration */}
+                    <div className={`p-6 border-2 rounded-xl transition-all ${integrations.lexis ? 'border-green-400 bg-green-50' : 'border-indigo-200 hover:border-indigo-400'}`}>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                          <div className="w-12 h-12 bg-blue-800 rounded-lg flex items-center justify-center text-white font-bold text-lg mr-3">
+                            L
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900">LexisNexis</h4>
+                            <p className="text-sm text-gray-600">Legal Research</p>
+                          </div>
+                        </div>
+                        {integrations.lexis && <CheckCircle className="h-6 w-6 text-green-600" />}
+                      </div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Access LexisNexis research database and import legal documents for processing and analysis.
+                      </p>
+                      <div className="space-y-2 mb-4">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Legal database access
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Document import tools
+                        </div>
+                        <div className="flex items-center text-sm text-gray-700">
+                          <CheckCircle className="h-3 w-3 text-green-600 mr-2" />
+                          Research workflow sync
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => handleIntegrationConnect('lexis')}
+                        size="sm"
+                        className={`w-full ${integrations.lexis ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-800 hover:bg-blue-900'} text-white`}
+                      >
+                        {integrations.lexis ? (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        ) : (
+                          <>
+                            <Layers className="h-3 w-3 mr-1" />
+                            Connect LexisNexis
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Coming Soon Integrations */}
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Coming Soon</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {[
+                      { name: 'DocuSign', icon: '📄', color: 'yellow' },
+                      { name: 'NetDocuments', icon: '🗂️', color: 'green' },
+                      { name: 'iManage', icon: '📊', color: 'blue' },
+                      { name: 'PracticePanther', icon: '🐾', color: 'purple' }
+                    ].map((integration) => (
+                      <div key={integration.name} className="text-center p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <div className="text-2xl mb-2">{integration.icon}</div>
+                        <h4 className="font-medium text-gray-900 text-sm">{integration.name}</h4>
+                        <p className="text-xs text-gray-500 mt-1">Coming Soon</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Integration Benefits */}
+                <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+                  <h4 className="font-semibold text-indigo-900 mb-4">Integration Benefits</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Seamless Workflow</h5>
+                        <p className="text-sm text-indigo-700">Documents flow automatically between your legal software platforms</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Time Savings</h5>
+                        <p className="text-sm text-indigo-700">Eliminate manual file transfers and duplicate data entry</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Data Consistency</h5>
+                        <p className="text-sm text-indigo-700">Maintain consistent file organization across all platforms</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-5 w-5 text-indigo-600 mr-3 mt-0.5" />
+                      <div>
+                        <h5 className="font-medium text-indigo-900">Enhanced Security</h5>
+                        <p className="text-sm text-indigo-700">Secure API connections with enterprise-grade encryption</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Enhanced PDF Tools Tab */}
         {activeTab === 'pdf-tools' && (

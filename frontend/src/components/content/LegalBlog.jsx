@@ -1,49 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { articles, legalNews } from './articlesData';
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from '../ads/AdSenseAd';
 
 const LegalBlog = () => {
-  const blogPosts = [
-    {
-      id: 1,
-      title: "5 Essential Legal Document Formats Every Attorney Should Master",
-      excerpt: "Understanding the nuances of PDF/A, DOCX, and other legal document formats is crucial for modern legal practice. Learn which formats to use when and why.",
-      date: "2025-01-15",
-      readTime: "8 min read",
-      category: "Document Management"
-    },
-    {
-      id: 2,
-      title: "AI in Legal Practice: Document Analysis Revolution",
-      excerpt: "Artificial intelligence is transforming how lawyers review contracts and legal documents. Discover the latest AI tools and their practical applications.",
-      date: "2025-01-12",
-      readTime: "12 min read",
-      category: "Legal Technology"
-    },
-    {
-      id: 3,
-      title: "Compliance Checklist: Legal Document Security Best Practices",
-      excerpt: "Protect client confidentiality and ensure regulatory compliance with these essential security practices for legal document handling.",
-      date: "2025-01-10",
-      readTime: "15 min read",
-      category: "Compliance"
-    },
-    {
-      id: 4,
-      title: "Court Filing Requirements: Digital Document Standards 2025",
-      excerpt: "Stay current with the latest court filing requirements and digital document standards across different jurisdictions.",
-      date: "2025-01-08",
-      readTime: "10 min read",
-      category: "Court Procedures"
-    },
-    {
-      id: 5,
-      title: "Contract Review Automation: Tools and Techniques",
-      excerpt: "Streamline your contract review process with automated tools and AI-powered analysis. Increase accuracy while reducing review time.",
-      date: "2025-01-05",
-      readTime: "14 min read",
-      category: "Contract Law"
-    }
-  ];
+  const blogPosts = articles;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -87,10 +48,13 @@ const LegalBlog = () => {
                   </p>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-sm">{post.date}</span>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                      Read More
-                    </button>
+                    <span className="text-gray-500 text-sm">{post.date} • {post.readTime}</span>
+                    <Link 
+                      to={`/blog/${post.id}`}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-block"
+                    >
+                      Read More →
+                    </Link>
                   </div>
                 </div>
               </article>
@@ -131,36 +95,22 @@ const LegalBlog = () => {
           {/* Industry News */}
           <div className="bg-white rounded-xl shadow-lg p-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Legal Tech Industry News
+              Latest Legal Industry News
             </h3>
             <div className="space-y-6">
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  Major Law Firms Adopt AI Document Review
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  Leading law firms report 40% efficiency gains with AI-powered document analysis tools.
-                </p>
-                <span className="text-blue-600 text-xs">Legal Tech Weekly</span>
-              </div>
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  New Court E-Filing Requirements
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  Federal courts announce updated digital filing standards for 2025.
-                </p>
-                <span className="text-blue-600 text-xs">Court Administrator News</span>
-              </div>
-              <div className="pb-4 border-b border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  Legal Document Security Standards
-                </h4>
-                <p className="text-gray-600 text-sm mb-2">
-                  New cybersecurity guidelines for legal document handling released.
-                </p>
-                <span className="text-blue-600 text-xs">Legal Security Today</span>
-              </div>
+              {legalNews.map((news, index) => (
+                <div key={index} className="pb-4 border-b border-gray-200 last:border-0">
+                  <Link to={news.url} className="block hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                    <h4 className="font-semibold text-gray-900 mb-2 hover:text-blue-600">
+                      {news.title}
+                    </h4>
+                    <p className="text-gray-600 text-sm mb-2">
+                      {news.excerpt}
+                    </p>
+                    <span className="text-blue-600 text-xs">{news.date} →</span>
+                  </Link>
+                </div>
+              ))}
             </div>
           </div>
         </div>
