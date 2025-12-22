@@ -1,0 +1,9 @@
+LEGAL DOCUMENT TEST
+
+This is a test legal document for API testing.
+It contains sample legal text to verify the upload functionality.
+
+TERMS AND CONDITIONS:
+1. This document is for testing purposes only
+2. All parties agree to the terms herein
+3. This agreement shall be governed by applicable law
