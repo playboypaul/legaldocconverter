@@ -206,7 +206,7 @@ analysis_storage = {}
 # Supported formats
 SUPPORTED_FORMATS = {
     "input": ["pdf", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md"],
-    "output": ["pdf", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md", "json", "yaml", "tex", "docbook", "opml", "rst", "asciidoc", "wiki", "jira", "fb2", "icml", "tei", "context", "man", "ms", "zimwiki"]
+    "output": ["pdf", "pdfa", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md", "json", "yaml", "tex", "docbook", "opml", "rst", "asciidoc", "wiki", "jira", "fb2", "icml", "tei", "context", "man", "ms", "zimwiki"]
 }
 
 @api_router.get("/")
