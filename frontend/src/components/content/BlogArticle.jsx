@@ -73,6 +73,8 @@ const BlogArticle = () => {
         </article>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
