@@ -32,6 +32,9 @@ class FileConverter:
                     await self._convert_pdf_to_text_based(input_path, output_path, output_format)
                 elif output_format == "docx":
                     await self._convert_pdf_to_docx(input_path, output_path)
+                elif output_format == "pdfa":
+                    # PDF to PDF/A conversion
+                    await self._convert_to_pdfa(input_path, output_path)
                 else:
                     # For other formats, convert PDF → TXT → target format
                     # Since pandoc can't read PDFs
@@ -42,17 +45,34 @@ class FileConverter:
             elif input_format in ["docx", "doc"]:
                 if output_format == "pdf":
                     await self._convert_docx_to_pdf(input_path, output_path)
+                elif output_format == "pdfa":
+                    # DOCX to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_docx_to_pdf(input_path, temp_pdf_path)
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
                 elif output_format in ["txt", "html", "rtf", "odt"]:
                     await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
                 else:
                     await self._convert_docx_to_docx(input_path, output_path)
             
             elif input_format == "txt":
-                await self._convert_text_based(input_path, output_path, input_format, output_format)
+                if output_format == "pdfa":
+                    # TXT to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_text_based(input_path, temp_pdf_path, input_format, "pdf")
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
+                else:
+                    await self._convert_text_based(input_path, output_path, input_format, output_format)
             
             else:
-                # Use pandoc for other formats
-                await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
+                if output_format == "pdfa":
+                    # For other formats to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_with_pandoc(input_path, temp_pdf_path, input_format, "pdf")
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
+                else:
+                    # Use pandoc for other formats
+                    await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
             
             if not os.path.exists(output_path):
                 raise Exception(f"Conversion failed: Output file not created")
