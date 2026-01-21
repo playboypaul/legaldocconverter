@@ -415,5 +415,46 @@
       "ms",
       "zimwiki"
     ]
+  },
+  "934e7b6b-37ad-433c-b684-f74e58a518e4": {
+    "file_id": "934e7b6b-37ad-433c-b684-f74e58a518e4",
+    "original_name": "test.txt",
+    "file_path": "/app/backend/storage/uploads/934e7b6b-37ad-433c-b684-f74e58a518e4_test.txt",
+    "file_type": "txt",
+    "file_size": 173,
+    "upload_time": "2026-01-21T21:57:38.617949",
+    "supported_conversions": [
+      "pdf",
+      "pdfa",
+      "docx",
+      "doc",
+      "rtf",
+      "odt",
+      "html",
+      "xml",
+      "csv",
+      "xlsx",
+      "xls",
+      "ppt",
+      "pptx",
+      "epub",
+      "md",
+      "json",
+      "yaml",
+      "tex",
+      "docbook",
+      "opml",
+      "rst",
+      "asciidoc",
+      "wiki",
+      "jira",
+      "fb2",
+      "icml",
+      "tei",
+      "context",
+      "man",
+      "ms",
+      "zimwiki"
+    ]
   }
 }
