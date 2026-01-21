@@ -121,6 +121,8 @@ function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/cookies" element={<CookiePage />} />
             <Route path="/security" element={<SecurityPageWrapper />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
           </Routes>
         </BrowserRouter>
         <SignInModal />
