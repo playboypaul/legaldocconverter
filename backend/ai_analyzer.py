@@ -1,23 +1,23 @@
 import os
 import logging
-from typing import Dict, List, Any
-import openai
+import json
+from typing import Dict, Any
 from pathlib import Path
 import PyPDF2
 from docx import Document
-import asyncio
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
 class AIAnalyzer:
-    """Handle AI-powered document analysis using OpenAI"""
+    """Handle AI-powered document analysis using Emergent LLM Integration"""
     
     def __init__(self):
-        self.openai_api_key = os.getenv('OPENAI_API_KEY')
-        if self.openai_api_key:
-            openai.api_key = self.openai_api_key
-        else:
-            logger.warning("OpenAI API key not found. AI analysis will use mock data.")
+        self.emergent_key = os.getenv('EMERGENT_LLM_KEY')
+        if not self.emergent_key:
+            logger.warning("EMERGENT_LLM_KEY not found. AI analysis will use fallback mode.")
     
     async def analyze_document(self, file_path: str, file_type: str, analysis_id: str) -> Dict[str, Any]:
         """Analyze document and return legal insights"""
@@ -28,12 +28,12 @@ class AIAnalyzer:
             if not document_text or len(document_text.strip()) < 50:
                 raise Exception("Document text is too short or empty for analysis")
             
-            # If OpenAI API key is available, use real analysis
-            if self.openai_api_key:
-                return await self._analyze_with_openai(document_text, analysis_id)
+            # Use Emergent LLM integration for real analysis
+            if self.emergent_key:
+                return await self._analyze_with_emergent_llm(document_text, analysis_id)
             else:
-                # Return enhanced mock data based on document length and content
-                return await self._generate_mock_analysis(document_text, analysis_id)
+                # Fallback to basic analysis
+                return await self._generate_basic_analysis(document_text, analysis_id)
                 
         except Exception as e:
             logger.error(f"Analysis error: {str(e)}")
@@ -48,20 +48,22 @@ class AIAnalyzer:
                 with open(file_path, 'rb') as file:
                     pdf_reader = PyPDF2.PdfReader(file)
                     for page in pdf_reader.pages:
-                        text += page.extract_text() + "\n"
+                        page_text = page.extract_text()
+                        if page_text:
+                            text += page_text + "\n"
             
             elif file_type in ["docx"]:
                 doc = Document(file_path)
                 for paragraph in doc.paragraphs:
                     text += paragraph.text + "\n"
             
-            elif file_type in ["txt", "rtf"]:
-                with open(file_path, 'r', encoding='utf-8') as file:
+            elif file_type in ["txt", "rtf", "md"]:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                     text = file.read()
             
             else:
                 # Try to read as text file
-                with open(file_path, 'r', encoding='utf-8') as file:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as file:
                     text = file.read()
             
             return text.strip()
@@ -70,169 +72,270 @@ class AIAnalyzer:
             logger.error(f"Text extraction error: {str(e)}")
             raise Exception(f"Failed to extract text from document: {str(e)}")
     
-    async def _analyze_with_openai(self, document_text: str, analysis_id: str) -> Dict[str, Any]:
-        """Analyze document using OpenAI GPT-4"""
+    async def _analyze_with_emergent_llm(self, document_text: str, analysis_id: str) -> Dict[str, Any]:
+        """Analyze document using Emergent LLM Integration with GPT-4o"""
         try:
-            # Truncate text if too long (GPT-4 has token limits)
-            max_chars = 12000  # Roughly 3000 tokens
-            if len(document_text) > max_chars:
-                document_text = document_text[:max_chars] + "... [truncated]"
+            from emergentintegrations.llm.chat import LlmChat, UserMessage
             
-            prompt = f"""
-As a legal expert, analyze the following legal document and provide:
+            # Truncate text if too long (context limits)
+            max_chars = 15000
+            truncated = False
+            if len(document_text) > max_chars:
+                document_text = document_text[:max_chars]
+                truncated = True
+            
+            # Initialize the chat with Emergent LLM key
+            chat = LlmChat(
+                api_key=self.emergent_key,
+                session_id=f"legal-analysis-{analysis_id}",
+                system_message="""You are an expert legal document analyst specializing in contract review, compliance assessment, and risk identification. 
 
-1. A brief executive summary (2-3 sentences)
-2. Key legal findings and provisions (3-5 bullet points)
-3. Risk assessment with specific issues and recommendations
-4. Compliance score (0-100) with explanation
+Your task is to analyze legal documents and provide:
+1. A clear executive summary
+2. Key legal findings and provisions
+3. Risk assessment with specific issues
+4. Compliance score with detailed explanation
 
-Document text:
+Always provide specific, actionable insights based on the actual document content. Never provide generic or placeholder information.
+
+Respond ONLY with valid JSON in the exact format specified."""
+            ).with_model("openai", "gpt-4o")
+            
+            prompt = f"""Analyze the following legal document and provide a comprehensive assessment.
+
+Document Text:
+---
 {document_text}
+{'[Document truncated due to length]' if truncated else ''}
+---
 
-Please respond in JSON format with the following structure:
+Provide your analysis in the following JSON format (respond with ONLY the JSON, no other text):
+
 {{
     "analysis_id": "{analysis_id}",
-    "summary": "Brief executive summary",
-    "key_findings": ["Finding 1", "Finding 2", "Finding 3"],
+    "summary": "A 2-3 sentence executive summary of the document's purpose, parties involved, and key terms",
+    "document_type": "The type of document (e.g., Contract, Agreement, Terms of Service, NDA, etc.)",
+    "key_findings": [
+        "Specific finding 1 from the actual document",
+        "Specific finding 2 from the actual document",
+        "Specific finding 3 from the actual document",
+        "Specific finding 4 from the actual document",
+        "Specific finding 5 from the actual document"
+    ],
+    "parties_identified": ["Party 1 name if found", "Party 2 name if found"],
+    "key_dates": ["Any important dates mentioned in the document"],
+    "financial_terms": ["Any monetary amounts, payment terms, or financial obligations"],
     "risk_assessment": [
         {{
             "level": "High/Medium/Low",
-            "issue": "Specific risk description",
+            "issue": "Specific risk issue identified in the document",
+            "clause_reference": "Reference to the relevant section/clause if identifiable",
+            "recommendation": "Specific actionable recommendation"
+        }},
+        {{
+            "level": "High/Medium/Low",
+            "issue": "Another specific risk issue",
+            "clause_reference": "Reference to relevant section",
             "recommendation": "Specific recommendation"
         }}
     ],
     "compliance": {{
         "score": 85,
-        "details": "Compliance assessment explanation"
-    }}
-}}
-"""
+        "details": "Detailed explanation of compliance assessment based on standard legal requirements",
+        "areas_of_concern": ["Any compliance concerns identified"],
+        "positive_aspects": ["Well-drafted sections or compliant provisions"]
+    }},
+    "recommendations": [
+        "Specific recommendation 1 for improving or addressing issues in this document",
+        "Specific recommendation 2",
+        "Specific recommendation 3"
+    ]
+}}"""
+
+            # Send the message and get the response
+            user_message = UserMessage(text=prompt)
+            response = await chat.send_message(user_message)
             
-            # Use the new OpenAI client
-            client = openai.OpenAI(api_key=self.openai_api_key)
+            logger.info(f"Received AI analysis response for {analysis_id}")
             
-            response = await asyncio.to_thread(
-                client.chat.completions.create,
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are a legal expert specializing in document analysis. Always respond with valid JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=1500
-            )
-            
-            # Parse the response
-            analysis_text = response.choices[0].message.content
-            
-            # Try to parse JSON response
-            import json
+            # Parse the JSON response
             try:
-                analysis_result = json.loads(analysis_text)
+                # Clean up response - remove markdown code blocks if present
+                cleaned_response = response.strip()
+                if cleaned_response.startswith("```json"):
+                    cleaned_response = cleaned_response[7:]
+                if cleaned_response.startswith("```"):
+                    cleaned_response = cleaned_response[3:]
+                if cleaned_response.endswith("```"):
+                    cleaned_response = cleaned_response[:-3]
+                cleaned_response = cleaned_response.strip()
+                
+                analysis_result = json.loads(cleaned_response)
+                analysis_result["analysis_id"] = analysis_id
+                analysis_result["ai_powered"] = True
                 return analysis_result
-            except json.JSONDecodeError:
-                # If JSON parsing fails, create structured response from text
-                return await self._parse_openai_response(analysis_text, analysis_id)
+                
+            except json.JSONDecodeError as je:
+                logger.warning(f"JSON parsing failed: {je}, using structured extraction")
+                return await self._extract_structured_response(response, analysis_id, document_text)
                 
         except Exception as e:
-            logger.error(f"OpenAI analysis error: {str(e)}")
-            # Fallback to mock analysis
-            return await self._generate_mock_analysis(document_text, analysis_id)
+            logger.error(f"Emergent LLM analysis error: {str(e)}")
+            # Fallback to basic analysis
+            return await self._generate_basic_analysis(document_text, analysis_id)
     
-    async def _parse_openai_response(self, response_text: str, analysis_id: str) -> Dict[str, Any]:
-        """Parse OpenAI response if JSON parsing fails"""
-        # Basic parsing logic for non-JSON responses
-        lines = response_text.split('\n')
+    async def _extract_structured_response(self, response_text: str, analysis_id: str, document_text: str) -> Dict[str, Any]:
+        """Extract structured data from non-JSON AI response"""
+        # Try to find JSON within the response
+        import re
+        json_match = re.search(r'\{[\s\S]*\}', response_text)
+        if json_match:
+            try:
+                return json.loads(json_match.group())
+            except:
+                pass
         
-        summary = "AI analysis completed successfully."
-        key_findings = [
-            "Document contains standard legal provisions",
-            "Terms and conditions appear reasonable",
-            "No major red flags identified"
-        ]
-        
-        # Try to extract content from the response
-        for i, line in enumerate(lines):
-            if "summary" in line.lower() and i + 1 < len(lines):
-                summary = lines[i + 1].strip()
-                break
+        # Build structured response from text
+        word_count = len(document_text.split())
         
         return {
             "analysis_id": analysis_id,
-            "summary": summary,
-            "key_findings": key_findings,
+            "summary": response_text[:500] if len(response_text) > 500 else response_text,
+            "document_type": "Legal Document",
+            "key_findings": [
+                "Document analyzed using AI assistance",
+                f"Document contains approximately {word_count} words",
+                "Full structured analysis available upon request"
+            ],
             "risk_assessment": [
                 {
-                    "level": "Low",
-                    "issue": "Standard document structure detected",
-                    "recommendation": "Review document thoroughly before signing"
+                    "level": "Medium",
+                    "issue": "AI analysis completed with partial structured output",
+                    "clause_reference": "N/A",
+                    "recommendation": "Consider manual review for detailed clause analysis"
                 }
             ],
             "compliance": {
-                "score": 80,
-                "details": "Document appears to meet standard legal requirements"
-            }
+                "score": 75,
+                "details": "Document analyzed - recommend detailed manual review",
+                "areas_of_concern": [],
+                "positive_aspects": ["Document structure detected"]
+            },
+            "ai_powered": True
         }
     
-    async def _generate_mock_analysis(self, document_text: str, analysis_id: str) -> Dict[str, Any]:
-        """Generate mock analysis based on document content"""
-        # Analyze document characteristics
+    async def _generate_basic_analysis(self, document_text: str, analysis_id: str) -> Dict[str, Any]:
+        """Generate basic analysis based on document content patterns"""
         word_count = len(document_text.split())
-        has_contract_terms = any(term in document_text.lower() for term in 
-                               ['agreement', 'contract', 'terms', 'conditions', 'party', 'obligation'])
-        has_legal_language = any(term in document_text.lower() for term in 
-                               ['whereas', 'therefore', 'shall', 'hereby', 'liability', 'indemnify'])
+        text_lower = document_text.lower()
         
-        # Generate contextual analysis
-        if has_contract_terms:
-            summary = "This appears to be a contractual document with standard legal provisions and terms."
-            key_findings = [
-                "Contract contains binding obligations for parties",
-                "Standard terms and conditions are present",
-                "Payment and performance clauses identified",
-                "Termination provisions included"
-            ]
-            compliance_score = 85
-        elif has_legal_language:
-            summary = "This document contains formal legal language and structured provisions."
-            key_findings = [
-                "Formal legal structure and language detected",
-                "Clear obligations and rights defined",
-                "Professional legal drafting evident"
-            ]
-            compliance_score = 90
-        else:
-            summary = "This document appears to be a general business or informational document."
-            key_findings = [
-                "Standard business document format",
-                "Clear and readable content structure",
-                "No complex legal provisions identified"
-            ]
-            compliance_score = 75
+        # Detect document type
+        doc_type_indicators = {
+            "contract": ["agreement", "contract", "parties", "whereas", "therefore"],
+            "nda": ["confidential", "non-disclosure", "proprietary", "trade secret"],
+            "terms_of_service": ["terms of service", "terms and conditions", "user agreement", "acceptable use"],
+            "privacy_policy": ["privacy policy", "personal data", "data protection", "gdpr", "cookies"],
+            "employment": ["employment", "employee", "employer", "salary", "compensation", "termination"],
+            "lease": ["lease", "landlord", "tenant", "rent", "premises", "property"]
+        }
         
-        # Risk assessment based on content
-        if word_count > 2000:
-            risk_level = "Medium"
-            risk_issue = "Lengthy document requires thorough review"
-            risk_recommendation = "Consider having legal counsel review complex sections"
-        else:
-            risk_level = "Low"
-            risk_issue = "Document appears straightforward"
-            risk_recommendation = "Standard review practices should suffice"
+        detected_type = "General Legal Document"
+        for doc_type, indicators in doc_type_indicators.items():
+            if any(indicator in text_lower for indicator in indicators):
+                detected_type = doc_type.replace("_", " ").title()
+                break
+        
+        # Extract potential parties
+        parties = []
+        party_patterns = ["party a", "party b", "the company", "the client", "the contractor", "the employee", "the landlord", "the tenant"]
+        for pattern in party_patterns:
+            if pattern in text_lower:
+                parties.append(pattern.title())
+        
+        # Identify key terms
+        key_findings = []
+        term_patterns = {
+            "Payment terms present": ["payment", "invoice", "fee", "compensation"],
+            "Confidentiality clause detected": ["confidential", "non-disclosure", "proprietary"],
+            "Termination provisions included": ["termination", "cancellation", "expiration"],
+            "Liability limitations present": ["liability", "limitation", "indemnify", "hold harmless"],
+            "Governing law specified": ["governing law", "jurisdiction", "applicable law"],
+            "Dispute resolution clause": ["arbitration", "mediation", "dispute resolution"]
+        }
+        
+        for finding, patterns in term_patterns.items():
+            if any(pattern in text_lower for pattern in patterns):
+                key_findings.append(finding)
+        
+        if not key_findings:
+            key_findings = [
+                "Document structure analyzed",
+                f"Contains approximately {word_count} words",
+                "Manual review recommended for detailed analysis"
+            ]
+        
+        # Risk assessment
+        risks = []
+        if "indemnify" not in text_lower and "liability" not in text_lower:
+            risks.append({
+                "level": "Medium",
+                "issue": "No clear liability or indemnification provisions detected",
+                "clause_reference": "N/A",
+                "recommendation": "Consider adding liability limitation clauses"
+            })
+        
+        if "termination" not in text_lower:
+            risks.append({
+                "level": "Low",
+                "issue": "Termination provisions not clearly identified",
+                "clause_reference": "N/A",
+                "recommendation": "Ensure termination rights are clearly defined"
+            })
+        
+        if not risks:
+            risks.append({
+                "level": "Low",
+                "issue": "Standard document structure detected",
+                "clause_reference": "General",
+                "recommendation": "Review all terms before signing"
+            })
+        
+        # Calculate compliance score
+        compliance_score = 70
+        positive_aspects = []
+        
+        if "governing law" in text_lower or "jurisdiction" in text_lower:
+            compliance_score += 10
+            positive_aspects.append("Governing law specified")
+        
+        if "confidential" in text_lower:
+            compliance_score += 5
+            positive_aspects.append("Confidentiality provisions present")
+        
+        if word_count > 500:
+            compliance_score += 5
+            positive_aspects.append("Comprehensive document length")
         
         return {
             "analysis_id": analysis_id,
-            "summary": summary,
-            "key_findings": key_findings,
-            "risk_assessment": [
-                {
-                    "level": risk_level,
-                    "issue": risk_issue,
-                    "recommendation": risk_recommendation
-                }
-            ],
+            "summary": f"This appears to be a {detected_type} containing approximately {word_count} words. The document has been analyzed for key legal provisions and potential risks. {'Multiple parties identified.' if parties else 'Party identification requires manual review.'}",
+            "document_type": detected_type,
+            "key_findings": key_findings[:5],
+            "parties_identified": parties if parties else ["Parties require manual identification"],
+            "key_dates": ["Dates require manual review"],
+            "financial_terms": ["Financial terms require manual review"],
+            "risk_assessment": risks,
             "compliance": {
-                "score": compliance_score,
-                "details": f"Document analysis based on {word_count} words and content structure"
-            }
+                "score": min(compliance_score, 95),
+                "details": f"Basic compliance analysis completed. Document type: {detected_type}. Word count: {word_count}.",
+                "areas_of_concern": ["Full AI-powered analysis recommended for comprehensive compliance review"],
+                "positive_aspects": positive_aspects if positive_aspects else ["Document readable and parseable"]
+            },
+            "recommendations": [
+                "Have qualified legal counsel review before signing",
+                "Verify all party names and dates are accurate",
+                "Ensure all obligations and rights are clearly understood"
+            ],
+            "ai_powered": False,
+            "note": "Basic analysis mode - for full AI-powered analysis, ensure EMERGENT_LLM_KEY is configured"
         }
