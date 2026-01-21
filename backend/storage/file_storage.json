@@ -538,5 +538,53 @@
       "ms",
       "zimwiki"
     ]
+  },
+  "4324d7f7-8bac-4416-aea1-875f47f9f509": {
+    "file_id": "4324d7f7-8bac-4416-aea1-875f47f9f509",
+    "original_name": "test_document_rotated.pdf",
+    "file_path": "/app/backend/storage/pdf_operations/4324d7f7-8bac-4416-aea1-875f47f9f509_test_document_rotated.pdf",
+    "file_type": "pdf",
+    "file_size": 826,
+    "upload_time": "2026-01-21T21:59:26.170700"
+  },
+  "26f1c192-da4c-4e98-9383-55109d895035": {
+    "file_id": "26f1c192-da4c-4e98-9383-55109d895035",
+    "original_name": "test_document_compressed.pdf",
+    "file_path": "/app/backend/storage/pdf_operations/26f1c192-da4c-4e98-9383-55109d895035_test_document_compressed.pdf",
+    "file_type": "pdf",
+    "file_size": 866,
+    "upload_time": "2026-01-21T21:59:26.275317"
+  },
+  "093f298a-3356-4070-a705-2bd68c8b1212": {
+    "file_id": "093f298a-3356-4070-a705-2bd68c8b1212",
+    "original_name": "test_document_watermarked.pdf",
+    "file_path": "/app/backend/storage/pdf_operations/093f298a-3356-4070-a705-2bd68c8b1212_test_document_watermarked.pdf",
+    "file_type": "pdf",
+    "file_size": 1662,
+    "upload_time": "2026-01-21T21:59:26.378410"
+  },
+  "90717d09-256c-4787-8aa4-c27b4b1e2d26": {
+    "file_id": "90717d09-256c-4787-8aa4-c27b4b1e2d26",
+    "original_name": "test_document_text.txt",
+    "file_path": "/app/backend/storage/pdf_operations/90717d09-256c-4787-8aa4-c27b4b1e2d26_test_document_text.txt",
+    "file_type": "txt",
+    "file_size": 70,
+    "upload_time": "2026-01-21T21:59:26.582279"
+  },
+  "4941577c-ccff-40e6-95af-7e7ea1e6aa90": {
+    "file_id": "4941577c-ccff-40e6-95af-7e7ea1e6aa90",
+    "original_name": "test_document_reordered.pdf",
+    "file_path": "/app/backend/storage/pdf_operations/4941577c-ccff-40e6-95af-7e7ea1e6aa90_test_document_reordered.pdf",
+    "file_type": "pdf",
+    "file_size": 804,
+    "upload_time": "2026-01-21T21:59:26.679377"
+  },
+  "ea96d158-fd66-44f3-9f88-68cea8fd64aa": {
+    "file_id": "ea96d158-fd66-44f3-9f88-68cea8fd64aa",
+    "original_name": "test_document_pages_removed.pdf",
+    "file_path": "/app/backend/storage/pdf_operations/ea96d158-fd66-44f3-9f88-68cea8fd64aa_test_document_pages_removed.pdf",
+    "file_type": "pdf",
+    "file_size": 558,
+    "upload_time": "2026-01-21T21:59:26.787750"
   }
 }
