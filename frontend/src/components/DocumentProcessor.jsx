@@ -336,6 +336,7 @@ const DocumentProcessor = () => {
   const getFormatDescription = (format) => {
     const descriptions = {
       pdf: "Portable Document Format",
+      pdfa: "PDF/A Archival Format (Long-term Preservation)",
       docx: "Microsoft Word Document",
       doc: "Legacy Word Document", 
       txt: "Plain Text File",
