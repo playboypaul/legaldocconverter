@@ -40,28 +40,20 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <a 
-                  href="#features" 
-                  className="hover:text-white transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('features')?.scrollIntoView({behavior: 'smooth'});
-                  }}
+                <Link 
+                  to="/features"
+                  className="hover:text-white transition-colors"
                 >
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#pricing" 
-                  className="hover:text-white transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('pricing')?.scrollIntoView({behavior: 'smooth'});
-                  }}
+                <Link 
+                  to="/pricing"
+                  className="hover:text-white transition-colors"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
                 <Link 
