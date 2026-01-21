@@ -20,6 +20,8 @@ import TermsOfService from "./components/legal/TermsOfService";
 import PrivacyPolicy from "./components/legal/PrivacyPolicy";
 import CookiePolicy from "./components/legal/CookiePolicy";
 import SecurityPage from "./components/legal/SecurityPage";
+import FeaturesPage from "./components/pages/FeaturesPage";
+import PricingPage from "./components/pages/PricingPage";
 
 const Home = () => {
   return (
