@@ -1,0 +1,37 @@
+LEGAL SERVICES AGREEMENT
+
+This Agreement is entered into as of January 1, 2025, by and between:
+
+Party A: ABC Law Firm ("Provider")
+Party B: XYZ Corporation ("Client")
+
+WHEREAS, the Client desires to engage the Provider for legal services;
+WHEREAS, the Provider agrees to provide such services under the terms herein;
+
+NOW, THEREFORE, the parties agree as follows:
+
+1. SERVICES
+The Provider shall provide legal consultation, document review, and representation services.
+
+2. COMPENSATION
+The Client shall pay the Provider at a rate of $500 per hour for all services rendered.
+
+3. TERM
+This Agreement shall commence on January 1, 2025 and continue for one year.
+
+4. CONFIDENTIALITY
+All information shared between parties shall remain strictly confidential.
+
+5. TERMINATION
+Either party may terminate this Agreement with 30 days written notice.
+
+6. GOVERNING LAW
+This Agreement shall be governed by the laws of the State of California.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement.
+
+_________________________
+Party A Signature
+
+_________________________
+Party B Signature

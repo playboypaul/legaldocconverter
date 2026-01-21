@@ -456,5 +456,46 @@
       "ms",
       "zimwiki"
     ]
+  },
+  "2b561228-36e4-4fb0-8556-e75aa6e00e89": {
+    "file_id": "2b561228-36e4-4fb0-8556-e75aa6e00e89",
+    "original_name": "legal_agreement.txt",
+    "file_path": "/app/backend/storage/uploads/2b561228-36e4-4fb0-8556-e75aa6e00e89_legal_agreement.txt",
+    "file_type": "txt",
+    "file_size": 1087,
+    "upload_time": "2026-01-21T21:58:53.131889",
+    "supported_conversions": [
+      "pdf",
+      "pdfa",
+      "docx",
+      "doc",
+      "rtf",
+      "odt",
+      "html",
+      "xml",
+      "csv",
+      "xlsx",
+      "xls",
+      "ppt",
+      "pptx",
+      "epub",
+      "md",
+      "json",
+      "yaml",
+      "tex",
+      "docbook",
+      "opml",
+      "rst",
+      "asciidoc",
+      "wiki",
+      "jira",
+      "fb2",
+      "icml",
+      "tei",
+      "context",
+      "man",
+      "ms",
+      "zimwiki"
+    ]
   }
 }
