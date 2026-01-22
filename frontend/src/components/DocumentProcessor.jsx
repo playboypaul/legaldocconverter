@@ -898,7 +898,7 @@ const DocumentProcessor = () => {
                     <p className="text-green-700 mb-4">
                       {conversionResult.original_file} → {conversionResult.converted_file}
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Button 
                         onClick={handleDownload}
                         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 shadow-lg transition-all duration-300"
@@ -906,6 +906,21 @@ const DocumentProcessor = () => {
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>
+                      {conversionResult.converted_file?.toLowerCase().endsWith('.pdf') && (
+                        <Button 
+                          onClick={() => setPdfPreview({
+                            isOpen: true,
+                            fileUrl: `${API}/download/${conversionResult.conversion_id}`,
+                            fileName: conversionResult.converted_file,
+                            compareUrl: null
+                          })}
+                          variant="outline"
+                          className="border-green-500 text-green-600 hover:bg-green-50 font-semibold py-2 transition-all duration-300"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Preview PDF
+                        </Button>
+                      )}
                       <Button 
                         onClick={() => {setActiveTab('edit'); loadFileForEditing(conversionResult);}}
                         variant="outline"
