@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2 } from 'lucide-react';
+import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import AdvancedPdfManager from './pdf/AdvancedPdfManager';
+import PdfPreviewModal from './pdf/PdfPreviewModal';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -21,6 +22,16 @@ const DocumentProcessor = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [conversionResult, setConversionResult] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  
+  // PDF Preview State
+  const [pdfPreview, setPdfPreview] = useState({
+    isOpen: false,
+    fileUrl: null,
+    fileName: null,
+    compareUrl: null,
+    compareLabel: 'After Edit',
+    originalLabel: 'Original'
+  });
   
   // New Enhanced Features State
   const [activeTab, setActiveTab] = useState('convert'); // 'convert', 'batch', 'compare', 'edit', 'annotate', 'pdf-tools'
