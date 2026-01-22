@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2 } from 'lucide-react';
+import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import AdvancedPdfManager from './pdf/AdvancedPdfManager';
+import PdfPreviewModal from './pdf/PdfPreviewModal';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -21,6 +22,16 @@ const DocumentProcessor = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [conversionResult, setConversionResult] = useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
+  
+  // PDF Preview State
+  const [pdfPreview, setPdfPreview] = useState({
+    isOpen: false,
+    fileUrl: null,
+    fileName: null,
+    compareUrl: null,
+    compareLabel: 'After Edit',
+    originalLabel: 'Original'
+  });
   
   // New Enhanced Features State
   const [activeTab, setActiveTab] = useState('convert'); // 'convert', 'batch', 'compare', 'edit', 'annotate', 'pdf-tools'
@@ -336,6 +347,7 @@ const DocumentProcessor = () => {
   const getFormatDescription = (format) => {
     const descriptions = {
       pdf: "Portable Document Format",
+      pdfa: "PDF/A Archival Format (Long-term Preservation)",
       docx: "Microsoft Word Document",
       doc: "Legacy Word Document", 
       txt: "Plain Text File",
@@ -886,7 +898,7 @@ const DocumentProcessor = () => {
                     <p className="text-green-700 mb-4">
                       {conversionResult.original_file} → {conversionResult.converted_file}
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <Button 
                         onClick={handleDownload}
                         className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2 shadow-lg transition-all duration-300"
@@ -894,6 +906,21 @@ const DocumentProcessor = () => {
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </Button>
+                      {conversionResult.converted_file?.toLowerCase().endsWith('.pdf') && (
+                        <Button 
+                          onClick={() => setPdfPreview({
+                            isOpen: true,
+                            fileUrl: `${API}/download/${conversionResult.conversion_id}`,
+                            fileName: conversionResult.converted_file,
+                            compareUrl: null
+                          })}
+                          variant="outline"
+                          className="border-green-500 text-green-600 hover:bg-green-50 font-semibold py-2 transition-all duration-300"
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Preview PDF
+                        </Button>
+                      )}
                       <Button 
                         onClick={() => {setActiveTab('edit'); loadFileForEditing(conversionResult);}}
                         variant="outline"
@@ -1563,10 +1590,25 @@ const DocumentProcessor = () => {
                         <p className="text-green-700 mb-4">
                           Merged {pdfEditor.mergeResult.source_files?.length} files into: {pdfEditor.mergeResult.output_file}
                         </p>
-                        <Button className="bg-green-600 hover:bg-green-700 text-white">
-                          <Download className="h-4 w-4 mr-2" />
-                          Download Merged PDF
-                        </Button>
+                        <div className="flex gap-3">
+                          <Button className="bg-green-600 hover:bg-green-700 text-white">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download Merged PDF
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            className="border-green-500 text-green-600 hover:bg-green-50"
+                            onClick={() => setPdfPreview({
+                              isOpen: true,
+                              fileUrl: `${API}${pdfEditor.mergeResult.download_url}`,
+                              fileName: pdfEditor.mergeResult.output_file,
+                              compareUrl: null
+                            })}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview PDF
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -2075,6 +2117,17 @@ const DocumentProcessor = () => {
           </Card>
         )}
       </div>
+      
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={pdfPreview.isOpen}
+        onClose={() => setPdfPreview(prev => ({ ...prev, isOpen: false }))}
+        fileUrl={pdfPreview.fileUrl}
+        fileName={pdfPreview.fileName}
+        compareUrl={pdfPreview.compareUrl}
+        compareLabel={pdfPreview.compareLabel}
+        originalLabel={pdfPreview.originalLabel}
+      />
     </section>
   );
 };

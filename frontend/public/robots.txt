@@ -1,92 +1,63 @@
-# Robots.txt for LegalDocConverter - SEO Optimized
+# Robots.txt for LegalDocConverter
+# https://legaldocconverter.com
 
+# Allow all crawlers
 User-agent: *
 Allow: /
-Allow: /blog
-Allow: /pdf-tools  
-Allow: /#processor
-Allow: /#features
-Allow: /#pricing
-Disallow: /admin
-Disallow: /api/
-Disallow: /temp/
-Disallow: /.env
-Disallow: /config/
 
 # Sitemap location
 Sitemap: https://legaldocconverter.com/sitemap.xml
 
-# Crawl delay for better server performance
-Crawl-delay: 1
-
-# Specific instructions for major search engines
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0
-
-User-agent: Bingbot  
-Allow: /
-Crawl-delay: 1
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 1
-
-# AI crawlers and research bots
+# Allow specific AI search crawlers
 User-agent: GPTBot
 Allow: /
-Allow: /blog
-Allow: /pdf-tools
-Crawl-delay: 1
 
 User-agent: ChatGPT-User
 Allow: /
-Allow: /blog
-Allow: /pdf-tools
 
-User-agent: CCBot
+User-agent: Google-Extended
 Allow: /
-Allow: /blog
-Allow: /pdf-tools
+
+User-agent: anthropic-ai
+Allow: /
 
 User-agent: Claude-Web
 Allow: /
-Allow: /blog  
-Allow: /pdf-tools
 
 User-agent: PerplexityBot
 Allow: /
-Allow: /blog
-Allow: /pdf-tools
 
-User-agent: YouBot
-Allow: /
-Allow: /blog
-Allow: /pdf-tools
-
-# Academic and research crawlers
-User-agent: ia_archiver
+User-agent: Applebot-Extended
 Allow: /
 
-User-agent: archive.org_bot
+# Standard search engines
+User-agent: Googlebot
 Allow: /
 
-# SEO and analysis tools
-User-agent: AhrefsBot
+User-agent: Bingbot
 Allow: /
 
-User-agent: SemrushBot  
+User-agent: DuckDuckBot
 Allow: /
 
-User-agent: MJ12bot
+User-agent: Slurp
 Allow: /
 
-# Social media crawlers
-User-agent: facebookexternalhit
+User-agent: Baiduspider
 Allow: /
 
-User-agent: Twitterbot
+User-agent: YandexBot
 Allow: /
 
-User-agent: LinkedInBot
-Allow: /
+# Disallow private/admin areas (if any)
+Disallow: /api/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Allow static assets
+Allow: /static/
+Allow: /images/
+Allow: /sitemap.xml
+
+# Crawl delay to be respectful
+Crawl-delay: 1

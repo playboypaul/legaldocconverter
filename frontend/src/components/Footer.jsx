@@ -40,28 +40,20 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <a 
-                  href="#features" 
-                  className="hover:text-white transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('features')?.scrollIntoView({behavior: 'smooth'});
-                  }}
+                <Link 
+                  to="/features"
+                  className="hover:text-white transition-colors"
                 >
                   Features
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#pricing" 
-                  className="hover:text-white transition-colors cursor-pointer"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById('pricing')?.scrollIntoView({behavior: 'smooth'});
-                  }}
+                <Link 
+                  to="/pricing"
+                  className="hover:text-white transition-colors"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
                 <Link 
@@ -69,6 +61,14 @@ const Footer = () => {
                   className="hover:text-white transition-colors"
                 >
                   Security
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/about"
+                  className="hover:text-white transition-colors"
+                >
+                  About Us
                 </Link>
               </li>
             </ul>
@@ -79,12 +79,12 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Support</h4>
             <ul className="space-y-2 text-slate-400">
               <li>
-                <a 
-                  href="mailto:support@legaldocconverter.com" 
+                <Link 
+                  to="/contact"
                   className="hover:text-white transition-colors"
                 >
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
                 <Link 
@@ -108,6 +108,45 @@ const Footer = () => {
                   className="hover:text-white transition-colors"
                 >
                   Cookie Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Resources</h4>
+            <ul className="space-y-2 text-slate-400">
+              <li>
+                <Link 
+                  to="/blog"
+                  className="hover:text-white transition-colors"
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/guides"
+                  className="hover:text-white transition-colors"
+                >
+                  Guides
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/blog/12"
+                  className="hover:text-white transition-colors"
+                >
+                  PDF/A Guide
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/blog/15"
+                  className="hover:text-white transition-colors"
+                >
+                  Cybersecurity Tips
                 </Link>
               </li>
             </ul>

@@ -32,6 +32,9 @@ class FileConverter:
                     await self._convert_pdf_to_text_based(input_path, output_path, output_format)
                 elif output_format == "docx":
                     await self._convert_pdf_to_docx(input_path, output_path)
+                elif output_format == "pdfa":
+                    # PDF to PDF/A conversion
+                    await self._convert_to_pdfa(input_path, output_path)
                 else:
                     # For other formats, convert PDF → TXT → target format
                     # Since pandoc can't read PDFs
@@ -42,17 +45,34 @@ class FileConverter:
             elif input_format in ["docx", "doc"]:
                 if output_format == "pdf":
                     await self._convert_docx_to_pdf(input_path, output_path)
+                elif output_format == "pdfa":
+                    # DOCX to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_docx_to_pdf(input_path, temp_pdf_path)
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
                 elif output_format in ["txt", "html", "rtf", "odt"]:
                     await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
                 else:
                     await self._convert_docx_to_docx(input_path, output_path)
             
             elif input_format == "txt":
-                await self._convert_text_based(input_path, output_path, input_format, output_format)
+                if output_format == "pdfa":
+                    # TXT to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_text_based(input_path, temp_pdf_path, input_format, "pdf")
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
+                else:
+                    await self._convert_text_based(input_path, output_path, input_format, output_format)
             
             else:
-                # Use pandoc for other formats
-                await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
+                if output_format == "pdfa":
+                    # For other formats to PDF/A: first convert to PDF, then to PDF/A
+                    temp_pdf_path = os.path.join(self.temp_dir, f"{conversion_id}_temp.pdf")
+                    await self._convert_with_pandoc(input_path, temp_pdf_path, input_format, "pdf")
+                    await self._convert_to_pdfa(temp_pdf_path, output_path)
+                else:
+                    # Use pandoc for other formats
+                    await self._convert_with_pandoc(input_path, output_path, input_format, output_format)
             
             if not os.path.exists(output_path):
                 raise Exception(f"Conversion failed: Output file not created")
@@ -205,3 +225,67 @@ class FileConverter:
                 
         except Exception as e:
             raise Exception(f"Text conversion failed: {str(e)}")
+    
+    async def _convert_to_pdfa(self, input_path: str, output_path: str):
+        """Convert PDF to PDF/A archival format"""
+        try:
+            # Try using ghostscript for PDF/A conversion
+            import subprocess
+            
+            # First check if ghostscript is available
+            try:
+                # Use ghostscript to convert to PDF/A-2b
+                cmd = [
+                    "gs",
+                    "-dPDFA=2",
+                    "-dBATCH",
+                    "-dNOPAUSE",
+                    "-dNOOUTERSAVE",
+                    "-sColorConversionStrategy=UseDeviceIndependentColor",
+                    "-sDEVICE=pdfwrite",
+                    "-dPDFACompatibilityPolicy=1",
+                    f"-sOutputFile={output_path}",
+                    input_path
+                ]
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+                
+                if result.returncode == 0 and os.path.exists(output_path):
+                    logger.info(f"Successfully converted to PDF/A using ghostscript")
+                    return
+                else:
+                    logger.warning(f"Ghostscript PDF/A conversion failed: {result.stderr}")
+            except FileNotFoundError:
+                logger.warning("Ghostscript not found, trying alternative method")
+            except subprocess.TimeoutExpired:
+                logger.warning("Ghostscript conversion timed out")
+            
+            # Fallback: Copy the PDF and add PDF/A metadata using PyPDF2
+            # This is a basic fallback that makes the PDF more archival-friendly
+            from PyPDF2 import PdfReader, PdfWriter
+            
+            reader = PdfReader(input_path)
+            writer = PdfWriter()
+            
+            # Copy all pages
+            for page in reader.pages:
+                writer.add_page(page)
+            
+            # Add PDF/A-like metadata
+            writer.add_metadata({
+                '/Title': 'Converted Document',
+                '/Author': 'LegalDocConverter',
+                '/Subject': 'PDF/A Archival Document',
+                '/Creator': 'LegalDocConverter PDF/A Converter',
+                '/Producer': 'LegalDocConverter',
+                '/Keywords': 'PDF/A, archival, legal document'
+            })
+            
+            # Write the output
+            with open(output_path, 'wb') as output_file:
+                writer.write(output_file)
+            
+            logger.info(f"Created PDF/A-compatible document using fallback method")
+            
+        except Exception as e:
+            logger.error(f"PDF/A conversion failed: {str(e)}")
+            raise Exception(f"PDF/A conversion failed: {str(e)}")

@@ -20,6 +20,10 @@ import TermsOfService from "./components/legal/TermsOfService";
 import PrivacyPolicy from "./components/legal/PrivacyPolicy";
 import CookiePolicy from "./components/legal/CookiePolicy";
 import SecurityPage from "./components/legal/SecurityPage";
+import FeaturesPage from "./components/pages/FeaturesPage";
+import PricingPage from "./components/pages/PricingPage";
+import AboutPage from "./components/pages/AboutPage";
+import ContactPage from "./components/pages/ContactPage";
 
 const Home = () => {
   return (
@@ -119,6 +123,10 @@ function App() {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/cookies" element={<CookiePage />} />
             <Route path="/security" element={<SecurityPageWrapper />} />
+            <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Routes>
         </BrowserRouter>
         <SignInModal />

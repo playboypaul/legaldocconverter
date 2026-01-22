@@ -206,7 +206,7 @@ analysis_storage = {}
 # Supported formats
 SUPPORTED_FORMATS = {
     "input": ["pdf", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md"],
-    "output": ["pdf", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md", "json", "yaml", "tex", "docbook", "opml", "rst", "asciidoc", "wiki", "jira", "fb2", "icml", "tei", "context", "man", "ms", "zimwiki"]
+    "output": ["pdf", "pdfa", "docx", "doc", "txt", "rtf", "odt", "html", "xml", "csv", "xlsx", "xls", "ppt", "pptx", "epub", "md", "json", "yaml", "tex", "docbook", "opml", "rst", "asciidoc", "wiki", "jira", "fb2", "icml", "tei", "context", "man", "ms", "zimwiki"]
 }
 
 @api_router.get("/")
@@ -1347,6 +1347,529 @@ async def export_annotations(request: dict):
     except Exception as e:
         logger.error(f"Export annotations error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to export annotations: {str(e)}")
+
+# Enhanced PDF Editing Tools
+
+@api_router.post("/pdf/rotate")
+async def rotate_pdf_pages(request: dict):
+    """Rotate pages in a PDF document"""
+    try:
+        file_id = request.get("file_id")
+        rotation = request.get("rotation", 90)  # 90, 180, 270
+        pages = request.get("pages", "all")  # "all" or list of page numbers [1, 2, 3]
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if rotation not in [90, 180, 270]:
+            raise HTTPException(status_code=400, detail="Rotation must be 90, 180, or 270 degrees")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader, PdfWriter
+        
+        rotate_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        rotated_filename = f"{base_name}_rotated.pdf"
+        output_path = os.path.join(PDF_OPERATIONS_DIR, f"{rotate_id}_{rotated_filename}")
+        
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        total_pages = len(reader.pages)
+        pages_to_rotate = list(range(total_pages)) if pages == "all" else [p - 1 for p in pages if 0 < p <= total_pages]
+        
+        for i, page in enumerate(reader.pages):
+            if i in pages_to_rotate:
+                page.rotate(rotation)
+            writer.add_page(page)
+        
+        with open(output_path, 'wb') as f:
+            writer.write(f)
+        
+        file_storage[rotate_id] = {
+            "file_id": rotate_id,
+            "original_name": rotated_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF rotation completed: {rotation} degrees on {len(pages_to_rotate)} pages")
+        
+        return {
+            "rotate_id": rotate_id,
+            "original_file": file_info["original_name"],
+            "rotated_file": rotated_filename,
+            "rotation": rotation,
+            "pages_rotated": len(pages_to_rotate),
+            "download_url": f"/api/download/{rotate_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF rotation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF rotation failed: {str(e)}")
+
+@api_router.post("/pdf/compress")
+async def compress_pdf(request: dict):
+    """Compress PDF to reduce file size"""
+    try:
+        file_id = request.get("file_id")
+        quality = request.get("quality", "medium")  # "low", "medium", "high"
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader, PdfWriter
+        
+        compress_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        compressed_filename = f"{base_name}_compressed.pdf"
+        output_path = os.path.join(PDF_OPERATIONS_DIR, f"{compress_id}_{compressed_filename}")
+        
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        for page in reader.pages:
+            page.compress_content_streams()
+            writer.add_page(page)
+        
+        # Remove unused objects
+        writer.remove_links()
+        
+        with open(output_path, 'wb') as f:
+            writer.write(f)
+        
+        original_size = file_info["file_size"]
+        compressed_size = os.path.getsize(output_path)
+        reduction = ((original_size - compressed_size) / original_size) * 100 if original_size > 0 else 0
+        
+        file_storage[compress_id] = {
+            "file_id": compress_id,
+            "original_name": compressed_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": compressed_size,
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF compression completed: {reduction:.1f}% reduction")
+        
+        return {
+            "compress_id": compress_id,
+            "original_file": file_info["original_name"],
+            "compressed_file": compressed_filename,
+            "original_size": original_size,
+            "compressed_size": compressed_size,
+            "reduction_percent": round(reduction, 1),
+            "download_url": f"/api/download/{compress_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF compression error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF compression failed: {str(e)}")
+
+@api_router.post("/pdf/watermark")
+async def add_watermark(request: dict):
+    """Add text watermark to PDF"""
+    try:
+        file_id = request.get("file_id")
+        watermark_text = request.get("text", "CONFIDENTIAL")
+        position = request.get("position", "center")  # "center", "diagonal", "header", "footer"
+        opacity = request.get("opacity", 0.3)
+        font_size = request.get("font_size", 50)
+        color = request.get("color", "gray")  # "gray", "red", "blue"
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader, PdfWriter
+        from reportlab.pdfgen import canvas as reportlab_canvas
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.colors import gray, red, blue, Color
+        import io
+        
+        watermark_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        watermarked_filename = f"{base_name}_watermarked.pdf"
+        output_path = os.path.join(PDF_OPERATIONS_DIR, f"{watermark_id}_{watermarked_filename}")
+        
+        # Create watermark PDF
+        packet = io.BytesIO()
+        c = reportlab_canvas.Canvas(packet, pagesize=letter)
+        width, height = letter
+        
+        color_map = {"gray": Color(0.5, 0.5, 0.5, alpha=opacity), "red": Color(1, 0, 0, alpha=opacity), "blue": Color(0, 0, 1, alpha=opacity)}
+        c.setFillColor(color_map.get(color, color_map["gray"]))
+        c.setFont("Helvetica-Bold", font_size)
+        
+        if position == "center":
+            c.drawCentredString(width/2, height/2, watermark_text)
+        elif position == "diagonal":
+            c.saveState()
+            c.translate(width/2, height/2)
+            c.rotate(45)
+            c.drawCentredString(0, 0, watermark_text)
+            c.restoreState()
+        elif position == "header":
+            c.drawCentredString(width/2, height - 50, watermark_text)
+        elif position == "footer":
+            c.drawCentredString(width/2, 50, watermark_text)
+        
+        c.save()
+        packet.seek(0)
+        
+        watermark_pdf = PdfReader(packet)
+        watermark_page = watermark_pdf.pages[0]
+        
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        for page in reader.pages:
+            page.merge_page(watermark_page)
+            writer.add_page(page)
+        
+        with open(output_path, 'wb') as f:
+            writer.write(f)
+        
+        file_storage[watermark_id] = {
+            "file_id": watermark_id,
+            "original_name": watermarked_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF watermark added: '{watermark_text}' at {position}")
+        
+        return {
+            "watermark_id": watermark_id,
+            "original_file": file_info["original_name"],
+            "watermarked_file": watermarked_filename,
+            "watermark_text": watermark_text,
+            "position": position,
+            "download_url": f"/api/download/{watermark_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF watermark error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF watermark failed: {str(e)}")
+
+@api_router.post("/pdf/remove-pages")
+async def remove_pages(request: dict):
+    """Remove specific pages from PDF"""
+    try:
+        file_id = request.get("file_id")
+        pages_to_remove = request.get("pages", [])  # List of page numbers to remove [1, 3, 5]
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if not pages_to_remove:
+            raise HTTPException(status_code=400, detail="pages list is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader, PdfWriter
+        
+        remove_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        output_filename = f"{base_name}_pages_removed.pdf"
+        output_path = os.path.join(PDF_OPERATIONS_DIR, f"{remove_id}_{output_filename}")
+        
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        total_pages = len(reader.pages)
+        pages_to_remove_indices = set(p - 1 for p in pages_to_remove if 0 < p <= total_pages)
+        
+        pages_kept = 0
+        for i, page in enumerate(reader.pages):
+            if i not in pages_to_remove_indices:
+                writer.add_page(page)
+                pages_kept += 1
+        
+        if pages_kept == 0:
+            raise HTTPException(status_code=400, detail="Cannot remove all pages from PDF")
+        
+        with open(output_path, 'wb') as f:
+            writer.write(f)
+        
+        file_storage[remove_id] = {
+            "file_id": remove_id,
+            "original_name": output_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF pages removed: {len(pages_to_remove_indices)} pages removed, {pages_kept} remaining")
+        
+        return {
+            "remove_id": remove_id,
+            "original_file": file_info["original_name"],
+            "output_file": output_filename,
+            "pages_removed": list(pages_to_remove_indices),
+            "pages_remaining": pages_kept,
+            "download_url": f"/api/download/{remove_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF remove pages error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF remove pages failed: {str(e)}")
+
+@api_router.post("/pdf/reorder")
+async def reorder_pages(request: dict):
+    """Reorder pages in a PDF"""
+    try:
+        file_id = request.get("file_id")
+        new_order = request.get("order", [])  # New page order [3, 1, 2, 4]
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if not new_order:
+            raise HTTPException(status_code=400, detail="order list is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader, PdfWriter
+        
+        reorder_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        output_filename = f"{base_name}_reordered.pdf"
+        output_path = os.path.join(PDF_OPERATIONS_DIR, f"{reorder_id}_{output_filename}")
+        
+        reader = PdfReader(file_info["file_path"])
+        writer = PdfWriter()
+        
+        total_pages = len(reader.pages)
+        
+        # Validate new_order
+        if len(set(new_order)) != len(new_order):
+            raise HTTPException(status_code=400, detail="Page numbers in order must be unique")
+        
+        for page_num in new_order:
+            if page_num < 1 or page_num > total_pages:
+                raise HTTPException(status_code=400, detail=f"Invalid page number: {page_num}. PDF has {total_pages} pages.")
+            writer.add_page(reader.pages[page_num - 1])
+        
+        with open(output_path, 'wb') as f:
+            writer.write(f)
+        
+        file_storage[reorder_id] = {
+            "file_id": reorder_id,
+            "original_name": output_filename,
+            "file_path": output_path,
+            "file_type": "pdf",
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF pages reordered: new order {new_order}")
+        
+        return {
+            "reorder_id": reorder_id,
+            "original_file": file_info["original_name"],
+            "output_file": output_filename,
+            "new_order": new_order,
+            "download_url": f"/api/download/{reorder_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF reorder error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF reorder failed: {str(e)}")
+
+@api_router.post("/pdf/extract-text")
+async def extract_text_from_pdf(request: dict):
+    """Extract all text from a PDF"""
+    try:
+        file_id = request.get("file_id")
+        output_format = request.get("format", "txt")  # "txt" or "json"
+        
+        if not file_id:
+            raise HTTPException(status_code=400, detail="file_id is required")
+        
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader
+        
+        extract_id = str(uuid.uuid4())
+        base_name = file_info["original_name"].rsplit('.', 1)[0]
+        
+        reader = PdfReader(file_info["file_path"])
+        
+        pages_text = []
+        full_text = ""
+        
+        for i, page in enumerate(reader.pages):
+            page_text = page.extract_text() or ""
+            pages_text.append({
+                "page_number": i + 1,
+                "text": page_text,
+                "word_count": len(page_text.split())
+            })
+            full_text += page_text + "\n\n"
+        
+        if output_format == "json":
+            output_filename = f"{base_name}_text.json"
+            output_path = os.path.join(PDF_OPERATIONS_DIR, f"{extract_id}_{output_filename}")
+            
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump({
+                    "source_file": file_info["original_name"],
+                    "total_pages": len(reader.pages),
+                    "total_words": len(full_text.split()),
+                    "pages": pages_text
+                }, f, indent=2, ensure_ascii=False)
+            
+            file_type = "json"
+        else:
+            output_filename = f"{base_name}_text.txt"
+            output_path = os.path.join(PDF_OPERATIONS_DIR, f"{extract_id}_{output_filename}")
+            
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(full_text)
+            
+            file_type = "txt"
+        
+        file_storage[extract_id] = {
+            "file_id": extract_id,
+            "original_name": output_filename,
+            "file_path": output_path,
+            "file_type": file_type,
+            "file_size": os.path.getsize(output_path),
+            "upload_time": datetime.utcnow()
+        }
+        save_storage()
+        
+        logger.info(f"PDF text extracted: {len(reader.pages)} pages, {len(full_text.split())} words")
+        
+        return {
+            "extract_id": extract_id,
+            "original_file": file_info["original_name"],
+            "output_file": output_filename,
+            "total_pages": len(reader.pages),
+            "total_words": len(full_text.split()),
+            "download_url": f"/api/download/{extract_id}",
+            "status": "completed"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF text extraction error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"PDF text extraction failed: {str(e)}")
+
+@api_router.get("/pdf/info/{file_id}")
+async def get_pdf_info(file_id: str):
+    """Get detailed information about a PDF file"""
+    try:
+        if file_id not in file_storage:
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        file_info = file_storage[file_id]
+        if file_info["file_type"].lower() != "pdf":
+            raise HTTPException(status_code=400, detail="File must be a PDF")
+        
+        from PyPDF2 import PdfReader
+        
+        reader = PdfReader(file_info["file_path"])
+        
+        # Get metadata
+        metadata = reader.metadata
+        
+        # Get page info
+        pages_info = []
+        for i, page in enumerate(reader.pages):
+            media_box = page.mediabox
+            pages_info.append({
+                "page_number": i + 1,
+                "width": float(media_box.width),
+                "height": float(media_box.height),
+                "rotation": page.get("/Rotate", 0)
+            })
+        
+        return {
+            "file_id": file_id,
+            "filename": file_info["original_name"],
+            "file_size": file_info["file_size"],
+            "total_pages": len(reader.pages),
+            "metadata": {
+                "title": metadata.get("/Title", "N/A") if metadata else "N/A",
+                "author": metadata.get("/Author", "N/A") if metadata else "N/A",
+                "subject": metadata.get("/Subject", "N/A") if metadata else "N/A",
+                "creator": metadata.get("/Creator", "N/A") if metadata else "N/A",
+                "producer": metadata.get("/Producer", "N/A") if metadata else "N/A",
+                "creation_date": str(metadata.get("/CreationDate", "N/A")) if metadata else "N/A",
+                "modification_date": str(metadata.get("/ModDate", "N/A")) if metadata else "N/A"
+            },
+            "is_encrypted": reader.is_encrypted,
+            "pages": pages_info
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"PDF info error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get PDF info: {str(e)}")
 
 # Include the router in the main app
 app.include_router(api_router)

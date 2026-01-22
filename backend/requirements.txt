@@ -93,3 +93,4 @@ urllib3==2.5.0
 uvicorn==0.25.0
 watchfiles==1.1.0
 yarl==1.20.1
+emergentintegrations==0.1.0

@@ -9,7 +9,7 @@ const LegalBlog = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
+        {/* Page Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-6">
             Legal Technology & Document Management Blog
@@ -20,9 +20,6 @@ const LegalBlog = () => {
           </p>
         </div>
 
-        {/* Featured Content with Ads */}
-        <LegalDocumentGuideWithAd />
-        
         {/* Blog Posts Grid */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
@@ -30,7 +27,7 @@ const LegalBlog = () => {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blogPosts.map((post) => (
-              <article key={post.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300">
+              <article key={post.id} className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
@@ -39,16 +36,18 @@ const LegalBlog = () => {
                     <span className="text-gray-500 text-sm">{post.readTime}</span>
                   </div>
                   
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
-                    {post.title}
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 hover:text-blue-600 transition-colors">
+                    <Link to={`/blog/${post.id}`}>
+                      {post.title}
+                    </Link>
                   </h3>
                   
                   <p className="text-gray-600 mb-4 line-clamp-3">
                     {post.excerpt}
                   </p>
                   
-                  <div className="flex items-center justify-between">
-                    <span className="text-gray-500 text-sm">{post.date} • {post.readTime}</span>
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                    <span className="text-gray-500 text-sm">{post.date}</span>
                     <Link 
                       to={`/blog/${post.id}`}
                       className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-block"
@@ -61,6 +60,9 @@ const LegalBlog = () => {
             ))}
           </div>
         </div>
+
+        {/* Featured Content with Ads */}
+        <LegalDocumentGuideWithAd />
 
         {/* Industry Report with Ad */}
         <LegalTechReportWithAd />
