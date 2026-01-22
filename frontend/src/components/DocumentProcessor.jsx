@@ -2102,6 +2102,17 @@ const DocumentProcessor = () => {
           </Card>
         )}
       </div>
+      
+      {/* PDF Preview Modal */}
+      <PdfPreviewModal
+        isOpen={pdfPreview.isOpen}
+        onClose={() => setPdfPreview(prev => ({ ...prev, isOpen: false }))}
+        fileUrl={pdfPreview.fileUrl}
+        fileName={pdfPreview.fileName}
+        compareUrl={pdfPreview.compareUrl}
+        compareLabel={pdfPreview.compareLabel}
+        originalLabel={pdfPreview.originalLabel}
+      />
     </section>
   );
 };
