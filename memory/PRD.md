@@ -141,7 +141,8 @@ Build a comprehensive legal document conversion and processing platform for lega
 
 ## Testing Status
 - AI Analysis: ✅ Verified working with real GPT-4o analysis
-- PDF Tools (new): Backend endpoints added, need frontend wiring
+- PDF Tools (new): Backend endpoints added + frontend wired
+- PDF Preview: ✅ New feature - inline PDF viewing with zoom, rotate, compare
 - Navigation: ✅ All tests passing
 - Blog Articles (17): ✅ Verified with Header/Footer
 - SEO: ✅ Structured data and sitemap updated
