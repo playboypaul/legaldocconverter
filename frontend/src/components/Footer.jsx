@@ -113,6 +113,45 @@ const Footer = () => {
             </ul>
           </div>
 
+          {/* Resources */}
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Resources</h4>
+            <ul className="space-y-2 text-slate-400">
+              <li>
+                <Link 
+                  to="/blog"
+                  className="hover:text-white transition-colors"
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/guides"
+                  className="hover:text-white transition-colors"
+                >
+                  Guides
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/blog/12"
+                  className="hover:text-white transition-colors"
+                >
+                  PDF/A Guide
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/blog/15"
+                  className="hover:text-white transition-colors"
+                >
+                  Cybersecurity Tips
+                </Link>
+              </li>
+            </ul>
+          </div>
+
           {/* Contact */}
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
