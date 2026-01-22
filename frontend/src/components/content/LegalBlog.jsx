@@ -143,6 +143,8 @@ const LegalBlog = () => {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
