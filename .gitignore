@@ -127,3 +127,7 @@ FINAL-LEGALDOCCONVERTER-COMPLETE-DEPLOYMENT.zip
 *.env.*
 frontend/node_modules/.cache/default-development/1.pack
 frontend/node_modules/.cache/default-development/3.pack
+-e 
+# Environment files
+*.env
+*.env.*
