@@ -106,6 +106,9 @@ const Pricing = () => {
                   onClick={() => {
                     if (plan.name === 'Professional') {
                       window.open('https://buy.stripe.com/5kQfZh7EU65I6Q61i65AQ0V', '_blank');
+                    } else {
+                      // Free plan - scroll to processor
+                      document.getElementById('processor')?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
                 >
