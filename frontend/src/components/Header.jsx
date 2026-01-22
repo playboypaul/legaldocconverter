@@ -52,7 +52,17 @@ const Header = () => {
                 >
                   Sign In
                 </Button>
-                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button 
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => {
+                    // Navigate to home and scroll to processor
+                    if (window.location.pathname !== '/') {
+                      window.location.href = '/#processor';
+                    } else {
+                      document.getElementById('processor')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
+                >
                   Get Started
                 </Button>
               </>
