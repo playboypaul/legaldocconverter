@@ -1590,10 +1590,25 @@ const DocumentProcessor = () => {
                         <p className="text-green-700 mb-4">
                           Merged {pdfEditor.mergeResult.source_files?.length} files into: {pdfEditor.mergeResult.output_file}
                         </p>
-                        <Button className="bg-green-600 hover:bg-green-700 text-white">
-                          <Download className="h-4 w-4 mr-2" />
-                          Download Merged PDF
-                        </Button>
+                        <div className="flex gap-3">
+                          <Button className="bg-green-600 hover:bg-green-700 text-white">
+                            <Download className="h-4 w-4 mr-2" />
+                            Download Merged PDF
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            className="border-green-500 text-green-600 hover:bg-green-50"
+                            onClick={() => setPdfPreview({
+                              isOpen: true,
+                              fileUrl: `${API}${pdfEditor.mergeResult.download_url}`,
+                              fileName: pdfEditor.mergeResult.output_file,
+                              compareUrl: null
+                            })}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview PDF
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
