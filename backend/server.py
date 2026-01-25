@@ -21,6 +21,11 @@ from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+
+# Import database and Stripe webhook
+from database import db as postgres_db
+import stripe_webhook
+
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
@@ -35,10 +40,10 @@ os.makedirs(PDF_OPERATIONS_DIR, exist_ok=True)
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB connection (keeping for backwards compatibility during migration)
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'legalconverter')]
 
 # Create the main app without a prefix
 app = FastAPI(
