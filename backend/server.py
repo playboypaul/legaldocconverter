@@ -21,6 +21,11 @@ from file_converter import FileConverter
 from ai_analyzer import AIAnalyzer
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+
+# Import database and Stripe webhook
+from database import db as postgres_db
+import stripe_webhook
+
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
@@ -35,10 +40,10 @@ os.makedirs(PDF_OPERATIONS_DIR, exist_ok=True)
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+# MongoDB connection (keeping for backwards compatibility during migration)
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[os.environ.get('DB_NAME', 'legalconverter')]
 
 # Create the main app without a prefix
 app = FastAPI(
@@ -1874,6 +1879,9 @@ async def get_pdf_info(file_id: str):
 # Include the router in the main app
 app.include_router(api_router)
 
+# Include Stripe webhook router
+app.include_router(stripe_webhook.router, prefix="/api", tags=["Stripe Webhooks"])
+
 # Add CORS middleware with proper configuration
 app.add_middleware(
     CORSMiddleware,
@@ -1885,9 +1893,15 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Start background cleanup task"""
+    """Start background cleanup task and connect to databases"""
+    # Connect to PostgreSQL (Supabase)
+    await postgres_db.connect()
+    # Start file cleanup task
     asyncio.create_task(cleanup_old_files())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    # Close MongoDB connection
     client.close()
+    # Close PostgreSQL connection
+    await postgres_db.disconnect()

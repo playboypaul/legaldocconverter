@@ -106,6 +106,9 @@ const Pricing = () => {
                   onClick={() => {
                     if (plan.name === 'Professional') {
                       window.open('https://buy.stripe.com/5kQfZh7EU65I6Q61i65AQ0V', '_blank');
+                    } else {
+                      // Free plan - scroll to processor
+                      document.getElementById('processor')?.scrollIntoView({ behavior: 'smooth' });
                     }
                   }}
                 >
@@ -129,6 +132,7 @@ const Pricing = () => {
           <Button 
             variant="outline" 
             className="border-2 border-slate-400 text-slate-700 hover:bg-gradient-to-r hover:from-slate-100 hover:to-blue-100 hover:border-blue-400 hover:text-blue-700 px-8 py-3 font-semibold transition-all duration-300"
+            onClick={() => window.location.href = '/contact'}
           >
             Contact Sales
           </Button>
