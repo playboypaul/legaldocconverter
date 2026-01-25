@@ -1879,6 +1879,9 @@ async def get_pdf_info(file_id: str):
 # Include the router in the main app
 app.include_router(api_router)
 
+# Include Stripe webhook router
+app.include_router(stripe_webhook.router, prefix="/api", tags=["Stripe Webhooks"])
+
 # Add CORS middleware with proper configuration
 app.add_middleware(
     CORSMiddleware,
