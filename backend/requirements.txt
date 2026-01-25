@@ -94,3 +94,7 @@ uvicorn==0.25.0
 watchfiles==1.1.0
 yarl==1.20.1
 emergentintegrations==0.1.0
+asyncpg==0.31.0
+passlib==1.7.4
+PyJWT==2.10.1
+stripe==14.2.0
