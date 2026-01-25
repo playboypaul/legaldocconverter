@@ -1893,9 +1893,15 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Start background cleanup task"""
+    """Start background cleanup task and connect to databases"""
+    # Connect to PostgreSQL (Supabase)
+    await postgres_db.connect()
+    # Start file cleanup task
     asyncio.create_task(cleanup_old_files())
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    # Close MongoDB connection
     client.close()
+    # Close PostgreSQL connection
+    await postgres_db.disconnect()
