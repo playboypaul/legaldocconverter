@@ -113,7 +113,8 @@ const PdfPreview = ({
     );
   }
 
-  const PreviewContainer = ({ children, label, isCompare = false }) => (
+  // Inline render helper (not a component) to avoid re-render issues
+  const renderPreviewContainer = (children, label, isCompare = false) => (
     <div className={`flex-1 ${showComparison ? 'max-w-[50%]' : 'w-full'}`}>
       {showComparison && (
         <div className={`text-center py-2 font-semibold text-sm ${isCompare ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'} rounded-t-lg`}>
