@@ -115,13 +115,13 @@ const PdfToolModal = ({
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const toolConfig = TOOL_CONFIG[toolId] || {
+  const toolConfig = useMemo(() => TOOL_CONFIG[toolId] || {
     title: 'PDF Tool',
     description: 'Process your PDF',
     icon: FileText,
     color: 'gray',
     endpoint: null
-  };
+  }, [toolId]);
 
   const IconComponent = toolConfig.icon;
   const colorClass = `from-${toolConfig.color}-500 to-${toolConfig.color}-600`;
