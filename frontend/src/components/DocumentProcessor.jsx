@@ -1270,17 +1270,64 @@ const DocumentProcessor = () => {
               <div className="space-y-6">
                 {/* Annotation Toolbar */}
                 <div className="flex flex-wrap items-center gap-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <Button size="sm" className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                  <Button 
+                    size="sm" 
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                    onClick={() => {
+                      if (!fileId) {
+                        toast({ title: "Upload Required", description: "Please upload a document first to add highlights", variant: "destructive" });
+                        return;
+                      }
+                      setAnnotationText('');
+                      toast({ title: "Highlight Mode", description: "Enter your highlight note in the text area below" });
+                    }}
+                  >
                     <PenTool className="h-3 w-3 mr-1" />
                     Highlight
                   </Button>
-                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-yellow-700 border-yellow-300"
+                    onClick={() => {
+                      if (!fileId) {
+                        toast({ title: "Upload Required", description: "Please upload a document first to add comments", variant: "destructive" });
+                        return;
+                      }
+                      setAnnotationText('[Comment] ');
+                      toast({ title: "Comment Mode", description: "Add your comment in the text area below" });
+                    }}
+                  >
                     📝 Comment
                   </Button>
-                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-yellow-700 border-yellow-300"
+                    onClick={() => {
+                      if (!fileId) {
+                        toast({ title: "Upload Required", description: "Please upload a document first to add bookmarks", variant: "destructive" });
+                        return;
+                      }
+                      setAnnotationText('[Bookmark] Page ');
+                      toast({ title: "Bookmark Mode", description: "Enter the page number or section to bookmark" });
+                    }}
+                  >
                     🔖 Bookmark
                   </Button>
-                  <Button size="sm" variant="outline" className="text-yellow-700 border-yellow-300">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="text-yellow-700 border-yellow-300"
+                    onClick={() => {
+                      if (!fileId) {
+                        toast({ title: "Upload Required", description: "Please upload a document first to add notes", variant: "destructive" });
+                        return;
+                      }
+                      setAnnotationText('[Note] ');
+                      toast({ title: "Note Mode", description: "Add your note in the text area below" });
+                    }}
+                  >
                     ✏️ Note
                   </Button>
                   <div className="border-l border-yellow-300 h-6 mx-2"></div>
@@ -1289,18 +1336,22 @@ const DocumentProcessor = () => {
                     <div 
                       className={`w-6 h-6 bg-yellow-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'yellow' ? 'border-yellow-700 ring-2 ring-yellow-300' : 'border-yellow-600'}`}
                       onClick={() => setSelectedAnnotationColor('yellow')}
+                      title="Yellow"
                     ></div>
                     <div 
                       className={`w-6 h-6 bg-green-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'green' ? 'border-green-700 ring-2 ring-green-300' : 'border-green-600'}`}
                       onClick={() => setSelectedAnnotationColor('green')}
+                      title="Green"
                     ></div>
                     <div 
                       className={`w-6 h-6 bg-blue-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'blue' ? 'border-blue-700 ring-2 ring-blue-300' : 'border-blue-600'}`}
                       onClick={() => setSelectedAnnotationColor('blue')}
+                      title="Blue"
                     ></div>
                     <div 
                       className={`w-6 h-6 bg-red-400 rounded cursor-pointer border-2 ${selectedAnnotationColor === 'red' ? 'border-red-700 ring-2 ring-red-300' : 'border-red-600'}`}
                       onClick={() => setSelectedAnnotationColor('red')}
+                      title="Red"
                     ></div>
                   </div>
                 </div>
