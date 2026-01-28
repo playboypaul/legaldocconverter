@@ -297,7 +297,13 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
             <Package className="h-12 w-12 text-blue-600 mx-auto mb-3" />
             <h3 className="font-semibold text-blue-900 mb-2">Batch Processing</h3>
             <p className="text-sm text-blue-700 mb-4">Process multiple PDFs simultaneously</p>
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button 
+              size="sm" 
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={() => {
+                alert('To use Batch Processing:\n\n1. Go to the "Batch Process" tab above\n2. Upload multiple files\n3. Select your output format\n4. Click "Start Batch Conversion"');
+              }}
+            >
               Start Batch Job
             </Button>
           </CardContent>
@@ -307,8 +313,18 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           <CardContent className="p-6 text-center">
             <Zap className="h-12 w-12 text-green-600 mx-auto mb-3" />
             <h3 className="font-semibold text-green-900 mb-2">Smart Optimization</h3>
-            <p className="text-sm text-green-700 mb-4">AI-powered PDF enhancement</p>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+            <p className="text-sm text-green-700 mb-4">Compress and optimize PDF files</p>
+            <Button 
+              size="sm" 
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => {
+                if (onToolSelect) {
+                  onToolSelect('compress');
+                } else {
+                  alert('To optimize a PDF:\n\n1. First upload a PDF file in the "Convert" tab\n2. Then select "Compress" from the PDF tools\n3. Click to reduce file size');
+                }
+              }}
+            >
               Optimize Now
             </Button>
           </CardContent>
@@ -318,8 +334,14 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           <CardContent className="p-6 text-center">
             <Settings className="h-12 w-12 text-purple-600 mx-auto mb-3" />
             <h3 className="font-semibold text-purple-900 mb-2">Custom Workflows</h3>
-            <p className="text-sm text-purple-700 mb-4">Create automated PDF workflows</p>
-            <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white">
+            <p className="text-sm text-purple-700 mb-4">Combine multiple PDF operations</p>
+            <Button 
+              size="sm" 
+              className="bg-purple-600 hover:bg-purple-700 text-white"
+              onClick={() => {
+                alert('Custom Workflows let you:\n\n• Merge → Compress → Add Watermark\n• Split → Encrypt → Download\n• Convert → Annotate → Export\n\nUpload a PDF first, then chain operations together!');
+              }}
+            >
               Create Workflow
             </Button>
           </CardContent>
