@@ -113,7 +113,8 @@ const PdfPreview = ({
     );
   }
 
-  const PreviewContainer = ({ children, label, isCompare = false }) => (
+  // Inline render helper (not a component) to avoid re-render issues
+  const renderPreviewContainer = (children, label, isCompare = false) => (
     <div className={`flex-1 ${showComparison ? 'max-w-[50%]' : 'w-full'}`}>
       {showComparison && (
         <div className={`text-center py-2 font-semibold text-sm ${isCompare ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'} rounded-t-lg`}>
@@ -237,47 +238,23 @@ const PdfPreview = ({
         {/* PDF Preview Area */}
         <div className={`flex gap-4 ${showComparison ? 'flex-row' : 'flex-col'}`}>
           {/* Original Document */}
-          <PreviewContainer label={originalLabel}>
-            {isLoading && (
-              <div className="flex items-center justify-center p-8">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                <span className="ml-2 text-gray-600">Loading PDF...</span>
-              </div>
-            )}
-            <Document
-              file={fileUrl}
-              onLoadSuccess={onDocumentLoadSuccess}
-              onLoadError={onDocumentLoadError}
-              loading={null}
-              className="flex justify-center"
-            >
-              <Page 
-                pageNumber={pageNumber} 
-                scale={scale}
-                rotate={rotation}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-                className="shadow-lg"
-              />
-            </Document>
-          </PreviewContainer>
-
-          {/* Comparison Document (After Edit) */}
-          {showComparison && compareUrl && (
-            <PreviewContainer label={compareLabel} isCompare>
+          {renderPreviewContainer(
+            <>
+              {isLoading && (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+                  <span className="ml-2 text-gray-600">Loading PDF...</span>
+                </div>
+              )}
               <Document
-                file={compareUrl}
-                onLoadSuccess={onCompareDocumentLoadSuccess}
-                onLoadError={(e) => console.error('Compare PDF error:', e)}
-                loading={
-                  <div className="flex items-center justify-center p-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-green-600" />
-                  </div>
-                }
+                file={fileUrl}
+                onLoadSuccess={onDocumentLoadSuccess}
+                onLoadError={onDocumentLoadError}
+                loading={null}
                 className="flex justify-center"
               >
                 <Page 
-                  pageNumber={Math.min(pageNumber, compareNumPages || pageNumber)} 
+                  pageNumber={pageNumber} 
                   scale={scale}
                   rotate={rotation}
                   renderTextLayer={false}
@@ -285,7 +262,35 @@ const PdfPreview = ({
                   className="shadow-lg"
                 />
               </Document>
-            </PreviewContainer>
+            </>,
+            originalLabel,
+            false
+          )}
+
+          {/* Comparison Document (After Edit) */}
+          {showComparison && compareUrl && renderPreviewContainer(
+            <Document
+              file={compareUrl}
+              onLoadSuccess={onCompareDocumentLoadSuccess}
+              onLoadError={(e) => console.error('Compare PDF error:', e)}
+              loading={
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+                </div>
+              }
+              className="flex justify-center"
+            >
+              <Page 
+                pageNumber={Math.min(pageNumber, compareNumPages || pageNumber)} 
+                scale={scale}
+                rotate={rotation}
+                renderTextLayer={false}
+                renderAnnotationLayer={false}
+                className="shadow-lg"
+              />
+            </Document>,
+            compareLabel,
+            true
           )}
         </div>
 

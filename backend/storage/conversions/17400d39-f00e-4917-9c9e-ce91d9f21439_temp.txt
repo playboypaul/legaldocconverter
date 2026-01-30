@@ -1,0 +1,161 @@
+GetSortAI Production Readiness Checklist
+Generated: January 9, 2026
+Purpose: Audit of what's complete and what's needed to accept paying subscribers
+WHAT'S ALREADY DONE
+Core Platform Features
+Landing Page - Professional marketing page with value propositions, workflow explanation, industries served
+Dashboard - Analytics dashboard for contamination monitoring
+Facilities Management - Multi-facility support with assignments
+Video Upload - Upload interface with facility selection
+Samples View - View uploaded samples and analysis results
+Reports - Automated weekly report generation (PDF/JSON)
+Job Queue - Async video processing with retry logic
+AI/Video Analysis
+Local Video Analysis - FFmpeg + Sharp for frame extraction and contamination detection
+Contamination Detection - Identifies plastic_in_paper, food_waste, metal_contaminant, glass_contaminant, hazardous_material, mixed_waste
+Results Storage - Analysis results stored in PostgreSQL with confidence scores
+Alert System - Threshold-based alerts with deduplication
+Authentication
+Google OAuth - Full Google login implementation with GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET configured
+Email/Password Auth - Local authentication with bcrypt password hashing
+Session Management - PostgreSQL-backed sessions with 7-day TTL
+Protected Routes - isAuthenticated middleware on all protected endpoints
+User Profiles - Role-based access (admin, facility_manager, auditor)
+Database
+PostgreSQL - Neon-backed database fully provisioned
+All Tables Created - user_profiles, facilities, facility_assignments, video_samples, contamination_results, weekly_reports, automation_configs, alert_history, jobs, sessions, enterprise_bookings
+Drizzle ORM - Type-safe database queries
+Object Storage
+Google Cloud Storage - Configured with PRIVATE_OBJECT_DIR
+File Upload - Video upload to GCS via signed URLs
+File Download - Authenticated file retrieval
+Legal & Compliance
+Privacy Policy - GDPR/CCPA/PIPEDA compliant with Stripe, GCS, AdSense disclosures
+Terms of Service - SLAs, refund policy, AI disclaimers, subscription terms
+Acceptable Use Policy - Prohibited uses, security requirements
+Cookie Policy - Cookie types, consent management, third-party cookies
+Data Processing Agreement - PIPEDA/Law 25/GDPR compliance for enterprise
+Legal Hub (/legal) - Central navigation for all legal documents
+LegalLayout Component - Consistent navigation across all legal pages
+Marketing & Content
+About Page - Company information
+Blog - 12 SEO-optimized articles with categories
+Case Studies - Industry success stories
+Documentation - User guides
+Pricing Page - Starter ($2,000/mo), Pro ($3,500/mo), Enterprise tiers
+Analytics & Tracking
+Google Analytics - G-5HV2M8TJM3 tracking code installed
+Google AdSense - ca-pub-8306818191166444 configured
+SEO
+Meta Tags - Title, description, keywords on all pages
+Open Graph - Social media preview images
+Twitter Cards - Configured
+JSON-LD Schema - Structured data for SoftwareApplication and Service
+Canonical URLs - Configured
+Cookie Consent
+Cookie Banner - GDPR-compliant consent popup
+Preference Management - Essential, Analytics, Advertising toggles
+Cookie Settings Page - /cookie-settings for preference updates
+CRITICAL: MUST DO BEFORE ACCEPTING PAYMENTS
+1. Stripe Configuration (BLOCKING)
+TaskStatusAction Required
+STRIPE_SECRET_KEYExistsVerify it's your LIVE key (starts with sk_live_), not test key
+STRIPE_WEBHOOK_SECRETMISSINGCreate webhook in Stripe Dashboard, add secret
+Stripe Price IDsHardcoded placeholdersReplace price_starter and price_pro with real Stripe Price IDs
+Webhook EndpointCode readyRegister https://getsortai.com/api/stripe/webhook in Stripe
+Test Mode ToggleN/ASwitch Stripe Dashboard to LIVE mode before launch
+How to fix:
+# In Stripe Dashboard (https://dashboard.stripe.com):
+1. Create Products:
+- "Starter Plan" → $2,000/month recurring → Copy Price ID
+- "Pro Plan" → $3,500/month recurring → Copy Price ID
+2. Create Webhook:
+- Endpoint: https://getsortai.com/api/stripe/webhook
+- Events: checkout.session.completed, customer.subscription.updated, customer.subscription.deleted
+- Copy Signing Secret
+3. Add secrets to Replit:
+- STRIPE_WEBHOOK_SECRET = whsec_xxxxx
+- Update STRIPE_SECRET_KEY to live key if not already
+Then update server/routes.ts line 786-789:
+const priceIds: Record<string, string> = {
+starter: "price_REAL_STARTER_ID_HERE",  // From Stripe Dashboard
+pro: "price_REAL_PRO_ID_HERE",          // From Stripe Dashboard
+};
+2. Session Security for Production
+TaskStatusAction Required
+Secure cookiesCurrently falseChange to secure: true for HTTPS
+SESSION_SECRETExistsVerify it's strong (32+ random chars)
+Update server/auth.ts line 37:
+secure: process.env.NODE_ENV === "production", // Auto-switches for production
+3. Environment Variable Audit
+VariableStatusNotes
+STRIPE_SECRET_KEYExistsVerify it's LIVE key
+STRIPE_WEBHOOK_SECRETMISSINGRequired for payment processing
+GOOGLE_CLIENT_IDExistsWorking
+GOOGLE_CLIENT_SECRETExistsWorking
+SESSION_SECRETExistsShould be strong random string
+DATABASE_URLExistsNeon PostgreSQL
+PRIVATE_OBJECT_DIRExistsGCS configured
+RECOMMENDED: SHOULD DO BEFORE LAUNCH
+Business Operations
+Support Email - Set up support@getsortai.com, privacy@getsortai.com, legal@getsortai.com
+Enterprise Booking System - Test the /enterprise-booking form, verify email delivery
+Admin Dashboard - Create admin user to manage facilities/users
+Testing & Quality
+End-to-End Payment Test - Complete a test subscription in Stripe test mode
+Video Upload Test - Upload sample videos and verify analysis completes
+Report Generation Test - Confirm weekly reports generate correctly
+Mobile Responsiveness - Test all pages on mobile devices
+Security
+Rate Limiting - Add rate limiting to auth endpoints
+CORS Configuration - Verify CORS is properly restricted for production domain
+Error Handling - Ensure no sensitive data in error messages
+SEO & Marketing
+Google Search Console - Submit sitemap, verify ownership
+robots.txt - Create if not exists
+sitemap.xml - Generate sitemap for all public pages
+Monitoring
+Error Tracking - Consider adding Sentry or similar
+Uptime Monitoring - Set up external monitoring (UptimeRobot, etc.)
+Log Retention - Configure log storage for debugging
+NICE TO HAVE (POST-LAUNCH)
+User Onboarding Flow - Guided setup for new subscribers
+Subscription Management Portal - Stripe Customer Portal integration
+Email Notifications - Transactional emails for alerts (SendGrid/Resend)
+API Documentation - For enterprise API access
+Two-Factor Authentication - Additional security option
+Dark Mode - Already has theme toggle infrastructure
+Multi-language Support - i18n if expanding internationally
+LAUNCH SEQUENCE
+Day Before Launch
+Switch STRIPE_SECRET_KEY to live key
+Add STRIPE_WEBHOOK_SECRET
+Update Stripe Price IDs in code
+Change secure: true for cookies (or use env check)
+Deploy to production
+Launch Day
+Register Stripe webhook endpoint with production URL
+Test one real payment (can refund immediately)
+Verify Google OAuth works on production domain
+Monitor logs for errors
+Post-Launch (First Week)
+Monitor Stripe for successful payments
+Check job queue is processing videos
+Verify automated reports are generating
+Respond to any support inquiries
+CURRENT STATE SUMMARY
+CategoryStatus
+Core PlatformReady
+AuthenticationReady
+DatabaseReady
+StorageReady
+Legal PagesReady
+Marketing ContentReady
+AnalyticsReady
+Payment Processing3 Items Missing (see Critical section)
+Production Security1 Item to Update (cookie secure flag)
+Bottom Line: You're 95% ready. The only blocking items are:
+Add STRIPE_WEBHOOK_SECRET
+Replace placeholder Price IDs with real Stripe Price IDs
+(Optional) Flip cookie secure flag for production
+Once those 2-3 items are done, you can start accepting paying customers.
