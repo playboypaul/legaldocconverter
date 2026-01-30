@@ -2,12 +2,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
+// OWNER EMAIL WHITELIST - These emails have FULL ADMIN privileges
+const OWNER_EMAILS = [
+  'elliottcarter101@gmail.com',
+  'playboyp@gmail.com'
+];
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+};
+
+// Helper to check if email is an owner
+const isOwnerEmail = (email) => {
+  return OWNER_EMAILS.includes(email?.toLowerCase());
 };
 
 export const AuthProvider = ({ children }) => {
@@ -33,9 +44,26 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with real API call
-      // For now, simulate API call with demo users
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Check if OWNER email - give full admin privileges
+      if (isOwnerEmail(email)) {
+        const userData = {
+          id: 'owner-' + Date.now(),
+          email: email,
+          name: 'Site Owner',
+          subscription: 'owner', // Special owner tier
+          role: 'admin',
+          uploadsRemaining: -1, // unlimited
+          analysesRemaining: -1, // unlimited
+          createdAt: new Date().toISOString()
+        };
+        
+        setUser(userData);
+        localStorage.setItem('legalconverter_user', JSON.stringify(userData));
+        setIsSignInOpen(false);
+        return { success: true, message: 'Welcome back, Owner!' };
+      }
       
       // Demo user authentication
       if (email === 'demo@legaldocconverter.com' && password === 'password') {
@@ -44,8 +72,9 @@ export const AuthProvider = ({ children }) => {
           email: 'demo@legaldocconverter.com',
           name: 'Demo User',
           subscription: 'free',
-          uploadsRemaining: 3,
-          analysesRemaining: 1,
+          role: 'user',
+          uploadsRemaining: 5,
+          analysesRemaining: 2,
           createdAt: new Date().toISOString()
         };
         
@@ -59,6 +88,7 @@ export const AuthProvider = ({ children }) => {
           email: 'pro@legaldocconverter.com',
           name: 'Pro User',
           subscription: 'professional',
+          role: 'user',
           uploadsRemaining: -1, // unlimited
           analysesRemaining: -1, // unlimited
           createdAt: new Date().toISOString()
@@ -79,20 +109,39 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signUp = async (name, email, password) => {
+  const signUp = async (email, password, name) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with real API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Simulate user creation
+      // Check if OWNER email - give full admin privileges
+      if (isOwnerEmail(email)) {
+        const userData = {
+          id: 'owner-' + Date.now(),
+          email: email,
+          name: name || 'Site Owner',
+          subscription: 'owner',
+          role: 'admin',
+          uploadsRemaining: -1,
+          analysesRemaining: -1,
+          createdAt: new Date().toISOString()
+        };
+        
+        setUser(userData);
+        localStorage.setItem('legalconverter_user', JSON.stringify(userData));
+        setIsSignUpOpen(false);
+        return { success: true, message: 'Owner account activated!' };
+      }
+      
+      // Regular user signup - free tier
       const userData = {
-        id: Date.now().toString(),
-        email,
-        name,
+        id: 'user-' + Date.now(),
+        email: email,
+        name: name || email.split('@')[0],
         subscription: 'free',
-        uploadsRemaining: 3,
-        analysesRemaining: 1,
+        role: 'user',
+        uploadsRemaining: 5,
+        analysesRemaining: 2,
         createdAt: new Date().toISOString()
       };
       
@@ -114,7 +163,17 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateUserUsage = (uploadsUsed = 0, analysesUsed = 0) => {
-    if (user && user.subscription === 'free') {
+    if (user) {
+      // Owners never lose usage
+      if (user.subscription === 'owner' || user.role === 'admin') {
+        return;
+      }
+      
+      // Professional users have unlimited
+      if (user.subscription === 'professional') {
+        return;
+      }
+      
       const updatedUser = {
         ...user,
         uploadsRemaining: Math.max(0, user.uploadsRemaining - uploadsUsed),
@@ -126,15 +185,27 @@ export const AuthProvider = ({ children }) => {
   };
 
   const canUpload = () => {
-    // Allow all users to upload - site owner testing mode
-    // In production, you can restrict this based on subscription
-    return true;
+    if (!user) return false;
+    // Owners and admins always can
+    if (user.subscription === 'owner' || user.role === 'admin') return true;
+    // Professional users always can
+    if (user.subscription === 'professional') return true;
+    // Free users check remaining
+    return user.uploadsRemaining > 0;
   };
 
   const canAnalyze = () => {
-    // Allow all users to analyze - site owner testing mode
-    // In production, you can restrict this based on subscription
-    return true;
+    if (!user) return false;
+    // Owners and admins always can
+    if (user.subscription === 'owner' || user.role === 'admin') return true;
+    // Professional users always can
+    if (user.subscription === 'professional') return true;
+    // Free users check remaining
+    return user.analysesRemaining > 0;
+  };
+
+  const isOwner = () => {
+    return user && (user.subscription === 'owner' || user.role === 'admin');
   };
 
   const value = {
@@ -149,7 +220,9 @@ export const AuthProvider = ({ children }) => {
     signOut,
     updateUserUsage,
     canUpload,
-    canAnalyze
+    canAnalyze,
+    isOwner,
+    OWNER_EMAILS
   };
 
   return (
