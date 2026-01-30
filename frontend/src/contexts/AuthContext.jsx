@@ -126,15 +126,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const canUpload = () => {
-    if (!user) return false;
-    if (user.subscription === 'professional') return true;
-    return user.uploadsRemaining > 0;
+    // Allow all users to upload - site owner testing mode
+    // In production, you can restrict this based on subscription
+    return true;
   };
 
   const canAnalyze = () => {
-    if (!user) return false;
-    if (user.subscription === 'professional') return true;
-    return user.analysesRemaining > 0;
+    // Allow all users to analyze - site owner testing mode
+    // In production, you can restrict this based on subscription
+    return true;
   };
 
   const value = {
