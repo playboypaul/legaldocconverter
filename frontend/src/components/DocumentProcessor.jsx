@@ -259,9 +259,7 @@ const DocumentProcessor = () => {
   };
 
   const handleAnalyze = async () => {
-    // Site owner mode - skip auth checks for testing
-    // In production, uncomment the auth checks below
-    /*
+    // Auth check - owners/admins bypass all limits
     if (!user) {
       toast({
         title: "Sign in required",
@@ -280,7 +278,6 @@ const DocumentProcessor = () => {
       });
       return;
     }
-    */
 
     if (!fileId) {
       toast({
