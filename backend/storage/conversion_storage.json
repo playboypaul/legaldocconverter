@@ -1,18 +1,12 @@
 {
-  "9806cb58-ee0e-448d-9366-719bb7128ef2": {
-    "conversion_id": "9806cb58-ee0e-448d-9366-719bb7128ef2",
-    "original_file": "test_batch1.pdf",
-    "converted_file": "test_batch1.txt",
-    "converted_file_path": "/app/backend/storage/conversions/9806cb58-ee0e-448d-9366-719bb7128ef2_converted.txt",
-    "target_format": "txt",
-    "conversion_time": "2026-01-28T15:59:21.871174"
-  },
-  "6c9b8f49-6e1d-4cad-b09c-a4420cb0a88c": {
-    "conversion_id": "6c9b8f49-6e1d-4cad-b09c-a4420cb0a88c",
-    "original_file": "test_batch2.pdf",
-    "converted_file": "test_batch2.txt",
-    "converted_file_path": "/app/backend/storage/conversions/6c9b8f49-6e1d-4cad-b09c-a4420cb0a88c_converted.txt",
-    "target_format": "txt",
-    "conversion_time": "2026-01-28T15:59:21.872136"
+  "bb3cba27-eb27-4ee6-8559-d8b5e6ea5a43": {
+    "conversion_id": "bb3cba27-eb27-4ee6-8559-d8b5e6ea5a43",
+    "original_file_id": "5d572f29-9fc1-4995-9960-cd3cda5837fc",
+    "converted_file_path": "/app/backend/storage/conversions/bb3cba27-eb27-4ee6-8559-d8b5e6ea5a43_converted.pdfa",
+    "original_file": "Getsortai - GetSortAI Production Readiness Chec.pdf",
+    "converted_file": "Getsortai - GetSortAI Production Readiness Chec.pdfa",
+    "target_format": "pdfa",
+    "conversion_time": "2026-01-30T15:32:39.280778",
+    "status": "completed"
   }
 }
