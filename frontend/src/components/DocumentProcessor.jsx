@@ -109,9 +109,7 @@ const DocumentProcessor = () => {
     const uploadedFile = event.target.files[0];
     if (!uploadedFile) return;
 
-    // Site owner mode - skip auth checks for testing
-    // In production, uncomment the auth checks below
-    /*
+    // Auth check - owners/admins bypass all limits
     if (!user) {
       toast({
         title: "Sign in required",
@@ -130,7 +128,6 @@ const DocumentProcessor = () => {
       });
       return;
     }
-    */
 
     // Validate file size (50MB limit)
     const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
