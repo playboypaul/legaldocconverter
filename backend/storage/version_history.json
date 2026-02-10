@@ -34,5 +34,23 @@
       }
     ],
     "current_version": 1
+  },
+  "3a7dbe01-ec22-4df1-93bc-abf968441cc2": {
+    "file_id": "3a7dbe01-ec22-4df1-93bc-abf968441cc2",
+    "original_name": "version_test.pdf",
+    "versions": [
+      {
+        "version_id": "2219afb8-240c-44fb-8071-5c95cc3be2bb",
+        "version_number": 1,
+        "file_path": "/app/backend/storage/conversions/versions/3a7dbe01-ec22-4df1-93bc-abf968441cc2/v1_version_test.pdf",
+        "file_size": 299,
+        "file_hash": "c2edb39b310172c5bca486e11cb5d890",
+        "created_at": "2026-02-10T18:44:05.174975",
+        "created_by": "Test",
+        "change_description": "Test version",
+        "is_current": true
+      }
+    ],
+    "current_version": 1
   }
 }
