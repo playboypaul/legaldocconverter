@@ -57,19 +57,7 @@ async def get_form_fields(file_id: str):
         
         reader = PdfReader(file_info["file_path"])
         
-        # Check if PDF has form fields
-        if "/AcroForm" not in reader.trailer.get("/Root", {}):
-            # Try to get fields directly
-            fields = reader.get_fields()
-            if not fields:
-                return {
-                    "file_id": file_id,
-                    "has_forms": False,
-                    "fields": [],
-                    "total_fields": 0,
-                    "message": "This PDF does not contain fillable form fields"
-                }
-        
+        # Try to get fields directly - safer approach
         fields = reader.get_fields()
         
         if not fields:
