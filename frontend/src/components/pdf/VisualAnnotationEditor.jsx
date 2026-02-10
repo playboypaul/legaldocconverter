@@ -723,6 +723,29 @@ const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableColl
               <ZoomIn className="h-4 w-4" />
             </Button>
           </div>
+          
+          {/* Collaboration Status */}
+          {enableCollaboration && (
+            <div className="flex items-center space-x-2 bg-slate-800 rounded-lg px-3 py-1">
+              {isConnected ? (
+                <>
+                  <Wifi className="h-4 w-4 text-green-400" />
+                  <span className="text-xs text-green-400">Live</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff className="h-4 w-4 text-red-400" />
+                  <span className="text-xs text-red-400">Offline</span>
+                </>
+              )}
+              {activeUsers.length > 1 && (
+                <div className="flex items-center space-x-1 ml-2">
+                  <Users className="h-4 w-4 text-blue-400" />
+                  <span className="text-xs text-blue-400">{activeUsers.length}</span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
