@@ -337,9 +337,14 @@ const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableColl
   };
 
   const handleMouseMove = (e) => {
-    if (!isDrawing) return;
-    
     const pos = getMousePosition(e);
+    
+    // Always broadcast cursor position for collaboration
+    if (isConnected) {
+      broadcastCursorPosition(pos.x, pos.y);
+    }
+    
+    if (!isDrawing) return;
     
     if (activeTool === 'freehand') {
       setDrawingPath(prev => [...prev, pos]);
