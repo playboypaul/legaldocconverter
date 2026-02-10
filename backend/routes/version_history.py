@@ -181,6 +181,58 @@ async def create_version(request: CreateVersionRequest):
         raise HTTPException(status_code=500, detail=f"Failed to create version: {str(e)}")
 
 
+# NOTE: More specific routes (/versions/stats/, /versions/download/) must be defined 
+# BEFORE the generic /versions/{file_id} route to ensure proper route matching
+
+@router.get("/versions/stats/{file_id}")
+async def get_version_stats(file_id: str):
+    """Get statistics about version history for a file"""
+    try:
+        if file_id not in version_history:
+            if file_id in file_storage:
+                return {
+                    "file_id": file_id,
+                    "total_versions": 0,
+                    "has_history": False
+                }
+            raise HTTPException(status_code=404, detail="File not found")
+        
+        history = version_history[file_id]
+        versions = history["versions"]
+        
+        if not versions:
+            return {
+                "file_id": file_id,
+                "total_versions": 0,
+                "has_history": False
+            }
+        
+        # Calculate stats
+        total_storage = sum(v["file_size"] for v in versions)
+        authors = list(set(v["created_by"] for v in versions))
+        first_version = versions[0]
+        latest_version = versions[-1]
+        
+        return {
+            "file_id": file_id,
+            "original_name": history["original_name"],
+            "total_versions": len(versions),
+            "current_version": history["current_version"],
+            "total_storage_bytes": total_storage,
+            "total_storage_mb": round(total_storage / (1024 * 1024), 2),
+            "authors": authors,
+            "first_version_date": first_version["created_at"],
+            "latest_version_date": latest_version["created_at"],
+            "has_history": True
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Get version stats error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get version stats: {str(e)}")
+
+
 @router.get("/versions/{file_id}")
 async def get_version_history(file_id: str):
     """Get complete version history for a document"""
