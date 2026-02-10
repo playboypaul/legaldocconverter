@@ -33,6 +33,7 @@ const Home = () => {
       <Header />
       <Hero />
       <Features />
+      <LegalSuiteSection />
       <DocumentProcessor />
       {/* Affiliate marketing section */}
       <AffiliateSection />
