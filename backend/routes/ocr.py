@@ -349,8 +349,7 @@ async def create_searchable_pdf(request: dict):
                 img_path = os.path.join(temp_dir, f"page_{i}.png")
                 image.save(img_path, 'PNG')
                 
-                # Create searchable PDF page
-                pdf_page_path = os.path.join(temp_dir, f"page_{i}")
+                # Create searchable PDF page using pytesseract
                 pdf_data = pytesseract.image_to_pdf_or_hocr(image, lang=language, extension='pdf')
                 
                 page_pdf_path = os.path.join(temp_dir, f"page_{i}.pdf")
