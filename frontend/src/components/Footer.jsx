@@ -21,7 +21,7 @@ const Footer = () => {
                 className="flex items-center px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
               >
                 <FileText className="h-5 w-5 mr-2" />
-                <span className="font-medium">Legal Draft Agent</span>
+                <span className="font-medium">Legal Document Generator</span>
                 <ExternalLink className="h-4 w-4 ml-2" />
               </a>
               <a 
@@ -80,7 +80,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="hover:text-white transition-colors flex items-center"
                 >
-                  Legal Draft Agent
+                  Legal Document Generator
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
               </li>

@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 const LegalSuiteSection = () => {
   const suiteApps = [
     {
-      name: 'Legal Draft Agent',
+      name: 'Legal Document Generator',
       tagline: 'Create Legal Documents',
       description: 'AI-powered legal document drafting. Generate contracts, NDAs, agreements, and more with intelligent templates.',
       url: 'https://legaldraftagent.abacusai.app',
@@ -134,7 +134,7 @@ const LegalSuiteSection = () => {
           <div className="flex flex-wrap justify-center items-center gap-4 text-white/80">
             <span className="flex items-center">
               <span className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center text-white font-bold mr-2">1</span>
-              Draft with Legal Draft Agent
+              Draft with Legal Document Generator
             </span>
             <ArrowRight className="h-5 w-5 hidden md:block" />
             <span className="flex items-center">
