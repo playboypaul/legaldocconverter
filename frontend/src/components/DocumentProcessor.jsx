@@ -49,6 +49,12 @@ const DocumentProcessor = () => {
   const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
   const [integrations, setIntegrations] = useState({ clio: false, westlaw: false, lexis: false });
   
+  // Visual Annotation Editor State
+  const [showVisualAnnotator, setShowVisualAnnotator] = useState(false);
+  
+  // PDF Form Filler State
+  const [showFormFiller, setShowFormFiller] = useState(false);
+  
   // PDF Editing Features State
   const [pdfEditor, setPdfEditor] = useState({
     activeOperation: 'merge', // 'merge', 'split', 'encrypt', 'esign'
