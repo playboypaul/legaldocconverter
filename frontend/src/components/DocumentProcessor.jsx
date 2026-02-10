@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye, Pencil, FormInput, ScanLine } from 'lucide-react';
+import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye, Pencil, FormInput, ScanLine, History } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import AdvancedPdfManager from './pdf/AdvancedPdfManager';
@@ -10,6 +10,7 @@ import PdfPreviewModal from './pdf/PdfPreviewModal';
 import VisualAnnotationEditor from './pdf/VisualAnnotationEditor';
 import PdfFormFiller from './pdf/PdfFormFiller';
 import OcrScanner from './pdf/OcrScanner';
+import VersionHistory from './pdf/VersionHistory';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
