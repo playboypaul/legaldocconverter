@@ -1,1 +1,43 @@
-{}
+{
+  "4cae82c9-59cd-4111-84ff-4db8a87c6256": {
+    "file_id": "4cae82c9-59cd-4111-84ff-4db8a87c6256",
+    "original_name": "test_document.txt",
+    "file_path": "/app/backend/storage/uploads/4cae82c9-59cd-4111-84ff-4db8a87c6256_test_document.txt",
+    "file_type": "txt",
+    "file_size": 137,
+    "upload_time": "2026-02-10T18:30:50.015540",
+    "supported_conversions": [
+      "pdf",
+      "pdfa",
+      "docx",
+      "doc",
+      "rtf",
+      "odt",
+      "html",
+      "xml",
+      "csv",
+      "xlsx",
+      "xls",
+      "ppt",
+      "pptx",
+      "epub",
+      "md",
+      "json",
+      "yaml",
+      "tex",
+      "docbook",
+      "opml",
+      "rst",
+      "asciidoc",
+      "wiki",
+      "jira",
+      "fb2",
+      "icml",
+      "tei",
+      "context",
+      "man",
+      "ms",
+      "zimwiki"
+    ]
+  }
+}
