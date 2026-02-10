@@ -255,7 +255,7 @@ async def get_supported_languages():
     try:
         installed = pytesseract.get_languages()
         available = {k: v for k, v in languages.items() if k in installed}
-    except:
+    except Exception:
         available = {"eng": "English"}  # Default fallback
     
     return {
