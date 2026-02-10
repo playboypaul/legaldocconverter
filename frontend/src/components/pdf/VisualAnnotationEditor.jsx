@@ -696,7 +696,45 @@ const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableColl
       ctx.restore();
     }
     
-  }, [annotations, currentAnnotation, drawingPath, currentPage, selectedAnnotation, pdfDimensions]);
+    // Draw remote cursors for collaboration
+    if (isConnected) {
+      Object.entries(remoteCursors).forEach(([remoteUserId, cursor], index) => {
+        if (cursor.page === currentPage) {
+          const cursorColor = USER_COLORS[index % USER_COLORS.length];
+          
+          // Draw cursor arrow
+          ctx.save();
+          ctx.fillStyle = cursorColor;
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 1;
+          
+          const x = cursor.x;
+          const y = cursor.y;
+          
+          // Cursor shape
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x + 12, y + 10);
+          ctx.lineTo(x + 4, y + 10);
+          ctx.lineTo(x + 4, y + 18);
+          ctx.lineTo(x, y + 14);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          
+          // User label
+          ctx.fillStyle = cursorColor;
+          ctx.fillRect(x + 15, y + 5, 60, 16);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = '10px Arial';
+          ctx.fillText(remoteUserId.slice(0, 8), x + 18, y + 16);
+          
+          ctx.restore();
+        }
+      });
+    }
+    
+  }, [annotations, currentAnnotation, drawingPath, currentPage, selectedAnnotation, pdfDimensions, remoteCursors, isConnected]);
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex flex-col">
