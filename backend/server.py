@@ -30,6 +30,7 @@ import stripe_webhook
 from routes.annotations import router as annotations_router, init_annotation_routes
 from routes.pdf_forms import router as pdf_forms_router, init_pdf_forms_routes
 from routes.user_dashboard import router as dashboard_router, init_dashboard_routes
+from routes.ocr import router as ocr_router, init_ocr_routes
 
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
