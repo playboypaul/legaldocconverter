@@ -1693,6 +1693,70 @@ const DocumentProcessor = () => {
           )
         )}
 
+        {/* Version History Tab */}
+        {activeTab === 'versions' && (
+          fileId ? (
+            <VersionHistory
+              fileId={fileId}
+              fileName={file?.name}
+              onVersionChange={(result) => {
+                toast({
+                  title: "Version Updated",
+                  description: result.message || "Document version changed"
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-amber-50/50">
+              <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <History className="h-5 w-5 mr-2" />
+                  Version History
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-amber-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-amber-100">
+                  Track changes, view history, and revert to previous versions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <History className="h-16 w-16 text-amber-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Version History</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a document to track changes, create versions, and revert to previous states.
+                    Perfect for legal document workflows with multiple revisions.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Track Changes</h4>
+                    <p className="text-sm text-amber-700">Save snapshots of your documents</p>
+                  </div>
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Revert Anytime</h4>
+                    <p className="text-sm text-amber-700">Restore previous versions instantly</p>
+                  </div>
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Compare Versions</h4>
+                    <p className="text-sm text-amber-700">See what changed between versions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        )}
+
         {/* Integrations Tab */}
 
         {/* Enhanced PDF Tools Tab */}
