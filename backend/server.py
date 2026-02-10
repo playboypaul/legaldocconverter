@@ -1889,12 +1889,14 @@ init_annotation_routes(annotation_storage, file_storage, CONVERSIONS_DIR, save_s
 init_pdf_forms_routes(file_storage, PDF_OPERATIONS_DIR, save_storage)
 init_dashboard_routes(postgres_db, file_storage)
 init_ocr_routes(file_storage, CONVERSIONS_DIR, save_storage)
+init_version_routes(file_storage, CONVERSIONS_DIR, save_storage)
 
 app.include_router(annotations_router, prefix="/api", tags=["Annotations"])
 app.include_router(pdf_forms_router, prefix="/api", tags=["PDF Forms"])
 app.include_router(dashboard_router, prefix="/api", tags=["User Dashboard"])
 app.include_router(ocr_router, prefix="/api", tags=["OCR"])
 app.include_router(collaboration_router, prefix="/api", tags=["Collaboration"])
+app.include_router(version_router, prefix="/api", tags=["Version History"])
 
 # Include Stripe webhook router
 app.include_router(stripe_webhook.router, prefix="/api", tags=["Stripe Webhooks"])
