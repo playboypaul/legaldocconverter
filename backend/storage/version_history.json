@@ -52,5 +52,41 @@
       }
     ],
     "current_version": 1
+  },
+  "2f5e0f90-6467-4f64-986f-fa1cf5a74a2a": {
+    "file_id": "2f5e0f90-6467-4f64-986f-fa1cf5a74a2a",
+    "original_name": "test_version.pdf",
+    "versions": [
+      {
+        "version_id": "80e9bc0c-d2e9-41be-9f81-bc783c238a7d",
+        "version_number": 1,
+        "file_path": "/app/backend/storage/conversions/versions/2f5e0f90-6467-4f64-986f-fa1cf5a74a2a/v1_test_version.pdf",
+        "file_size": 298,
+        "file_hash": "b78bd461b260970b6d1c16ec242d70ae",
+        "created_at": "2026-02-10T18:45:42.477614",
+        "created_by": "Test User",
+        "change_description": "Initial version for testing",
+        "is_current": true
+      }
+    ],
+    "current_version": 1
+  },
+  "27c7d023-f7ca-4ea5-a16b-bb9e96db5e62": {
+    "file_id": "27c7d023-f7ca-4ea5-a16b-bb9e96db5e62",
+    "original_name": "workflow_test.pdf",
+    "versions": [
+      {
+        "version_id": "e5fe77ec-1fff-4a14-bd3a-29b2b8ddce70",
+        "version_number": 1,
+        "file_path": "/app/backend/storage/conversions/versions/27c7d023-f7ca-4ea5-a16b-bb9e96db5e62/v1_workflow_test.pdf",
+        "file_size": 298,
+        "file_hash": "b78bd461b260970b6d1c16ec242d70ae",
+        "created_at": "2026-02-10T18:45:42.723222",
+        "created_by": "Integration Test",
+        "change_description": "Version 1 - Initial document",
+        "is_current": true
+      }
+    ],
+    "current_version": 1
   }
 }
