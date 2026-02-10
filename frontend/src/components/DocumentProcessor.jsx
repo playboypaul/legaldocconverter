@@ -842,7 +842,16 @@ const DocumentProcessor = () => {
             >
               <PenTool className="h-4 w-4 mr-2" />
               Annotate
-              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+              <span className="ml-1 px-2 py-0.5 text-xs bg-purple-500 text-white rounded-full">ENHANCED</span>
+            </Button>
+            <Button
+              variant={activeTab === 'form-fill' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('form-fill')}
+              className={`${activeTab === 'form-fill' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <FormInput className="h-4 w-4 mr-2" />
+              Form Fill
+              <span className="ml-1 px-2 py-0.5 text-xs bg-teal-500 text-white rounded-full">NEW</span>
             </Button>
             <Button
               variant={activeTab === 'pdf-tools' ? 'default' : 'ghost'}
