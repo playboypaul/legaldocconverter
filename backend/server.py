@@ -26,6 +26,11 @@ from reportlab.lib.pagesizes import letter
 from database import db as postgres_db
 import stripe_webhook
 
+# Import new routers
+from routes.annotations import router as annotations_router, init_annotation_routes
+from routes.pdf_forms import router as pdf_forms_router, init_pdf_forms_routes
+from routes.user_dashboard import router as dashboard_router, init_dashboard_routes
+
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
