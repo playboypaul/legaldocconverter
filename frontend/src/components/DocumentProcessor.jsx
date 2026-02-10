@@ -384,15 +384,25 @@ const DocumentProcessor = () => {
 
   // Annotation Functions
   const loadAnnotations = async () => {
-    if (!fileId) return;
+    if (!fileId) {
+      setAnnotations([]);
+      return;
+    }
+    
     setIsLoadingAnnotations(true);
     try {
       const response = await axios.get(`${API}/annotations/${fileId}`);
       setAnnotations(response.data.annotations || []);
-      toast({ title: "Annotations loaded", description: `${response.data.total} annotations found` });
+      if (response.data.total > 0) {
+        toast({ title: "Annotations loaded", description: `${response.data.total} annotations found` });
+      }
     } catch (error) {
       console.error('Error loading annotations:', error);
-      toast({ title: "Error", description: "Failed to load annotations", variant: "destructive" });
+      // Only show error if it's not a 404 (file not found is expected for new files)
+      if (error.response?.status !== 404) {
+        toast({ title: "Error", description: "Failed to load annotations", variant: "destructive" });
+      }
+      setAnnotations([]);
     } finally {
       setIsLoadingAnnotations(false);
     }
