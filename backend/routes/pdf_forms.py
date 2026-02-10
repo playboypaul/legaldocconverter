@@ -290,9 +290,10 @@ async def create_form_field(request: dict):
     try:
         file_id = request.get("file_id")
         field_name = request.get("field_name")
-        field_type = request.get("field_type", "text")
-        page_num = request.get("page", 1)
-        position = request.get("position", {"x": 100, "y": 700, "width": 200, "height": 20})
+        # These are read from request but not used in this simplified implementation
+        _ = request.get("field_type", "text")  # field_type reserved for future
+        _ = request.get("page", 1)  # page_num reserved for future
+        _ = request.get("position", {"x": 100, "y": 700, "width": 200, "height": 20})  # position reserved
         
         if not file_id or not field_name:
             raise HTTPException(status_code=400, detail="file_id and field_name are required")
