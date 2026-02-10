@@ -14,6 +14,7 @@ import LegalModalManager from "./components/legal/LegalModalManager";
 import { Toaster } from "./components/ui/toaster";
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from "./components/ads/AdSenseAd";
 import AffiliateSection from "./components/marketing/AffiliateSection";
+import LegalSuiteSection from "./components/marketing/LegalSuiteSection";
 import LegalBlog from "./components/content/LegalBlog";
 import BlogArticle from "./components/content/BlogArticle";
 import TermsOfService from "./components/legal/TermsOfService";
