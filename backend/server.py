@@ -32,6 +32,7 @@ from routes.pdf_forms import router as pdf_forms_router, init_pdf_forms_routes
 from routes.user_dashboard import router as dashboard_router, init_dashboard_routes
 from routes.ocr import router as ocr_router, init_ocr_routes
 from routes.collaboration import router as collaboration_router
+from routes.version_history import router as version_router, init_version_routes
 
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
