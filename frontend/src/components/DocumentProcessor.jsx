@@ -2286,6 +2286,16 @@ const DocumentProcessor = () => {
         compareLabel={pdfPreview.compareLabel}
         originalLabel={pdfPreview.originalLabel}
       />
+      
+      {/* Visual Annotation Editor */}
+      {showVisualAnnotator && fileId && (
+        <VisualAnnotationEditor
+          fileId={fileId}
+          fileUrl={`${API}/download/${fileId}`}
+          fileName={file?.name || 'document.pdf'}
+          onClose={() => setShowVisualAnnotator(false)}
+        />
+      )}
     </section>
   );
 };
