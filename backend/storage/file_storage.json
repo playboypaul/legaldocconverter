@@ -80,5 +80,14 @@
       "ms",
       "zimwiki"
     ]
+  },
+  "69a65d04-32bc-4f9a-9f88-cac6d53510c8": {
+    "file_id": "69a65d04-32bc-4f9a-9f88-cac6d53510c8",
+    "original_name": "ocr_test_ocr.txt",
+    "file_path": "/app/backend/storage/conversions/69a65d04-32bc-4f9a-9f88-cac6d53510c8_ocr_test_ocr.txt",
+    "file_type": "txt",
+    "file_size": 284,
+    "upload_time": "2026-02-10T18:31:13.778073",
+    "ocr_source": "7e39c84f-69e2-44f6-971f-33f7ce8b3d69"
   }
 }
