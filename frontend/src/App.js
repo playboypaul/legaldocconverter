@@ -24,6 +24,7 @@ import FeaturesPage from "./components/pages/FeaturesPage";
 import PricingPage from "./components/pages/PricingPage";
 import AboutPage from "./components/pages/AboutPage";
 import ContactPage from "./components/pages/ContactPage";
+import DashboardPage from "./components/pages/DashboardPage";
 
 const Home = () => {
   return (
