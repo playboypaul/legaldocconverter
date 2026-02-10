@@ -119,7 +119,7 @@ const DocumentProcessor = () => {
     const uploadedFile = event.target.files[0];
     if (!uploadedFile) return;
 
-    // Check authentication and usage limits
+    // Auth check - owners/admins bypass all limits
     if (!user) {
       toast({
         title: "Sign in required",
@@ -269,6 +269,7 @@ const DocumentProcessor = () => {
   };
 
   const handleAnalyze = async () => {
+    // Auth check - owners/admins bypass all limits
     if (!user) {
       toast({
         title: "Sign in required",
@@ -1778,12 +1779,15 @@ const DocumentProcessor = () => {
                 <AdvancedPdfManager 
                   onToolSelect={(toolId) => {
                     setPdfEditor(prev => ({ ...prev, activeOperation: toolId }));
-                    toast({
-                      title: "PDF Tool Selected",
-                      description: `${toolId.charAt(0).toUpperCase() + toolId.slice(1)} tool is ready to use.`,
-                    });
                   }}
                   files={batchFiles}
+                  supportedFormats={supportedFormats}
+                  onBatchComplete={(results) => {
+                    toast({
+                      title: "Batch Processing Complete",
+                      description: `Successfully processed ${results.filter(r => r.status === 'success').length} files.`,
+                    });
+                  }}
                 />
               </CardContent>
             </Card>

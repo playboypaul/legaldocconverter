@@ -25,9 +25,13 @@ import {
   Grid3X3,
   Maximize
 } from 'lucide-react';
+import PdfToolModal from './PdfToolModal';
+import BatchFileModal from './BatchFileModal';
 
-const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
+const AdvancedPdfManager = ({ onToolSelect, files = [], supportedFormats = { input: [], output: [] }, onBatchComplete }) => {
   const [activeCategory, setActiveCategory] = useState('basic');
+  const [selectedTool, setSelectedTool] = useState(null);
+  const [showBatchModal, setShowBatchModal] = useState(false);
 
   const toolCategories = {
     basic: {
@@ -40,7 +44,8 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           description: 'Combine multiple PDF documents into one',
           icon: <Package className="h-8 w-8" />,
           color: 'bg-blue-500',
-          features: ['Multiple file support', 'Custom page order', 'Bookmark preservation']
+          features: ['Multiple file support', 'Custom page order', 'Bookmark preservation'],
+          requiresMultipleFiles: true
         },
         {
           id: 'split',
@@ -119,12 +124,12 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           features: ['Multi-language OCR', 'Text extraction', 'Search indexing']
         },
         {
-          id: 'search-replace',
-          name: 'Search & Replace',
-          description: 'Find and replace text throughout PDF',
+          id: 'extract-text',
+          name: 'Extract Text',
+          description: 'Extract all text content from PDF',
           icon: <Search className="h-8 w-8" />,
           color: 'bg-cyan-500',
-          features: ['Regex support', 'Case sensitivity', 'Batch operations']
+          features: ['TXT export', 'JSON export', 'Per-page extraction']
         },
         {
           id: 'metadata',
@@ -165,23 +170,46 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           features: ['Lossless compression', 'Format conversion', 'Resolution control']
         },
         {
-          id: 'linearize',
-          name: 'Web Optimize',
-          description: 'Optimize for web viewing and download',
+          id: 'reorder',
+          name: 'Reorder Pages',
+          description: 'Change the order of pages',
           icon: <Grid3X3 className="h-8 w-8" />,
           color: 'bg-violet-500',
-          features: ['Fast web view', 'Progressive loading', 'Mobile optimization']
+          features: ['Drag and drop', 'Reverse order', 'Custom arrangement']
         },
         {
-          id: 'repair',
-          name: 'Repair PDF',
-          description: 'Fix corrupted or damaged PDF files',
-          icon: <Settings className="h-8 w-8" />,
+          id: 'remove-pages',
+          name: 'Remove Pages',
+          description: 'Delete specific pages from PDF',
+          icon: <Trash2 className="h-8 w-8" />,
           color: 'bg-gray-500',
-          features: ['Error recovery', 'Structure repair', 'Content restoration']
+          features: ['Select pages', 'Range deletion', 'Preview changes']
         }
       ]
     }
+  };
+
+  const handleToolClick = (tool) => {
+    if (tool.requiresMultipleFiles) {
+      // For merge, we need the batch modal
+      setShowBatchModal(true);
+    } else {
+      // For single-file operations, open the tool modal
+      setSelectedTool(tool.id);
+    }
+    
+    // Also notify parent if callback exists
+    if (onToolSelect) {
+      onToolSelect(tool.id);
+    }
+  };
+
+  const handleToolModalClose = () => {
+    setSelectedTool(null);
+  };
+
+  const handleBatchModalClose = () => {
+    setShowBatchModal(false);
   };
 
   return (
@@ -198,6 +226,7 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
                 ? 'bg-orange-600 text-white' 
                 : 'text-gray-700 hover:text-orange-600'
             } font-medium flex items-center gap-2`}
+            data-testid={`pdf-category-${key}`}
           >
             {category.icon}
             {category.name}
@@ -211,14 +240,24 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
           <Card 
             key={tool.id}
             className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
-            onClick={() => onToolSelect(tool.id)}
+            onClick={() => handleToolClick(tool)}
+            data-testid={`pdf-tool-card-${tool.id}`}
           >
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between mb-3">
                 <div className={`p-3 rounded-lg ${tool.color} text-white`}>
                   {tool.icon}
                 </div>
-                <Button size="sm" variant="outline" className="text-xs">
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToolClick(tool);
+                  }}
+                  data-testid={`pdf-tool-btn-${tool.id}`}
+                >
                   Use Tool
                 </Button>
               </div>
@@ -261,11 +300,11 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
                     <div className="flex items-center">
                       <FileText className="h-4 w-4 text-red-500 mr-2" />
                       <span className="text-sm font-medium text-gray-900 truncate">
-                        {file.name}
+                        {file.name || file.originalFile?.name || 'Unknown'}
                       </span>
                     </div>
                     <span className="text-xs text-gray-500">
-                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                      {((file.size || file.originalFile?.size || 0) / 1024 / 1024).toFixed(2)} MB
                     </span>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -300,9 +339,8 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
             <Button 
               size="sm" 
               className="bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={() => {
-                alert('To use Batch Processing:\n\n1. Go to the "Batch Process" tab above\n2. Upload multiple files\n3. Select your output format\n4. Click "Start Batch Conversion"');
-              }}
+              onClick={() => setShowBatchModal(true)}
+              data-testid="start-batch-job-btn"
             >
               Start Batch Job
             </Button>
@@ -317,13 +355,8 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
             <Button 
               size="sm" 
               className="bg-green-600 hover:bg-green-700 text-white"
-              onClick={() => {
-                if (onToolSelect) {
-                  onToolSelect('compress');
-                } else {
-                  alert('To optimize a PDF:\n\n1. First upload a PDF file in the "Convert" tab\n2. Then select "Compress" from the PDF tools\n3. Click to reduce file size');
-                }
-              }}
+              onClick={() => setSelectedTool('compress')}
+              data-testid="optimize-now-btn"
             >
               Optimize Now
             </Button>
@@ -338,15 +371,32 @@ const AdvancedPdfManager = ({ onToolSelect, files = [] }) => {
             <Button 
               size="sm" 
               className="bg-purple-600 hover:bg-purple-700 text-white"
-              onClick={() => {
-                alert('Custom Workflows let you:\n\n• Merge → Compress → Add Watermark\n• Split → Encrypt → Download\n• Convert → Annotate → Export\n\nUpload a PDF first, then chain operations together!');
-              }}
+              onClick={() => setShowBatchModal(true)}
+              data-testid="create-workflow-btn"
             >
               Create Workflow
             </Button>
           </CardContent>
         </Card>
       </div>
+
+      {/* PDF Tool Modal */}
+      <PdfToolModal
+        isOpen={!!selectedTool}
+        onClose={handleToolModalClose}
+        toolId={selectedTool}
+        onOperationComplete={(result) => {
+          console.log('Operation complete:', result);
+        }}
+      />
+
+      {/* Batch File Modal */}
+      <BatchFileModal
+        isOpen={showBatchModal}
+        onClose={handleBatchModalClose}
+        supportedFormats={supportedFormats}
+        onBatchComplete={onBatchComplete}
+      />
     </div>
   );
 };
