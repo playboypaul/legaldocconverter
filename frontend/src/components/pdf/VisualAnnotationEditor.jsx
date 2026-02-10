@@ -102,6 +102,144 @@ const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableColl
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [commentPosition, setCommentPosition] = useState(null);
+  
+  // Collaboration state
+  const wsRef = useRef(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [remoteCursors, setRemoteCursors] = useState({});
+  const [userId] = useState(() => `user_${Math.random().toString(36).substr(2, 9)}`);
+  const [userColor] = useState(() => USER_COLORS[Math.floor(Math.random() * USER_COLORS.length)]);
+
+  // Connect to collaboration WebSocket
+  useEffect(() => {
+    if (enableCollaboration && fileId && WS_URL) {
+      connectWebSocket();
+    }
+    
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, [fileId, enableCollaboration]);
+
+  const connectWebSocket = () => {
+    try {
+      const ws = new WebSocket(`${WS_URL}/api/ws/collaborate/${fileId}/${userId}`);
+      
+      ws.onopen = () => {
+        setIsConnected(true);
+        toast({ title: "Connected", description: "Real-time collaboration enabled" });
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleCollaborationMessage(data);
+      };
+      
+      ws.onclose = () => {
+        setIsConnected(false);
+        // Attempt to reconnect after 3 seconds
+        setTimeout(() => {
+          if (enableCollaboration && fileId) {
+            connectWebSocket();
+          }
+        }, 3000);
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        setIsConnected(false);
+      };
+      
+      wsRef.current = ws;
+    } catch (error) {
+      console.error('Failed to connect WebSocket:', error);
+    }
+  };
+
+  const handleCollaborationMessage = (data) => {
+    switch (data.type) {
+      case 'init':
+        setActiveUsers(data.active_users || []);
+        setRemoteCursors(data.cursors || {});
+        break;
+        
+      case 'user_joined':
+        setActiveUsers(data.active_users || []);
+        toast({ title: "User Joined", description: `${data.user_id} joined the session` });
+        break;
+        
+      case 'user_left':
+        setActiveUsers(data.active_users || []);
+        setRemoteCursors(prev => {
+          const newCursors = { ...prev };
+          delete newCursors[data.user_id];
+          return newCursors;
+        });
+        break;
+        
+      case 'cursor_update':
+        setRemoteCursors(prev => ({
+          ...prev,
+          [data.user_id]: data.position
+        }));
+        break;
+        
+      case 'annotation_added':
+        setAnnotations(prev => [...prev, data.annotation]);
+        break;
+        
+      case 'annotation_updated':
+        setAnnotations(prev => prev.map(ann => 
+          ann.annotation_id === data.annotation_id 
+            ? { ...ann, ...data.changes }
+            : ann
+        ));
+        break;
+        
+      case 'annotation_deleted':
+        setAnnotations(prev => prev.filter(ann => ann.annotation_id !== data.annotation_id));
+        break;
+        
+      case 'new_comment':
+        // Handle real-time comments
+        break;
+        
+      default:
+        break;
+    }
+  };
+
+  const sendCollaborationMessage = (message) => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify(message));
+    }
+  };
+
+  const broadcastCursorPosition = (x, y) => {
+    sendCollaborationMessage({
+      type: 'cursor_move',
+      x,
+      y,
+      page: currentPage
+    });
+  };
+
+  const broadcastAnnotationAdd = (annotation) => {
+    sendCollaborationMessage({
+      type: 'annotation_add',
+      annotation
+    });
+  };
+
+  const broadcastAnnotationDelete = (annotationId) => {
+    sendCollaborationMessage({
+      type: 'annotation_delete',
+      annotation_id: annotationId
+    });
+  };
 
   // Load existing annotations
   useEffect(() => {
