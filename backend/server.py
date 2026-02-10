@@ -1893,6 +1893,7 @@ app.include_router(annotations_router, prefix="/api", tags=["Annotations"])
 app.include_router(pdf_forms_router, prefix="/api", tags=["PDF Forms"])
 app.include_router(dashboard_router, prefix="/api", tags=["User Dashboard"])
 app.include_router(ocr_router, prefix="/api", tags=["OCR"])
+app.include_router(collaboration_router, prefix="/api", tags=["Collaboration"])
 
 # Include Stripe webhook router
 app.include_router(stripe_webhook.router, prefix="/api", tags=["Stripe Webhooks"])
