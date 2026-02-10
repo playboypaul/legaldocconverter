@@ -1253,9 +1253,8 @@ async def add_annotation(request: dict):
 async def get_annotations(file_id: str):
     """Get all annotations for a document"""
     try:
-        if file_id not in file_storage:
-            raise HTTPException(status_code=404, detail="File not found")
-        
+        # Return empty annotations if file doesn't exist or has no annotations
+        # This is more user-friendly than returning 404
         annotations = annotation_storage.get(file_id, [])
         
         return {
@@ -1264,8 +1263,6 @@ async def get_annotations(file_id: str):
             "total": len(annotations)
         }
         
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Get annotations error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get annotations: {str(e)}")
