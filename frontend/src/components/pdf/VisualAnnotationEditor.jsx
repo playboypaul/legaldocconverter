@@ -444,6 +444,11 @@ const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableColl
     setAnnotations(newAnnotations);
     addToHistory(newAnnotations);
     setSelectedAnnotation(null);
+    
+    // Broadcast deletion to collaborators
+    if (isConnected) {
+      broadcastAnnotationDelete(annotationId);
+    }
   };
 
   const saveAnnotations = async () => {
