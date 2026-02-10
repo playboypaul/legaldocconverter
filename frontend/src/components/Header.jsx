@@ -42,7 +42,15 @@ const Header = () => {
 
           <div className="flex items-center space-x-4">
             {user ? (
-              <UserMenu />
+              <>
+                <Link 
+                  to="/dashboard" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 font-medium hidden md:inline"
+                >
+                  Dashboard
+                </Link>
+                <UserMenu />
+              </>
             ) : (
               <>
                 <Button 

@@ -26,6 +26,14 @@ from reportlab.lib.pagesizes import letter
 from database import db as postgres_db
 import stripe_webhook
 
+# Import new routers
+from routes.annotations import router as annotations_router, init_annotation_routes
+from routes.pdf_forms import router as pdf_forms_router, init_pdf_forms_routes
+from routes.user_dashboard import router as dashboard_router, init_dashboard_routes
+from routes.ocr import router as ocr_router, init_ocr_routes
+from routes.collaboration import router as collaboration_router
+from routes.version_history import router as version_router, init_version_routes
+
 # Persistent storage directories
 STORAGE_BASE_DIR = os.path.join(os.path.dirname(__file__), "storage")
 UPLOADS_DIR = os.path.join(STORAGE_BASE_DIR, "uploads")
@@ -1253,9 +1261,8 @@ async def add_annotation(request: dict):
 async def get_annotations(file_id: str):
     """Get all annotations for a document"""
     try:
-        if file_id not in file_storage:
-            raise HTTPException(status_code=404, detail="File not found")
-        
+        # Return empty annotations if file doesn't exist or has no annotations
+        # This is more user-friendly than returning 404
         annotations = annotation_storage.get(file_id, [])
         
         return {
@@ -1264,8 +1271,6 @@ async def get_annotations(file_id: str):
             "total": len(annotations)
         }
         
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Get annotations error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to get annotations: {str(e)}")
@@ -1878,6 +1883,20 @@ async def get_pdf_info(file_id: str):
 
 # Include the router in the main app
 app.include_router(api_router)
+
+# Initialize and include new routers
+init_annotation_routes(annotation_storage, file_storage, CONVERSIONS_DIR, save_storage)
+init_pdf_forms_routes(file_storage, PDF_OPERATIONS_DIR, save_storage)
+init_dashboard_routes(postgres_db, file_storage)
+init_ocr_routes(file_storage, CONVERSIONS_DIR, save_storage)
+init_version_routes(file_storage, CONVERSIONS_DIR, save_storage)
+
+app.include_router(annotations_router, prefix="/api", tags=["Annotations"])
+app.include_router(pdf_forms_router, prefix="/api", tags=["PDF Forms"])
+app.include_router(dashboard_router, prefix="/api", tags=["User Dashboard"])
+app.include_router(ocr_router, prefix="/api", tags=["OCR"])
+app.include_router(collaboration_router, prefix="/api", tags=["Collaboration"])
+app.include_router(version_router, prefix="/api", tags=["Version History"])
 
 # Include Stripe webhook router
 app.include_router(stripe_webhook.router, prefix="/api", tags=["Stripe Webhooks"])

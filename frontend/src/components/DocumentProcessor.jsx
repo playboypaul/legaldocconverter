@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye } from 'lucide-react';
+import { Upload, FileText, Download, Brain, Loader2, CheckCircle, AlertCircle, Lock, Settings, Edit3, GitCompare, Package, Layers, PenTool, Trash2, Eye, Pencil, FormInput, ScanLine, History } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { useAuth } from '../contexts/AuthContext';
 import AdvancedPdfManager from './pdf/AdvancedPdfManager';
 import PdfPreviewModal from './pdf/PdfPreviewModal';
+import VisualAnnotationEditor from './pdf/VisualAnnotationEditor';
+import PdfFormFiller from './pdf/PdfFormFiller';
+import OcrScanner from './pdf/OcrScanner';
+import VersionHistory from './pdf/VersionHistory';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -46,6 +50,12 @@ const DocumentProcessor = () => {
   const [isLoadingAnnotations, setIsLoadingAnnotations] = useState(false);
   const [isSavingAnnotation, setIsSavingAnnotation] = useState(false);
   const [integrations, setIntegrations] = useState({ clio: false, westlaw: false, lexis: false });
+  
+  // Visual Annotation Editor State
+  const [showVisualAnnotator, setShowVisualAnnotator] = useState(false);
+  
+  // PDF Form Filler State
+  const [showFormFiller, setShowFormFiller] = useState(false);
   
   // PDF Editing Features State
   const [pdfEditor, setPdfEditor] = useState({
@@ -385,15 +395,25 @@ const DocumentProcessor = () => {
 
   // Annotation Functions
   const loadAnnotations = async () => {
-    if (!fileId) return;
+    if (!fileId) {
+      setAnnotations([]);
+      return;
+    }
+    
     setIsLoadingAnnotations(true);
     try {
       const response = await axios.get(`${API}/annotations/${fileId}`);
       setAnnotations(response.data.annotations || []);
-      toast({ title: "Annotations loaded", description: `${response.data.total} annotations found` });
+      if (response.data.total > 0) {
+        toast({ title: "Annotations loaded", description: `${response.data.total} annotations found` });
+      }
     } catch (error) {
       console.error('Error loading annotations:', error);
-      toast({ title: "Error", description: "Failed to load annotations", variant: "destructive" });
+      // Only show error if it's not a 404 (file not found is expected for new files)
+      if (error.response?.status !== 404) {
+        toast({ title: "Error", description: "Failed to load annotations", variant: "destructive" });
+      }
+      setAnnotations([]);
     } finally {
       setIsLoadingAnnotations(false);
     }
@@ -825,7 +845,34 @@ const DocumentProcessor = () => {
             >
               <PenTool className="h-4 w-4 mr-2" />
               Annotate
-              <span className="ml-1 px-2 py-0.5 text-xs bg-green-500 text-white rounded-full">FREE</span>
+              <span className="ml-1 px-2 py-0.5 text-xs bg-purple-500 text-white rounded-full">ENHANCED</span>
+            </Button>
+            <Button
+              variant={activeTab === 'form-fill' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('form-fill')}
+              className={`${activeTab === 'form-fill' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <FormInput className="h-4 w-4 mr-2" />
+              Form Fill
+              <span className="ml-1 px-2 py-0.5 text-xs bg-teal-500 text-white rounded-full">NEW</span>
+            </Button>
+            <Button
+              variant={activeTab === 'ocr' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('ocr')}
+              className={`${activeTab === 'ocr' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <ScanLine className="h-4 w-4 mr-2" />
+              OCR
+              <span className="ml-1 px-2 py-0.5 text-xs bg-indigo-500 text-white rounded-full">NEW</span>
+            </Button>
+            <Button
+              variant={activeTab === 'versions' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('versions')}
+              className={`${activeTab === 'versions' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <History className="h-4 w-4 mr-2" />
+              Versions
+              <span className="ml-1 px-2 py-0.5 text-xs bg-amber-500 text-white rounded-full">NEW</span>
             </Button>
             <Button
               variant={activeTab === 'pdf-tools' ? 'default' : 'ghost'}
@@ -1481,6 +1528,22 @@ const DocumentProcessor = () => {
 
                   {/* Annotation Features */}
                   <div className="space-y-4">
+                    {/* Visual Annotation Editor Button */}
+                    {fileId && file?.name?.toLowerCase().endsWith('.pdf') && (
+                      <div className="text-center p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg">
+                        <Pencil className="h-10 w-10 text-purple-600 mx-auto mb-3" />
+                        <h4 className="font-semibold text-purple-900 text-lg mb-2">Visual Annotation Editor</h4>
+                        <p className="text-sm text-purple-700 mb-4">Draw highlights, shapes, and add comments directly on your PDF</p>
+                        <Button
+                          onClick={() => setShowVisualAnnotator(true)}
+                          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Open Visual Editor
+                        </Button>
+                      </div>
+                    )}
+                    
                     <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <CheckCircle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                       <h4 className="font-semibold text-yellow-900">Smart Highlighting</h4>
@@ -1501,6 +1564,198 @@ const DocumentProcessor = () => {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* PDF Form Fill Tab */}
+        {activeTab === 'form-fill' && (
+          fileId && file?.name?.toLowerCase().endsWith('.pdf') ? (
+            <PdfFormFiller
+              fileId={fileId}
+              fileName={file?.name}
+              onComplete={(result) => {
+                toast({
+                  title: "Form Filled",
+                  description: `Successfully filled ${result.fields_filled} fields`
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-teal-50/50">
+              <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <FormInput className="h-5 w-5 mr-2" />
+                  PDF Form Filler
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-teal-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-teal-100">
+                  Fill out PDF forms directly in your browser
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <FormInput className="h-16 w-16 text-teal-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Fill PDF Forms</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a PDF with fillable form fields to detect and fill them automatically.
+                    Perfect for contracts, applications, and official documents.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload PDF Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Auto-Detection</h4>
+                    <p className="text-sm text-teal-700">Automatically finds all fillable fields</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Multiple Field Types</h4>
+                    <p className="text-sm text-teal-700">Text, checkboxes, dropdowns, and more</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Instant Download</h4>
+                    <p className="text-sm text-teal-700">Save your filled PDF immediately</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        )}
+
+        {/* OCR Tab */}
+        {activeTab === 'ocr' && (
+          fileId ? (
+            <OcrScanner
+              fileId={fileId}
+              fileName={file?.name}
+              onComplete={(result) => {
+                toast({
+                  title: "OCR Complete",
+                  description: `Extracted ${result.word_count} words with ${result.confidence}% confidence`
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-indigo-50/50">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <ScanLine className="h-5 w-5 mr-2" />
+                  OCR Text Extraction
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-indigo-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-indigo-100">
+                  Extract text from scanned documents and images
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <ScanLine className="h-16 w-16 text-indigo-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">OCR Text Extraction</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a scanned PDF or image to extract text using AI-powered OCR.
+                    Perfect for digitizing paper documents, contracts, and historical records.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">15+ Languages</h4>
+                    <p className="text-sm text-indigo-700">Support for multiple languages</p>
+                  </div>
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">Image Enhancement</h4>
+                    <p className="text-sm text-indigo-700">Auto-enhance for better accuracy</p>
+                  </div>
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">Searchable PDFs</h4>
+                    <p className="text-sm text-indigo-700">Create text-searchable PDFs</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        )}
+
+        {/* Version History Tab */}
+        {activeTab === 'versions' && (
+          fileId ? (
+            <VersionHistory
+              fileId={fileId}
+              fileName={file?.name}
+              onVersionChange={(result) => {
+                toast({
+                  title: "Version Updated",
+                  description: result.message || "Document version changed"
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-amber-50/50">
+              <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <History className="h-5 w-5 mr-2" />
+                  Version History
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-amber-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-amber-100">
+                  Track changes, view history, and revert to previous versions
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <History className="h-16 w-16 text-amber-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Version History</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a document to track changes, create versions, and revert to previous states.
+                    Perfect for legal document workflows with multiple revisions.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Track Changes</h4>
+                    <p className="text-sm text-amber-700">Save snapshots of your documents</p>
+                  </div>
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Revert Anytime</h4>
+                    <p className="text-sm text-amber-700">Restore previous versions instantly</p>
+                  </div>
+                  <div className="text-center p-4 bg-amber-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-amber-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-amber-900">Compare Versions</h4>
+                    <p className="text-sm text-amber-700">See what changed between versions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
         )}
 
         {/* Integrations Tab */}
@@ -2183,6 +2438,16 @@ const DocumentProcessor = () => {
         compareLabel={pdfPreview.compareLabel}
         originalLabel={pdfPreview.originalLabel}
       />
+      
+      {/* Visual Annotation Editor */}
+      {showVisualAnnotator && fileId && (
+        <VisualAnnotationEditor
+          fileId={fileId}
+          fileUrl={`${API}/download/${fileId}`}
+          fileName={file?.name || 'document.pdf'}
+          onClose={() => setShowVisualAnnotator(false)}
+        />
+      )}
     </section>
   );
 };

@@ -14,6 +14,7 @@ import LegalModalManager from "./components/legal/LegalModalManager";
 import { Toaster } from "./components/ui/toaster";
 import { LegalDocumentGuideWithAd, LegalTechReportWithAd } from "./components/ads/AdSenseAd";
 import AffiliateSection from "./components/marketing/AffiliateSection";
+import LegalSuiteSection from "./components/marketing/LegalSuiteSection";
 import LegalBlog from "./components/content/LegalBlog";
 import BlogArticle from "./components/content/BlogArticle";
 import TermsOfService from "./components/legal/TermsOfService";
@@ -24,6 +25,7 @@ import FeaturesPage from "./components/pages/FeaturesPage";
 import PricingPage from "./components/pages/PricingPage";
 import AboutPage from "./components/pages/AboutPage";
 import ContactPage from "./components/pages/ContactPage";
+import DashboardPage from "./components/pages/DashboardPage";
 
 const Home = () => {
   return (
@@ -31,6 +33,7 @@ const Home = () => {
       <Header />
       <Hero />
       <Features />
+      <LegalSuiteSection />
       <DocumentProcessor />
       {/* Affiliate marketing section */}
       <AffiliateSection />
@@ -127,6 +130,7 @@ function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Routes>
         </BrowserRouter>
         <SignInModal />
