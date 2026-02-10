@@ -1,0 +1,9 @@
+--- Page 1 ---
+LEGAL DOCUMENT OCR TEST
+
+This is a test document for OCR functionality.
+Agreement Contract Terms:
+
+1. The parties agree to the terms specified herein.
+
+2. This agreement shall remain in effect for 12 months.
