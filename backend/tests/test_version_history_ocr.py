@@ -282,7 +282,7 @@ class TestExistingFeatures:
     
     def test_dashboard_stats_endpoint(self):
         """Test dashboard stats endpoint"""
-        response = requests.get(f"{BASE_URL}/api/dashboard/stats/test-user")
+        response = requests.get(f"{BASE_URL}/api/dashboard/stats/123")  # user_id must be integer
         # Should return 200 with default stats
         assert response.status_code == 200
         data = response.json()
