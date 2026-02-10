@@ -1507,6 +1507,22 @@ const DocumentProcessor = () => {
 
                   {/* Annotation Features */}
                   <div className="space-y-4">
+                    {/* Visual Annotation Editor Button */}
+                    {fileId && file?.name?.toLowerCase().endsWith('.pdf') && (
+                      <div className="text-center p-6 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg">
+                        <Pencil className="h-10 w-10 text-purple-600 mx-auto mb-3" />
+                        <h4 className="font-semibold text-purple-900 text-lg mb-2">Visual Annotation Editor</h4>
+                        <p className="text-sm text-purple-700 mb-4">Draw highlights, shapes, and add comments directly on your PDF</p>
+                        <Button
+                          onClick={() => setShowVisualAnnotator(true)}
+                          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Open Visual Editor
+                        </Button>
+                      </div>
+                    )}
+                    
                     <div className="text-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                       <CheckCircle className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                       <h4 className="font-semibold text-yellow-900">Smart Highlighting</h4>
@@ -1527,6 +1543,70 @@ const DocumentProcessor = () => {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* PDF Form Fill Tab */}
+        {activeTab === 'form-fill' && (
+          fileId && file?.name?.toLowerCase().endsWith('.pdf') ? (
+            <PdfFormFiller
+              fileId={fileId}
+              fileName={file?.name}
+              onComplete={(result) => {
+                toast({
+                  title: "Form Filled",
+                  description: `Successfully filled ${result.fields_filled} fields`
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-teal-50/50">
+              <CardHeader className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <FormInput className="h-5 w-5 mr-2" />
+                  PDF Form Filler
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-teal-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-teal-100">
+                  Fill out PDF forms directly in your browser
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <FormInput className="h-16 w-16 text-teal-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Fill PDF Forms</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a PDF with fillable form fields to detect and fill them automatically.
+                    Perfect for contracts, applications, and official documents.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload PDF Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Auto-Detection</h4>
+                    <p className="text-sm text-teal-700">Automatically finds all fillable fields</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Multiple Field Types</h4>
+                    <p className="text-sm text-teal-700">Text, checkboxes, dropdowns, and more</p>
+                  </div>
+                  <div className="text-center p-4 bg-teal-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-teal-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-teal-900">Instant Download</h4>
+                    <p className="text-sm text-teal-700">Save your filled PDF immediately</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
         )}
 
         {/* Integrations Tab */}
