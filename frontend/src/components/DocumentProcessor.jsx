@@ -1619,6 +1619,70 @@ const DocumentProcessor = () => {
           )
         )}
 
+        {/* OCR Tab */}
+        {activeTab === 'ocr' && (
+          fileId ? (
+            <OcrScanner
+              fileId={fileId}
+              fileName={file?.name}
+              onComplete={(result) => {
+                toast({
+                  title: "OCR Complete",
+                  description: `Extracted ${result.word_count} words with ${result.confidence}% confidence`
+                });
+              }}
+            />
+          ) : (
+            <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-indigo-50/50">
+              <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-t-lg">
+                <CardTitle className="flex items-center text-white">
+                  <ScanLine className="h-5 w-5 mr-2" />
+                  OCR Text Extraction
+                  <span className="ml-2 px-2 py-1 text-xs bg-white text-indigo-600 rounded-full">NEW</span>
+                </CardTitle>
+                <CardDescription className="text-indigo-100">
+                  Extract text from scanned documents and images
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="text-center py-12">
+                  <ScanLine className="h-16 w-16 text-indigo-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">OCR Text Extraction</h3>
+                  <p className="text-gray-600 mb-4 max-w-md mx-auto">
+                    Upload a scanned PDF or image to extract text using AI-powered OCR.
+                    Perfect for digitizing paper documents, contracts, and historical records.
+                  </p>
+                  <Button
+                    onClick={() => setActiveTab('convert')}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Document
+                  </Button>
+                </div>
+                
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">15+ Languages</h4>
+                    <p className="text-sm text-indigo-700">Support for multiple languages</p>
+                  </div>
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">Image Enhancement</h4>
+                    <p className="text-sm text-indigo-700">Auto-enhance for better accuracy</p>
+                  </div>
+                  <div className="text-center p-4 bg-indigo-50 rounded-lg">
+                    <CheckCircle className="h-8 w-8 text-indigo-600 mx-auto mb-2" />
+                    <h4 className="font-semibold text-indigo-900">Searchable PDFs</h4>
+                    <p className="text-sm text-indigo-700">Create text-searchable PDFs</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        )}
+
         {/* Integrations Tab */}
 
         {/* Enhanced PDF Tools Tab */}
