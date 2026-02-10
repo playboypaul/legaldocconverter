@@ -855,6 +855,15 @@ const DocumentProcessor = () => {
               <span className="ml-1 px-2 py-0.5 text-xs bg-teal-500 text-white rounded-full">NEW</span>
             </Button>
             <Button
+              variant={activeTab === 'ocr' ? 'default' : 'ghost'}
+              onClick={() => setActiveTab('ocr')}
+              className={`${activeTab === 'ocr' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
+            >
+              <ScanLine className="h-4 w-4 mr-2" />
+              OCR
+              <span className="ml-1 px-2 py-0.5 text-xs bg-indigo-500 text-white rounded-full">NEW</span>
+            </Button>
+            <Button
               variant={activeTab === 'pdf-tools' ? 'default' : 'ghost'}
               onClick={() => setActiveTab('pdf-tools')}
               className={`${activeTab === 'pdf-tools' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600'} font-medium`}
