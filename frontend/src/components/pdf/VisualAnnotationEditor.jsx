@@ -21,7 +21,10 @@ import {
   Save,
   Loader2,
   MousePointer,
-  Minus
+  Minus,
+  Users,
+  Wifi,
+  WifiOff
 } from 'lucide-react';
 import { useToast } from '../../hooks/use-toast';
 import axios from 'axios';
@@ -30,6 +33,13 @@ import axios from 'axios';
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const WS_URL = process.env.REACT_APP_BACKEND_URL?.replace('https://', 'wss://').replace('http://', 'ws://');
+
+// User colors for collaboration
+const USER_COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', 
+  '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+];
 
 // Annotation tools configuration
 const ANNOTATION_TOOLS = {
@@ -56,7 +66,7 @@ const COLOR_PALETTE = [
   { name: 'Purple', value: '#9370DB' }
 ];
 
-const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose }) => {
+const VisualAnnotationEditor = ({ fileId, fileUrl, fileName, onClose, enableCollaboration = true }) => {
   const { toast } = useToast();
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
