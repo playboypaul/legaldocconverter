@@ -9,7 +9,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://legal-doc-converter.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://legal-converter-pro.preview.emergentagent.com').rstrip('/')
 
 class TestOCRLanguages:
     """Test OCR Languages API - should return 15 supported languages"""
